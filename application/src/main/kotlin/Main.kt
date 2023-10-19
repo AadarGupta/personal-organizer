@@ -2,9 +2,11 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.TextButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode.Companion.Color
@@ -17,7 +19,7 @@ import androidx.compose.ui.window.application
 fun FileItem(fileName: String, fileContent: String) {
     //Text(fileName)
     TextButton(onClick = {
-        println("$fileName Clicked")
+        openTextWindow(fileName, fileContent)
     }) {
         Text(fileName)
     }
@@ -212,6 +214,36 @@ fun Sidebar() {
     }
 }
 
+@Composable
+fun TextPage(fileName: String, fileContent: String) {
+    var query = remember { mutableStateOf(fileContent) }
+    Column (
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(15.dp)
+    ) {
+        Row(
+                modifier = Modifier
+                        .fillMaxWidth(1f)
+        ) {
+            Text(fileName) // style this
+        }
+        Row(
+                modifier = Modifier
+                        .fillMaxWidth(1f)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                BasicTextField(value=query.value, onValueChange = {query.value = it})
+            }
+        }
+
+    }
+}
+
+fun openTextWindow(fileName: String, fileContent: String) = application {
+    Window(onCloseRequest = ::exitApplication, title="Editing $fileName") {
+        TextPage(fileName, fileContent)
+    }
+}
 
 @Composable
 @Preview
@@ -228,7 +260,8 @@ fun App() {
                 .fillMaxWidth(0.7f)
                 .fillMaxHeight(1f)
         ) {
-            WelcomePage()
+            //WelcomePage()
+            TextPage("Course 1", "CS 346 uses Kotlin to create a project. Our project is focused on note-taking and improving student lifestyles and work ethics.")
         }
 
         Box(
@@ -240,22 +273,10 @@ fun App() {
             Sidebar()
         }
     }
-
-    /*
-    var text by remember { mutableStateOf("Hello, World!") }
-
-    MaterialTheme {
-        Button(onClick = {
-            text = "Hello, Desktop!"
-        }) {
-            Text(text)
-        }
-    }
-    */
 }
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(onCloseRequest = ::exitApplication, title="CS346 Note-Taking App") {
         App()
     }
 }
