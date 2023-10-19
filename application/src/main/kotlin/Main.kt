@@ -2,6 +2,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.TextButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -13,8 +14,13 @@ import androidx.compose.ui.window.application
 
 // =================== BASIC ITEMS ===================
 @Composable
-fun FileItem(fileName: String) {
-    Text(fileName)
+fun FileItem(fileName: String, fileContent: String) {
+    //Text(fileName)
+    TextButton(onClick = {
+        println("$fileName Clicked")
+    }) {
+        Text(fileName)
+    }
 }
 
 @Composable
@@ -37,31 +43,31 @@ fun FileList() {
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileItem("file1")
+            FileItem("file1", fileContent = "These are notes for course 1")
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileItem("file2")
+            FileItem("file2", fileContent = "These are notes for course 2")
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileItem("file3")
+            FileItem("file3", fileContent = "These are notes for course 3")
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileItem("file4")
+            FileItem("file4", fileContent = "These are notes for course 4")
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileItem("file5")
+            FileItem("file5", fileContent = "These are notes for course 5")
         }
     }
 }
@@ -162,6 +168,7 @@ fun WelcomePage() {
         }
     }
 }
+
 
 @Composable
 fun Sidebar() {
