@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
@@ -77,8 +78,16 @@ fun ToDoContainer() {
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
+                .border( width = 2.dp,
+                        color = androidx.compose.ui.graphics.Color.Gray,
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp))
+
         ) {
-            Text("To-Dos")
+            Text(
+                text = "To-Dos",
+                fontSize = 15.sp,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+            )
         }
         Box(
             modifier = Modifier
@@ -110,8 +119,16 @@ fun RemindersContainer() {
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
+                .border( width = 2.dp,
+                    color = androidx.compose.ui.graphics.Color.Gray,
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp))
+
         ) {
-            Text("Reminders")
+            Text(
+                    text = "Reminders",
+                    fontSize = 15.sp,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+            )
         }
         Box(
             modifier = Modifier
@@ -152,7 +169,7 @@ fun WelcomePage() {
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            Text("Welcome!") // style this
+            Text("Welcome Jeff!") // style this
         }
         Box(
             modifier = Modifier
@@ -173,20 +190,29 @@ fun Sidebar() {
 
         Box(
             modifier = Modifier
-                .background(androidx.compose.ui.graphics.Color.White)
+                .background(androidx.compose.ui.graphics.Color.Gray)
                 .fillMaxWidth(1f)
+                .height(75.dp)
         ) {
-            Text("Tool Sidebar")
+            Text(
+                    text = "Toolbar",
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp)
+            )
         }
 
         Box(
             modifier = Modifier
                 .padding(10.dp)
-                .border(2.dp, androidx.compose.ui.graphics.Color.Black)
-                .background(androidx.compose.ui.graphics.Color.White)
+                .border( width = 2.dp,
+                    color = androidx.compose.ui.graphics.Color.Black,
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp))
+                .background(androidx.compose.ui.graphics.Color.Gray)
                 .height(200.dp)
                 .fillMaxWidth(1f)
                 .padding(5.dp)
+
+
         ) {
             ToDoContainer()
         }
@@ -194,11 +220,14 @@ fun Sidebar() {
         Box(
             modifier = Modifier
                 .padding(10.dp)
-                .border(2.dp, androidx.compose.ui.graphics.Color.Black)
-                .background(androidx.compose.ui.graphics.Color.White)
+                .background(androidx.compose.ui.graphics.Color.Gray)
+                .border( width = 2.dp,
+                    color = androidx.compose.ui.graphics.Color.Black,
+                    shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp))
                 .height(200.dp)
                 .fillMaxWidth(1f)
                 .padding(5.dp)
+
         ) {
             RemindersContainer()
         }
@@ -218,7 +247,7 @@ fun App() {
             modifier = Modifier
                 .background(androidx.compose.ui.graphics.Color.White)
                 .weight(1f)
-                .fillMaxWidth(0.7f)
+                .fillMaxWidth(0.70f)
                 .fillMaxHeight(1f)
         ) {
             WelcomePage()
@@ -227,7 +256,7 @@ fun App() {
         Box(
             modifier = Modifier
                 .background(androidx.compose.ui.graphics.Color.Gray)
-                .fillMaxWidth(0.3f)
+                .fillMaxWidth(0.30f)
                 .fillMaxHeight(1f)
         ) {
             Sidebar()
