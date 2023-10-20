@@ -15,11 +15,16 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
 // =================== BASIC ITEMS ===================
+// need to implement a file class
+var name = ""
+var content = ""
+
 @Composable
 fun FileItem(fileName: String, fileContent: String) {
     //Text(fileName)
     TextButton(onClick = {
-        openTextWindow(fileName, fileContent)
+        name = fileName
+        content = fileContent
     }) {
         Text(fileName)
     }
@@ -260,8 +265,12 @@ fun App() {
                 .fillMaxWidth(0.7f)
                 .fillMaxHeight(1f)
         ) {
-            //WelcomePage()
-            TextPage("Course 1", "CS 346 uses Kotlin to create a project. Our project is focused on note-taking and improving student lifestyles and work ethics.")
+            // Need to figure out why this doesn't update
+            if(name === "") {
+                WelcomePage()
+            } else {
+                TextPage(name, content)
+            }
         }
 
         Box(
