@@ -76,11 +76,10 @@ fun App() {
                 .fillMaxWidth(0.70f)
                 .fillMaxHeight(1f)
         ) {
-            // For demo only: WelcomePage is Home, FileEdit is sample editing page
-            //WelcomePage()
-            FileEdit("CS 346", "Welcome to CS 346! In this course you will form four-person project teams and work together to design, develop and test a robust full-stack application.\n" +
-                    "\n" +
-                    "Modern software is often too complex for a single person to design and build on their own. By working together, we can pool everyone’s talents to tackle much larger, more complex projects. Our goal is to use best-practices to design and build a commercial-quality, robust, full-featured application.")
+            WelcomePage()
+            //FileEdit("CS 346", "Welcome to CS 346! In this course you will form four-person project teams and work together to design, develop and test a robust full-stack application.\n" +
+                    //"\n" +
+                    //"Modern software is often too complex for a single person to design and build on their own. By working together, we can pool everyone’s talents to tackle much larger, more complex projects. Our goal is to use best-practices to design and build a commercial-quality, robust, full-featured application.")
         }
 
         Box(
