@@ -50,7 +50,7 @@ fun FileEdit(file: File, showEditView: MutableState<Boolean>) {
     var isAskingToClose = remember { mutableStateOf(true) }
 
     if (isAskingToClose.value) {
-        Dialog(
+        Window(
             onCloseRequest = {
                 isAskingToClose.value = !isAskingToClose.value
                 showEditView.value = !showEditView.value
