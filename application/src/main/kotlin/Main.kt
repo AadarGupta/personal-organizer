@@ -22,9 +22,9 @@ fun WelcomePage() {
     var file1 = File("file1")
     file1.content = "Contents of file1"
     var file2 = File("file2")
-    file1.content = "Contents of file2"
+    file2.content = "Contents of file2"
     var file3 = File("file3")
-    file1.content = "Contents of file3"
+    file3.content = "Contents of file3"
 
     var fileList = listOf(file1, file2, file3)
 

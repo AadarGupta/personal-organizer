@@ -13,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import kotlin.system.exitProcess
 
 class File(filename: String) {
     var filename = filename
@@ -24,8 +26,14 @@ class File(filename: String) {
 
 @Composable
 fun FileListItem(file: File) {
+
+    val showFileEdit = remember { mutableStateOf(false) }
+    if (showFileEdit.value) {
+        FileEdit(file, showFileEdit);
+    }
+
     TextButton(
-        onClick = { }
+        onClick = { showFileEdit.value = !showFileEdit.value }
     ) {
         Text(
             text = file.filename,
@@ -38,41 +46,48 @@ fun FileListItem(file: File) {
 
 
 @Composable
-fun FileEdit(fileName: String, fileContent: String) {
-    var query = remember { mutableStateOf(fileContent) }
-    Column (
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(1f)
+fun FileEdit(file: File, showEditView: MutableState<Boolean>) {
+    var isAskingToClose = remember { mutableStateOf(true) }
+
+    if (isAskingToClose.value) {
+        Dialog(
+            onCloseRequest = {
+                isAskingToClose.value = !isAskingToClose.value
+                showEditView.value = !showEditView.value
+            }
         ) {
-            Text(
-                text = fileName,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
-                color = androidx.compose.ui.graphics.Color.Black,
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(1f)
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                BasicTextField(value=query.value, onValueChange = {query.value = it},modifier = Modifier.padding(horizontal = 15.dp, vertical = 0.dp),
-                )
+            var query = remember { mutableStateOf(file.content) }
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                ) {
+                    Text(
+                        text = file.filename,
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
+                        color = androidx.compose.ui.graphics.Color.Black,
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                ) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        BasicTextField(
+                            value = query.value,
+                            onValueChange = { query.value = it },
+                            modifier = Modifier.padding(horizontal = 15.dp, vertical = 0.dp),
+                        )
+                    }
+                }
+
             }
         }
-
     }
-}
-
-
-fun openTextWindow(file: File) {
-    /*Window(onCloseRequest = ::exitApplication, title="Editing $file.filename") {
-        FileEdit(file.filename, file.content)
-    }*/
 }
 
 
