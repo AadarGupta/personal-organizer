@@ -10,23 +10,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+
+import org.jetbrains.exposed.*
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.dao.*
+import org.jetbrains.exposed.dao.id.*
+import org.jetbrains.exposed.sql.transactions.*
+import org.jetbrains.exposed.sql.transactions.transaction
+
+
 import files.File
 import files.FileEdit
 import files.FileItemList
 import sidebar.SidebarContainer
+import sidebar.reminders.Reminder
 
 // =================== HOMEPAGE SECTIONS ===================
 
 @Composable
 fun WelcomePage() {
-    var file1 = File("file1")
-    file1.content = "Contents of file1"
-    var file2 = File("file2")
-    file2.content = "Contents of file2"
-    var file3 = File("file3")
-    file3.content = "Contents of file3"
 
-    var fileList = listOf(file1, file2, file3)
+    var fileList = mutableListOf<File>();
+
+    transaction {
+        for (file in FileDataObject.selectAll()) {
+            var fileData = File(file[FileDataObject.fileName]);
+            fileData.content = file[FileDataObject.fileContent];
+            fileList.add(fileData)
+        }
+    }
 
     Column (
         modifier = Modifier.fillMaxSize(),
@@ -47,6 +59,8 @@ fun WelcomePage() {
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
+            // fileList was generated from pulling the DB data into
+            // File objects which are passed to FileItemList() composable
             FileItemList(fileList)
         }
     }
@@ -77,9 +91,6 @@ fun App() {
                 .fillMaxHeight(1f)
         ) {
             WelcomePage()
-            //FileEdit("CS 346", "Welcome to CS 346! In this course you will form four-person project teams and work together to design, develop and test a robust full-stack application.\n" +
-                    //"\n" +
-                    //"Modern software is often too complex for a single person to design and build on their own. By working together, we can pool everyone’s talents to tackle much larger, more complex projects. Our goal is to use best-practices to design and build a commercial-quality, robust, full-featured application.")
         }
 
         Box(
@@ -93,17 +104,80 @@ fun App() {
     }
 }
 
+fun clearDatabase() {
+    transaction {
+        FileDataObject.deleteAll();
+        ReminderDataObject.deleteAll();
+        ToDoDataObject.deleteAll();
+    }
+}
+
+fun resetDatabase() {
+
+    clearDatabase()
+
+    transaction {
+
+        FileDataObject.insert {
+            it[fileName] = "File 1"
+            it[fileContent] = "File Content 1"
+        }
+
+        FileDataObject.insert {
+            it[fileName] = "File 2"
+            it[fileContent] = "File Content 2"
+        }
+
+        FileDataObject.insert {
+            it[fileName] = "File 3"
+            it[fileContent] = "File Content 3"
+        }
+
+        FileDataObject.insert {
+            it[fileName] = "File 4"
+            it[fileContent] = "File Content 4"
+        }
+
+        ReminderDataObject.insert {
+            it[itemName] = "Pay hydro"
+        }
+        ReminderDataObject.insert {
+            it[itemName] = "Pay rent"
+        }
+        ReminderDataObject.insert {
+            it[itemName] = "Go to bed earlier"
+        }
+
+        ToDoDataObject.insert {
+            it[itemName] = "Get groceries"
+        }
+        ToDoDataObject.insert {
+            it[itemName] = "Plan a heist"
+        }
+        ToDoDataObject.insert {
+            it[itemName] = "Learn how to walk"
+        }
+        ToDoDataObject.insert {
+            it[itemName] = "Hack NASA"
+        }
+    }
+}
+
 fun main() = application {
+
+    Database.connect("jdbc:sqlite:personal-organizer.db")
+
+    transaction {
+        SchemaUtils.create (FileDataObject)
+        SchemaUtils.create (ReminderDataObject)
+        SchemaUtils.create (ToDoDataObject)
+    }
+
+    // UNCOMMENT THE COMMAND BELOW TO RESET YOUR DB FILE TO DEFAULTS
+    resetDatabase();
 
     Window(onCloseRequest = ::exitApplication, title="Personal Organizer") {
         App()
     }
-
-    /*
-    Window(onCloseRequest = ::exitApplication, title="Editing file") {
-        FileEdit("asdf1234", "asdf")
-    }
-    */
-
 
 }

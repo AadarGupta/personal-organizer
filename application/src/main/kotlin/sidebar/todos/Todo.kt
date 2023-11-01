@@ -1,5 +1,6 @@
 package sidebar.todos
 
+import ToDoDataObject
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,6 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import sidebar.reminders.Reminder
 
 
 class ToDo(itemName: String) {
@@ -28,12 +32,14 @@ fun ToDoItem(todo: ToDo) {
 @Composable
 fun ToDoContainer() {
 
-    var todo1 = ToDo("Get groceries")
-    var todo2 = ToDo("Study for MUSIC246 Midterm")
-    var todo3 = ToDo("Plan a heist")
-    var todo4 = ToDo("Learn how to walk")
+    var todoObjectList = mutableListOf<ToDo>();
 
-    var todoObjectList = listOf(todo1, todo2, todo3, todo4)
+    transaction {
+        for (todo in ToDoDataObject.selectAll()) {
+            val toDoData = ToDo(todo[ToDoDataObject.itemName]);
+            todoObjectList.add(toDoData)
+        }
+    }
 
     Column (
         modifier = Modifier.fillMaxSize(),
