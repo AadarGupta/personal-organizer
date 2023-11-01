@@ -1,5 +1,6 @@
 package sidebar.reminders
 
+import ReminderDataObject
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,6 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import files.File
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 
 
 class Reminder(itemName: String) {
@@ -28,11 +32,14 @@ fun ReminderItem(reminder: Reminder) {
 @Composable
 fun RemindersContainer() {
 
-    var reminder1 = Reminder("Pay hydro")
-    var reminder2 = Reminder("Pay rent")
-    var reminder3 = Reminder("Go to bed earlier")
+    var reminderObjectList = mutableListOf<Reminder>();
 
-    var reminderObjectList = listOf(reminder1, reminder2, reminder3)
+    transaction {
+        for (reminder in ReminderDataObject.selectAll()) {
+            val reminderData = Reminder(reminder[ReminderDataObject.itemName]);
+            reminderObjectList.add(reminderData)
+        }
+    }
 
     Column (
         modifier = Modifier.fillMaxSize(),

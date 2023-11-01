@@ -20,6 +20,15 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+
+    // database dependencies
+    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
+    implementation("org.jetbrains.exposed", "exposed-core", "0.44.0")
+    implementation("org.jetbrains.exposed", "exposed-dao", "0.44.0")
+    implementation("org.jetbrains.exposed", "exposed-jdbc", "0.44.0")
+
+
+
 }
 
 compose.desktop {
