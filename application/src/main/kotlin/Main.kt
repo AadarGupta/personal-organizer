@@ -67,13 +67,6 @@ fun WelcomePage() {
 }
 
 
-@Composable
-fun ViewHandler(editView: MutableState<Boolean>) {
-    Switch(
-        checked = editView.value,
-        onCheckedChange = { editView.value = it }
-    )
-}
 
 @Composable
 @Preview
