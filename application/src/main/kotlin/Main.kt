@@ -1,8 +1,6 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -11,19 +9,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
-import org.jetbrains.exposed.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.dao.*
-import org.jetbrains.exposed.dao.id.*
-import org.jetbrains.exposed.sql.transactions.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
 import files.File
-import files.FileEdit
 import files.FileItemList
 import sidebar.SidebarContainer
-import sidebar.reminders.Reminder
 
 // =================== HOMEPAGE SECTIONS ===================
 
@@ -161,6 +152,7 @@ fun main() = application {
     Database.connect("jdbc:sqlite:personal-organizer.db")
 
     transaction {
+        // create schemas
         SchemaUtils.create (FileDataObject)
         SchemaUtils.create (ReminderDataObject)
         SchemaUtils.create (ToDoDataObject)
