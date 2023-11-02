@@ -1,18 +1,14 @@
 package sidebar.todos
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,19 +20,19 @@ import androidx.compose.ui.unit.sp
 fun ToDoContainer() {
 
     var toDoVM = ToDoViewModel()
+    var selectedItemIdx = remember { mutableStateOf(-1) }
+    val activateDialog = remember { mutableStateOf(false) }
+
+    if(activateDialog.value) {
+        ToDoDialog(activateDialog, selectedItemIdx.value, toDoVM)
+    }
 
     Column (
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxWidth(1f)
-                .border( width = 2.dp,
-                    color = Color.Gray,
-                    shape = RoundedCornerShape(10.dp)
-                )
-
         ) {
             Text(
                 text = "To-Dos",
@@ -44,6 +40,17 @@ fun ToDoContainer() {
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
                 color = Color.White,
             )
+            Icon(
+                imageVector = Icons.Filled.Add, contentDescription = "Add",
+
+                modifier = Modifier
+                    .clickable {
+                        selectedItemIdx.value = toDoVM.addToDoList()
+                        activateDialog.value = true
+                    },
+                tint = Color.White
+            )
+
         }
 
         if (toDoVM.isToDoEmpty()) {
@@ -57,8 +64,11 @@ fun ToDoContainer() {
                     Card(
                         backgroundColor = Color.Gray,
                         modifier = Modifier
-                            .padding(16.dp)
-                            .clickable {  }
+                            .padding(2.dp)
+                            .clickable {
+                                selectedItemIdx.value = toDoVM.getItemIdx(it)
+                                activateDialog.value = true
+                            }
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
