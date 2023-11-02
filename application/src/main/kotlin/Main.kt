@@ -90,15 +90,19 @@ fun resetDefaultToDos() {
     transaction {
         ToDoDataObject.insert {
             it[itemName] = "Get groceries"
+            it[isChecked] = false
         }
         ToDoDataObject.insert {
             it[itemName] = "Plan a heist"
+            it[isChecked] = false
         }
         ToDoDataObject.insert {
             it[itemName] = "Learn how to walk"
+            it[isChecked] = true
         }
         ToDoDataObject.insert {
             it[itemName] = "Hack NASA"
+            it[isChecked] = true
         }
     }
 }

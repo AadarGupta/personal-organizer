@@ -1,3 +1,5 @@
+application/personal-organizer.db
+
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
