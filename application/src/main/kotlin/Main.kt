@@ -1,8 +1,6 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -11,34 +9,19 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 
-import org.jetbrains.exposed.*
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.dao.*
-import org.jetbrains.exposed.dao.id.*
-import org.jetbrains.exposed.sql.transactions.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
 import files.File
-import files.FileEdit
 import files.FileItemList
 import sidebar.SidebarContainer
-import sidebar.reminders.Reminder
 
 // =================== HOMEPAGE SECTIONS ===================
 
 @Composable
 fun WelcomePage() {
 
-    var fileList = mutableListOf<File>();
-
-    transaction {
-        for (file in FileDataObject.selectAll()) {
-            var fileData = File(file[FileDataObject.fileName]);
-            fileData.content = file[FileDataObject.fileContent];
-            fileList.add(fileData)
-        }
-    }
+    var fileLevel = remember { mutableStateOf("root") }
 
     Column (
         modifier = Modifier.fillMaxSize(),
@@ -59,9 +42,7 @@ fun WelcomePage() {
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            // fileList was generated from pulling the DB data into
-            // File objects which are passed to FileItemList() composable
-            FileItemList(fileList)
+            FileItemList(fileLevel)
         }
     }
 }
@@ -105,42 +86,8 @@ fun clearDatabase() {
     }
 }
 
-fun resetDatabase() {
-
-    clearDatabase()
-
+fun resetDefaultToDos() {
     transaction {
-
-        FileDataObject.insert {
-            it[fileName] = "File 1"
-            it[fileContent] = "File Content 1"
-        }
-
-        FileDataObject.insert {
-            it[fileName] = "File 2"
-            it[fileContent] = "File Content 2"
-        }
-
-        FileDataObject.insert {
-            it[fileName] = "File 3"
-            it[fileContent] = "File Content 3"
-        }
-
-        FileDataObject.insert {
-            it[fileName] = "File 4"
-            it[fileContent] = "File Content 4"
-        }
-
-        ReminderDataObject.insert {
-            it[itemName] = "Pay hydro"
-        }
-        ReminderDataObject.insert {
-            it[itemName] = "Pay rent"
-        }
-        ReminderDataObject.insert {
-            it[itemName] = "Go to bed earlier"
-        }
-
         ToDoDataObject.insert {
             it[itemName] = "Get groceries"
             it[isChecked] = false
@@ -160,11 +107,96 @@ fun resetDatabase() {
     }
 }
 
+fun resetDefaultReminders() {
+    transaction {
+
+        ReminderDataObject.insert {
+            it[itemName] = "Pay hydro"
+        }
+        ReminderDataObject.insert {
+            it[itemName] = "Pay rent"
+        }
+        ReminderDataObject.insert {
+            it[itemName] = "Go to bed earlier"
+        }
+    }
+}
+
+fun resetDefaultFiles() {
+    transaction {
+
+        FileDataObject.insert {
+            it[isFolder] = false
+            it[parent] = "root"
+            it[fileName] = "File 1"
+            it[fileContent] = "File Content 1"
+        }
+
+        FileDataObject.insert {
+            it[isFolder] = true
+            it[parent] = "root"
+            it[fileName] = "Folder 1"
+            it[fileContent] = ""
+        }
+
+        FileDataObject.insert {
+            it[isFolder] = false
+            it[parent] = "Folder 1"
+            it[fileName] = "File 1.1"
+            it[fileContent] = "File Content 1.1"
+        }
+
+        FileDataObject.insert {
+            it[isFolder] = false
+            it[parent] = "Folder 1"
+            it[fileName] = "File 1.2"
+            it[fileContent] = "File Content 1.2"
+        }
+
+        FileDataObject.insert {
+            it[isFolder] = true
+            it[parent] = "Folder 1"
+            it[fileName] = "Folder 1.1"
+            it[fileContent] = ""
+        }
+
+        FileDataObject.insert {
+            it[isFolder] = false
+            it[parent] = "Folder 1.1"
+            it[fileName] = "File 1.1.1"
+            it[fileContent] = "File Content 1.1.1"
+        }
+
+        FileDataObject.insert {
+            it[isFolder] = false
+            it[parent] = "root"
+            it[fileName] = "File 2"
+            it[fileContent] = "File Content 2"
+        }
+
+        FileDataObject.insert {
+            it[isFolder] = false
+            it[parent] = "root"
+            it[fileName] = "File 3"
+            it[fileContent] = "File Content 3"
+        }
+    }
+}
+
+
+fun resetDatabase() {
+    clearDatabase()
+    resetDefaultFiles()
+    resetDefaultReminders()
+    resetDefaultToDos()
+}
+
 fun main() = application {
 
     Database.connect("jdbc:sqlite:personal-organizer.db")
 
     transaction {
+        // create schemas
         SchemaUtils.create (FileDataObject)
         SchemaUtils.create (ReminderDataObject)
         SchemaUtils.create (ToDoDataObject)
