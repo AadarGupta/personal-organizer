@@ -203,7 +203,7 @@ fun main() = application {
     }
 
     // UNCOMMENT THE COMMAND BELOW TO RESET YOUR DB FILE TO DEFAULTS
-    resetDatabase();
+    //resetDatabase();
 
     Window(onCloseRequest = ::exitApplication, title="Personal Organizer") {
         App()

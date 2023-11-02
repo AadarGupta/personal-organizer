@@ -43,7 +43,7 @@ class ToDoViewModel() {
 
     fun checkToDoItem(toDoItem: ToDoModel, value: Boolean) {
         val idx = toDoList.indexOf(toDoItem)
-        toDoList[idx].isChecked = value
+        toDoList[idx] = ToDoModel(toDoList[idx].id, toDoList[idx].itemName, value)
 
         transaction {
             ToDoDataObject.update({ ToDoDataObject.id eq toDoItem.id }) {

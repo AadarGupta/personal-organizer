@@ -66,7 +66,7 @@ fun ToDoContainer() {
                         ) {
                             Checkbox(
                                 checked = it.isChecked,
-                                onCheckedChange = { value -> toDoVM.checkToDoItem(it, !value)}
+                                onCheckedChange = { value -> toDoVM.checkToDoItem(it, value)}
                             )
                             Text(
                                 text = it.itemName,
