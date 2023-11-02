@@ -9,7 +9,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,13 +20,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import sidebar.reminders.Reminder
-import javax.sql.rowset.RowSetProvider
+import org.jetbrains.exposed.sql.update
 
 
-class ToDo(itemName: String, isChecked: Boolean) {
+class ToDo(id: EntityID<Int>, itemName: String, isChecked: Boolean) {
+    var id = id
     var itemName = itemName
     var isChecked = isChecked
 }
@@ -40,12 +47,20 @@ fun ToDoItem(todo: ToDo) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Checkbox(checked = todo.isChecked, onCheckedChange = {})
+            Checkbox(checked = todo.isChecked, onCheckedChange = {checkTodo(!todo.isChecked, todo.id)})
             Text(
                 text = todo.itemName,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
                 color = Color.White,
+            )
+            Icon(
+                imageVector = Icons.Filled.Delete, contentDescription = "Delete",
+
+                modifier = Modifier.clickable {
+                    deleteTodo(todo.id)
+                },
+                tint = Color.Red
             )
         }
     }
@@ -97,10 +112,23 @@ fun getToDoList(): MutableList<ToDo> {
 
     transaction {
         for (todo in ToDoDataObject.selectAll()) {
-            val toDoData = ToDo(todo[ToDoDataObject.itemName], todo[ToDoDataObject.isChecked]);
+            val toDoData = ToDo(todo[ToDoDataObject.id], todo[ToDoDataObject.itemName], todo[ToDoDataObject.isChecked]);
             list.add(toDoData)
         }
     }
 
     return list;
+}
+
+fun deleteTodo(todoId: EntityID<Int>) {
+    transaction {
+        ToDoDataObject.deleteWhere { ToDoDataObject.id eq todoId }
+    }
+}
+fun checkTodo(updateValue: Boolean, todoId: EntityID<Int>) {
+    transaction {
+        ToDoDataObject.update({ ToDoDataObject.id eq todoId }) {
+            it[isChecked] = updateValue;
+        }
+    }
 }
