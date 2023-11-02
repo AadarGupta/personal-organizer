@@ -23,7 +23,6 @@ fun FileItemList(fileLevel: MutableState<String>) {
     var fileList = mutableListOf<File>();
 
     var toCreate = remember { mutableStateOf(false) }
-    var toDelete = remember{ mutableStateOf(false) }
 
     transaction {
         for (file in FileDataObject.selectAll()) {
@@ -60,22 +59,7 @@ fun FileItemList(fileLevel: MutableState<String>) {
                 )
             }
 
-            TextButton(onClick = { toDelete.value = !toDelete.value }, modifier = Modifier.height(50.dp)) {
-                /*if(toCreate.value) {
-                    // Needs to be FileDelete which pulls a list of files and deletes the clicked ones
-                    FileCreate(toCreate)
-                }*/
-                Image(
-                    painter = painterResource("trashIcon.png"),
-                    contentDescription = "Delete File Icon",
-                    modifier = Modifier.padding(4.dp)
-                )
-                Text(
-                    text = "Delete File",
-                    fontSize = 15.sp,
-                    color = Color.Red,
-                )
-            }
+
         }
 
         if (fileLevel.value != "root") {

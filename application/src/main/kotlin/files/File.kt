@@ -31,6 +31,8 @@ class File(filename: String) {
 fun FileListItem(file: File, fileLevel: MutableState<String>) {
 
     val fileClicked = remember { mutableStateOf(false) }
+    var toDelete = remember { mutableStateOf(false) }
+
     if (fileClicked.value) {
         if (file.isFolder) {
             // open folder view
@@ -42,32 +44,56 @@ fun FileListItem(file: File, fileLevel: MutableState<String>) {
         }
     }
 
-    TextButton(
-        onClick = { fileClicked.value = !fileClicked.value },
-        modifier = Modifier.height(50.dp)) {
-    val showFileEdit = remember { mutableStateOf(false) }
-    if (showFileEdit.value) {
-        FileEdit(file, showFileEdit)
-    }
+    Row(modifier = Modifier.height(50.dp)) {
 
-        if (file.isFolder) {
-            Image(
-                painter = painterResource("folderIcon.png"),
-                contentDescription = "Folder Icon"
+
+        TextButton(
+            onClick = { fileClicked.value = !fileClicked.value },
+
+        ) {
+            val showFileEdit = remember { mutableStateOf(false) }
+            if (showFileEdit.value) {
+                FileEdit(file, showFileEdit)
+            }
+
+            if (file.isFolder) {
+                Image(
+                    painter = painterResource("folderIcon.png"),
+                    contentDescription = "Folder Icon"
+                )
+            } else {
+                Image(
+                    painter = painterResource("fileIcon.png"),
+                    contentDescription = "File Icon"
+                )
+            }
+            Text(
+                text = file.filename,
+                fontSize = 20.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(horizontal = 4.dp)
             )
-        } else {
+
+
+        }
+
+        TextButton(onClick = { toDelete.value = !toDelete.value }
+            ) {
+            /*if(toCreate.value) {
+            // Needs to be FileDelete which pulls a list of files and deletes the clicked ones
+            FileCreate(toCreate)
+        }*/
+
             Image(
-                painter = painterResource("fileIcon.png"),
-                contentDescription = "File Icon"
+                painter = painterResource("trashIcon.png"),
+                contentDescription = "Delete File Icon",
+                modifier = Modifier.height(30.dp)
             )
         }
-        Text(
-            text = file.filename,
-            fontSize = 20.sp,
-            color = Color.Black
-        )
     }
+
 }
+
 
 
 @Composable
