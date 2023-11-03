@@ -119,6 +119,22 @@ fun ListFiles(fileLevel: MutableState<String>) {
                 )
             }
 
+            TextButton(onClick = { toCreate.value = !toCreate.value }, modifier = Modifier.height(50.dp)) {
+                if(toCreate.value) {
+                    FolderCreate(toCreate, fileList)
+                }
+                Image(
+                    painter = painterResource("newFolderIcon.png"),
+                    contentDescription = "Create New Folder Icon",
+                    modifier = Modifier.padding(4.dp)
+                )
+                Text(
+                    text = "Create New Folder",
+                    fontSize = 15.sp,
+                    color = Color.Blue,
+                )
+            }
+
 
         }
 
@@ -246,6 +262,64 @@ fun FileCreate(active: MutableState<Boolean>, fileList: FileViewModel) {
 
                     // Need to figure this out
                     fileList.addFileList(false, "root", item.text, "")
+                    active.value = false
+                }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { active.value = false }
+            ) {
+                Text("Dismiss")
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier.padding(10.dp),
+            ) {
+
+                TextField(
+                    value = item, onValueChange = { newText ->
+                        item = newText
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
+                )
+            }
+
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun FolderCreate(active: MutableState<Boolean>, fileList: FileViewModel) {
+    var item by remember { mutableStateOf(TextFieldValue("")) }
+
+    AlertDialog(
+        title = {
+            Text(
+                text = "Create New Folder", modifier = Modifier.padding(20.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+        },
+        onDismissRequest = { active.value = false },
+        confirmButton = {
+            TextButton(
+                onClick = {
+
+                    // Need to figure this out
+                    fileList.addFileList(true, "root", item.text, "")
                     active.value = false
                 }
             ) {
