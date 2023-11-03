@@ -43,7 +43,7 @@ fun SidebarContainer() {
                     shape = RoundedCornerShape(10.dp)
                 )
                 .background(Color.Gray)
-                .height(200.dp)
+                .height(300.dp)
                 .fillMaxWidth(1f)
                 .padding(5.dp)
 
@@ -60,7 +60,7 @@ fun SidebarContainer() {
                     color = Color.White,
                     shape = RoundedCornerShape(10.dp)
                 )
-                .height(200.dp)
+                .height(300.dp)
                 .fillMaxWidth(1f)
                 .padding(5.dp)
 

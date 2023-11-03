@@ -45,7 +45,6 @@ fun FileListItem(file: FileModel, fileLevel: MutableState<String>, fileList: Fil
 
         TextButton(
             onClick = { fileClicked.value = !fileClicked.value },
-
         ) {
             val showFileEdit = remember { mutableStateOf(false) }
             if (showFileEdit.value) {
@@ -63,26 +62,28 @@ fun FileListItem(file: FileModel, fileLevel: MutableState<String>, fileList: Fil
                     contentDescription = "File Icon"
                 )
             }
-            Text(
-                text = file.fileName,
-                fontSize = 20.sp,
-                color = Color.Black,
-                modifier = Modifier.padding(horizontal = 4.dp)
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)
+            ) {
+                Text(
+                    text = file.fileName,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
 
-            Icon(
-                imageVector = Icons.Filled.Delete, contentDescription = "Delete",
+                Icon(
+                    imageVector = Icons.Filled.Delete, contentDescription = "Delete",
 
-                modifier = Modifier.clickable {
-                    fileList.removeFileItem(file)
-                },
-                tint = Color.Red
-            )
-
-
+                    modifier = Modifier.clickable {
+                        fileList.removeFileItem(file)
+                    },
+                    tint = Color.Red
+                )
+            }
         }
     }
-
 }
 
 @Composable

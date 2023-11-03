@@ -64,7 +64,6 @@ fun ToDoContainer() {
                     Card(
                         backgroundColor = Color.Gray,
                         modifier = Modifier
-                            .padding(2.dp)
                             .clickable {
                                 selectedItemIdx.value = toDoVM.getItemIdx(it)
                                 activateDialog.value = true
@@ -72,26 +71,34 @@ fun ToDoContainer() {
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp)
                         ) {
                             Checkbox(
                                 checked = it.isChecked,
                                 onCheckedChange = { value -> toDoVM.checkToDoItem(it, value)}
                             )
-                            Text(
-                                text = it.itemName,
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
-                                color = Color.White,
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.Delete, contentDescription = "Delete",
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = it.itemName,
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                    color = Color.White,
+                                )
+                                Icon(
+                                    imageVector = Icons.Filled.Delete, contentDescription = "Delete",
 
-                                modifier = Modifier.clickable {
-                                    toDoVM.removeToDoItem(it);
-                                },
-                                tint = Color.Red
-                            )
+                                    modifier = Modifier.clickable {
+                                        toDoVM.removeToDoItem(it);
+                                    },
+                                    tint = Color.Red
+                                )
+                            }
                         }
                     }
                 }

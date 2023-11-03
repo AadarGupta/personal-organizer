@@ -36,9 +36,9 @@ fun WelcomePage() {
                 .fillMaxWidth(1f)
         ) {
             Text(
-                text = "Hello Jeff!",
+                text = "Personal Organizer",
                 fontSize = 40.sp,
-                modifier = Modifier.padding(horizontal = 50.dp, vertical = 0.dp),
+                modifier = Modifier.padding(horizontal = 50.dp, vertical = 20.dp),
                 color = Color.Black,
             )
 
@@ -69,6 +69,7 @@ fun App() {
                 .weight(1f)
                 .fillMaxWidth(1f)
                 .fillMaxHeight(1f)
+                .padding(horizontal = 30.dp)
         ) {
             WelcomePage()
         }
@@ -117,7 +118,7 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title="Personal Organizer",
         state = WindowState(
-            width = 1000.dp, height = 700.dp,
+            width = 1200.dp, height = 800.dp,
             position = WindowPosition(50.dp, 50.dp)
         )
     ) {

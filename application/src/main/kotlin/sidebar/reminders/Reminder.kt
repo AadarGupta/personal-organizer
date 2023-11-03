@@ -78,26 +78,34 @@ fun ReminderContainer() {
                                 checked = it.isChecked,
                                 onCheckedChange = { value -> ReminderVM.checkReminderItem(it, value)}
                             )
-                            Text(
-                                text = it.itemName,
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
-                                color = Color.White,
-                            )
-                            Text(
-                                text = it.year + "." + it.month + "."+ it.day + ":"+ it.time ,
-                                fontSize = 10.sp,
-                                modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
-                                color = Color.LightGray,
-                            )
-                            Icon(
-                                imageVector = Icons.Filled.Delete, contentDescription = "Delete",
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = it.itemName,
+                                    fontSize = 12.sp,
+                                    modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                    color = Color.White,
+                                )
+                                Row() {
+                                    Text(
+                                        text = it.year + "." + it.month + "."+ it.day + ":"+ it.time ,
+                                        fontSize = 10.sp,
+                                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                        color = Color.LightGray,
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Filled.Delete, contentDescription = "Delete",
 
-                                modifier = Modifier.clickable {
-                                    ReminderVM.removeReminderItem(it);
-                                },
-                                tint = Color.Red
-                            )
+                                        modifier = Modifier.clickable {
+                                            ReminderVM.removeReminderItem(it);
+                                        },
+                                        tint = Color.Red
+                                    )
+                                }
+                            }
                         }
                     }
                 }
