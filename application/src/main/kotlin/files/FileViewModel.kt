@@ -32,16 +32,16 @@ class FileViewModel {
         return fileList.isEmpty()
     }
 
-    fun addFileList(folder: Boolean, parentFolder: String, name: String, content: String): Int {
+    fun addFileList(folder: Boolean, parentFolder: String, name: String): Int {
         transaction {
             val newFile = FileDataObject.insert {
                 it[fileName] = name
                 it[isFolder] = folder
                 it[parent] = parentFolder
-                it[fileContent] = content
+                it[fileContent] = ""
             } get FileDataObject.id
 
-            fileList.add(FileModel(newFile, folder,parentFolder, name,content))
+            fileList.add(FileModel(newFile, folder,parentFolder, name, ""))
         }
         return fileList.size - 1
     }

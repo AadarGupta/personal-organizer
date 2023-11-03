@@ -89,7 +89,8 @@ fun FileListItem(file: FileModel, fileLevel: MutableState<String>, fileList: Fil
 @Composable
 fun ListFiles(fileLevel: MutableState<String>) {
 
-    var toCreate = remember { mutableStateOf(false) }
+    var toCreateFile = remember { mutableStateOf(false) }
+    var toCreateFolder = remember { mutableStateOf(false) }
 
     var fileList = FileViewModel();
 
@@ -99,9 +100,9 @@ fun ListFiles(fileLevel: MutableState<String>) {
     ) {
 
         Row( modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp),) {
-            TextButton(onClick = { toCreate.value = !toCreate.value }, modifier = Modifier.height(50.dp)) {
-                if(toCreate.value) {
-                    FileCreate(toCreate, fileList)
+            TextButton(onClick = { toCreateFile.value = !toCreateFile.value }, modifier = Modifier.height(50.dp)) {
+                if(toCreateFile.value) {
+                    FileCreate(toCreateFile, fileList, fileLevel.value)
                 }
                 Image(
                     painter = painterResource("createFileIcon.png"),
@@ -115,9 +116,9 @@ fun ListFiles(fileLevel: MutableState<String>) {
                 )
             }
 
-            TextButton(onClick = { toCreate.value = !toCreate.value }, modifier = Modifier.height(50.dp)) {
-                if(toCreate.value) {
-                    FolderCreate(toCreate, fileList, fileLevel.value)
+            TextButton(onClick = { toCreateFolder.value = !toCreateFolder.value }, modifier = Modifier.height(50.dp)) {
+                if(toCreateFolder.value) {
+                    FolderCreate(toCreateFolder, fileList, fileLevel.value)
                 }
                 Image(
                     painter = painterResource("newFolderIcon.png"),
@@ -235,7 +236,7 @@ fun FileEdit(file: FileModel, showEditView: MutableState<Boolean>, fileList: Fil
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FileCreate(active: MutableState<Boolean>, fileList: FileViewModel) {
+fun FileCreate(active: MutableState<Boolean>, fileList: FileViewModel, parentFolder: String) {
     var item by remember { mutableStateOf(TextFieldValue("")) }
 
     AlertDialog(
@@ -251,8 +252,19 @@ fun FileCreate(active: MutableState<Boolean>, fileList: FileViewModel) {
             TextButton(
                 onClick = {
 
-                    // Need to figure this out
-                    fileList.addFileList(false, "root", item.text, "")
+                    var fileExists = false
+                    for (f in fileList.getFileList()) {
+                        if (f.fileName == item.text) {
+                            fileExists = true;
+                        }
+                    }
+
+                    if (!fileExists) {
+                        fileList.addFileList(true, parentFolder, item.text)
+                    } else {
+                        // tell user that they can't create a file with the same name
+                    }
+
                     active.value = false
                 }
             ) {
@@ -308,9 +320,19 @@ fun FolderCreate(active: MutableState<Boolean>, fileList: FileViewModel, parentF
         confirmButton = {
             TextButton(
                 onClick = {
+                    var folderExists = false
+                    for (f in fileList.getFileList()) {
+                        if (f.fileName == item.text) {
+                            folderExists = true;
+                        }
+                    }
 
-                    // Need to figure this out
-                    fileList.addFileList(true, parentFolder, item.text, "")
+                    if (!folderExists) {
+                        fileList.addFileList(true, parentFolder, item.text)
+                    } else {
+                        // tell user that they can't create a folder with the same name
+                    }
+
                     active.value = false
                 }
             ) {
