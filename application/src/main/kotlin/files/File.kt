@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -16,13 +14,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import javax.swing.filechooser.FileView
 
 
 @Composable
@@ -195,8 +190,21 @@ fun FileEdit(file: FileModel, showEditView: MutableState<Boolean>, fileList: Fil
                         text = file.fileName,
                         fontSize = 20.sp,
                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
-                        color = androidx.compose.ui.graphics.Color.Black,
+                        color = Color.Black,
                     )
+
+                    TextButton(onClick = { fileList.editFileList(file, query.value) }, modifier = Modifier.height(40.dp)) {
+                        Image(
+                            painter = painterResource("saveIcon.png"),
+                            contentDescription = "Save File Icon",
+                            modifier = Modifier.padding(4.dp)
+                        )
+                        Text(
+                            text = "Save File",
+                            fontSize = 15.sp,
+                            color = Color.Blue,
+                        )
+                    }
                 }
                 Row(
                     modifier = Modifier
