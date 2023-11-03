@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
@@ -12,8 +13,9 @@ import androidx.compose.ui.window.application
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-import files.File
-import files.FileItemList
+import files.FileModel
+import files.FileViewModel
+import files.ListFiles
 import sidebar.SidebarContainer
 
 // =================== HOMEPAGE SECTIONS ===================
@@ -34,15 +36,17 @@ fun WelcomePage() {
             Text(
                 text = "Hello Jeff!",
                 fontSize = 40.sp,
-                modifier = Modifier.padding(horizontal = 40.dp, vertical = 40.dp),
-                color = androidx.compose.ui.graphics.Color.Black,
+                modifier = Modifier.padding(horizontal = 50.dp, vertical = 0.dp),
+                color = Color.Black,
             )
+
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileItemList(fileLevel)
+            ListFiles(fileLevel)
+
         }
     }
 }
