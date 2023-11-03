@@ -14,5 +14,6 @@ object ReminderDataObject: IntIdTable() {
 
 object ToDoDataObject: IntIdTable() {
     var itemName = varchar("itemName", 50)
+    var isChecked = bool("isChecked")
 }
 
