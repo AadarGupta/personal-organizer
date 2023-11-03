@@ -73,11 +73,12 @@ fun FileListItem(file: FileModel, fileLevel: MutableState<String>, fileList: Fil
         TextButton(onClick = { toDelete.value = !toDelete.value }
             ) {
 
-            /*
+
             if (toDelete.value) {
                 fileList.removeFileItem(file)
+                toDelete.value = false;
             }
-            */
+
 
             Image(
                 painter = painterResource("trashIcon.png"),
