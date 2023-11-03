@@ -13,8 +13,9 @@ import androidx.compose.ui.window.application
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
-import files.File
-import files.FileItemList
+import files.FileModel
+import files.FileViewModel
+import files.ListFiles
 import sidebar.SidebarContainer
 
 // =================== HOMEPAGE SECTIONS ===================
@@ -44,7 +45,7 @@ fun WelcomePage() {
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileItemList(fileLevel)
+            ListFiles(fileLevel)
 
         }
     }

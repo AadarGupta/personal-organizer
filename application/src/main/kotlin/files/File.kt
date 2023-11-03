@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -18,29 +19,26 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-
-class File(filename: String) {
-    var isFolder = false
-    var parent = "root"
-    var filename = filename
-    var content = ""
-}
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import javax.swing.filechooser.FileView
 
 
 @Composable
-fun FileListItem(file: File, fileLevel: MutableState<String>) {
+fun FileListItem(file: FileModel, fileLevel: MutableState<String>, fileList: FileViewModel) {
 
     val fileClicked = remember { mutableStateOf(false) }
-    var toDelete = remember { mutableStateOf(false) }
+    val toDelete = remember { mutableStateOf(false) }
 
     if (fileClicked.value) {
         if (file.isFolder) {
             // open folder view
-            fileLevel.value = file.filename;
+            fileLevel.value = file.fileName;
             fileClicked.value = false; // needed to prevent double click
         } else {
             // open editor
-            FileEdit(file, fileClicked);
+            FileEdit(file, fileClicked, fileList);
         }
     }
 
@@ -53,7 +51,7 @@ fun FileListItem(file: File, fileLevel: MutableState<String>) {
         ) {
             val showFileEdit = remember { mutableStateOf(false) }
             if (showFileEdit.value) {
-                FileEdit(file, showFileEdit)
+                FileEdit(file, showFileEdit, fileList)
             }
 
             if (file.isFolder) {
@@ -68,7 +66,7 @@ fun FileListItem(file: File, fileLevel: MutableState<String>) {
                 )
             }
             Text(
-                text = file.filename,
+                text = file.fileName,
                 fontSize = 20.sp,
                 color = Color.Black,
                 modifier = Modifier.padding(horizontal = 4.dp)
@@ -79,10 +77,12 @@ fun FileListItem(file: File, fileLevel: MutableState<String>) {
 
         TextButton(onClick = { toDelete.value = !toDelete.value }
             ) {
-            /*if(toCreate.value) {
-            // Needs to be FileDelete which pulls a list of files and deletes the clicked ones
-            FileCreate(toCreate)
-        }*/
+
+            /*
+            if (toDelete.value) {
+                fileList.removeFileItem(file)
+            }
+            */
 
             Image(
                 painter = painterResource("trashIcon.png"),
@@ -94,10 +94,84 @@ fun FileListItem(file: File, fileLevel: MutableState<String>) {
 
 }
 
+@Composable
+fun ListFiles(fileLevel: MutableState<String>) {
+
+    var toCreate = remember { mutableStateOf(false) }
+
+    var fileList = FileViewModel();
+
+    Column (
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+
+        Row( modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp),) {
+            TextButton(onClick = { toCreate.value = !toCreate.value }, modifier = Modifier.height(50.dp)) {
+                if(toCreate.value) {
+                    FileCreate(toCreate, fileList)
+                }
+                Image(
+                    painter = painterResource("createFileIcon.png"),
+                    contentDescription = "Create New File Icon",
+                    modifier = Modifier.padding(4.dp)
+                )
+                Text(
+                    text = "Create New File",
+                    fontSize = 15.sp,
+                    color = Color.Blue,
+                )
+            }
+
+
+        }
+
+        if (fileLevel.value != "root") {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+            ) {
+                TextButton(
+                    onClick = {
+                        // get parents filename
+                        transaction {
+                            for (file in FileDataObject.selectAll()) {
+                                if (file[FileDataObject.fileName] == fileLevel.value) {
+                                    fileLevel.value = file[FileDataObject.parent]
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier.height(50.dp)
+                ) {
+                    // add back arrow here
+                    Text(
+                        text = "..",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(horizontal = 50.dp, vertical = 0.dp),
+                        color = Color.Black,
+                    )
+                }
+            }
+        }
+
+            for (targetFile in fileList.getFileList()) {
+                if (targetFile.parent == fileLevel.value) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                    ) {
+                        FileListItem(targetFile, fileLevel, fileList)
+                    }
+                }
+
+            }
+    }
+}
 
 
 @Composable
-fun FileEdit(file: File, showEditView: MutableState<Boolean>) {
+fun FileEdit(file: FileModel, showEditView: MutableState<Boolean>, fileList: FileViewModel) {
     var isAskingToClose = remember { mutableStateOf(true) }
 
     if (isAskingToClose.value) {
@@ -105,9 +179,10 @@ fun FileEdit(file: File, showEditView: MutableState<Boolean>) {
             onCloseRequest = {
                 isAskingToClose.value = !isAskingToClose.value
                 showEditView.value = !showEditView.value
-            }, title="Editing: ${file.filename}"
+            }, title="Editing: ${file.fileName}"
         ) {
-            var query = remember { mutableStateOf(file.content) }
+            var query = remember { mutableStateOf(file.fileContent) }
+            // Add save button to handle editing
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -117,7 +192,7 @@ fun FileEdit(file: File, showEditView: MutableState<Boolean>) {
                         .fillMaxWidth(1f)
                 ) {
                     Text(
-                        text = file.filename,
+                        text = file.fileName,
                         fontSize = 20.sp,
                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
                         color = androidx.compose.ui.graphics.Color.Black,
@@ -141,16 +216,10 @@ fun FileEdit(file: File, showEditView: MutableState<Boolean>) {
     }
 }
 
-// Function should create a new file
-fun createNewFile(filename: String) {
-    println("Creating a new file called '${filename}'...")
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FileCreate(
-    active: MutableState<Boolean>
-) {
+fun FileCreate(active: MutableState<Boolean>, fileList: FileViewModel) {
     var item by remember { mutableStateOf(TextFieldValue("")) }
 
     AlertDialog(
@@ -165,7 +234,9 @@ fun FileCreate(
         confirmButton = {
             TextButton(
                 onClick = {
-                    //toDoVM.editToDoList(toDoItem, item.text)
+
+                    // Need to figure this out
+                    fileList.addFileList(false, "root", item.text, "")
                     active.value = false
                 }
             ) {
