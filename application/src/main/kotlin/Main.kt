@@ -8,6 +8,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 
 import org.jetbrains.exposed.sql.*
@@ -65,7 +67,7 @@ fun App() {
             modifier = Modifier
                 .background(androidx.compose.ui.graphics.Color.White)
                 .weight(1f)
-                .fillMaxWidth(0.70f)
+                .fillMaxWidth(1f)
                 .fillMaxHeight(1f)
         ) {
             WelcomePage()
@@ -74,7 +76,7 @@ fun App() {
         Box(
             modifier = Modifier
                 .background(androidx.compose.ui.graphics.Color.Gray)
-                .fillMaxWidth(0.30f)
+                .width(400.dp)
                 .fillMaxHeight(1f)
         ) {
             SidebarContainer()
@@ -89,104 +91,6 @@ fun clearDatabase() {
         ToDoDataObject.deleteAll();
     }
 }
-
-fun resetDefaultToDos() {
-    transaction {
-        ToDoDataObject.insert {
-            it[itemName] = "Get groceries"
-            it[isChecked] = false
-        }
-        ToDoDataObject.insert {
-            it[itemName] = "Plan a heist"
-            it[isChecked] = false
-        }
-        ToDoDataObject.insert {
-            it[itemName] = "Learn how to walk"
-            it[isChecked] = true
-        }
-        ToDoDataObject.insert {
-            it[itemName] = "Hack NASA"
-            it[isChecked] = true
-        }
-    }
-}
-
-fun resetDefaultReminders() {
-    transaction {
-
-        ReminderDataObject.insert {
-            it[itemName] = "Pay hydro"
-        }
-        ReminderDataObject.insert {
-            it[itemName] = "Pay rent"
-        }
-        ReminderDataObject.insert {
-            it[itemName] = "Go to bed earlier"
-        }
-    }
-}
-
-fun resetDefaultFiles() {
-    transaction {
-
-        FileDataObject.insert {
-            it[isFolder] = false
-            it[parent] = "root"
-            it[fileName] = "File 1"
-            it[fileContent] = "File Content 1"
-        }
-
-        FileDataObject.insert {
-            it[isFolder] = true
-            it[parent] = "root"
-            it[fileName] = "Folder 1"
-            it[fileContent] = ""
-        }
-
-        FileDataObject.insert {
-            it[isFolder] = false
-            it[parent] = "Folder 1"
-            it[fileName] = "File 1.1"
-            it[fileContent] = "File Content 1.1"
-        }
-
-        FileDataObject.insert {
-            it[isFolder] = false
-            it[parent] = "Folder 1"
-            it[fileName] = "File 1.2"
-            it[fileContent] = "File Content 1.2"
-        }
-
-        FileDataObject.insert {
-            it[isFolder] = true
-            it[parent] = "Folder 1"
-            it[fileName] = "Folder 1.1"
-            it[fileContent] = ""
-        }
-
-        FileDataObject.insert {
-            it[isFolder] = false
-            it[parent] = "Folder 1.1"
-            it[fileName] = "File 1.1.1"
-            it[fileContent] = "File Content 1.1.1"
-        }
-
-        FileDataObject.insert {
-            it[isFolder] = false
-            it[parent] = "root"
-            it[fileName] = "File 2"
-            it[fileContent] = "File Content 2"
-        }
-
-        FileDataObject.insert {
-            it[isFolder] = false
-            it[parent] = "root"
-            it[fileName] = "File 3"
-            it[fileContent] = "File Content 3"
-        }
-    }
-}
-
 
 fun resetDatabase() {
     clearDatabase()
@@ -209,7 +113,14 @@ fun main() = application {
     // UNCOMMENT THE COMMAND BELOW TO RESET YOUR DB FILE TO DEFAULTS
     resetDatabase();
 
-    Window(onCloseRequest = ::exitApplication, title="Personal Organizer") {
+    Window(
+        onCloseRequest = ::exitApplication,
+        title="Personal Organizer",
+        state = WindowState(
+            width = 1000.dp, height = 700.dp,
+            position = WindowPosition(50.dp, 50.dp)
+        )
+    ) {
         App()
     }
 

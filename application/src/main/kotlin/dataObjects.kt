@@ -10,6 +10,11 @@ object FileDataObject: IntIdTable() {
 
 object ReminderDataObject: IntIdTable() {
     var itemName = varchar("itemName", 50)
+    var year = varchar("year", 50)
+    var month = varchar("month", 50)
+    var day = varchar("day", 50)
+    var time = varchar("time", 50)
+    var isChecked = bool("isChecked")
 }
 
 object ToDoDataObject: IntIdTable() {

@@ -180,7 +180,6 @@ fun ListFiles(fileLevel: MutableState<String>) {
 @Composable
 fun FileEdit(file: FileModel, showEditView: MutableState<Boolean>, fileList: FileViewModel) {
     var isAskingToClose = remember { mutableStateOf(true) }
-
     if (isAskingToClose.value) {
         Window(
             onCloseRequest = {
