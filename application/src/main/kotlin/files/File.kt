@@ -1,12 +1,16 @@
 package files
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,7 +28,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 fun FileListItem(file: FileModel, fileLevel: MutableState<String>, fileList: FileViewModel) {
 
     val fileClicked = remember { mutableStateOf(false) }
-    val toDelete = remember { mutableStateOf(false) }
 
     if (fileClicked.value) {
         if (file.isFolder) {
@@ -67,24 +70,16 @@ fun FileListItem(file: FileModel, fileLevel: MutableState<String>, fileList: Fil
                 modifier = Modifier.padding(horizontal = 4.dp)
             )
 
+            Icon(
+                imageVector = Icons.Filled.Delete, contentDescription = "Delete",
 
-        }
-
-        TextButton(onClick = { toDelete.value = !toDelete.value }
-            ) {
-
-
-            if (toDelete.value) {
-                fileList.removeFileItem(file)
-                toDelete.value = false;
-            }
-
-
-            Image(
-                painter = painterResource("trashIcon.png"),
-                contentDescription = "Delete File Icon",
-                modifier = Modifier.height(30.dp)
+                modifier = Modifier.clickable {
+                    fileList.removeFileItem(file)
+                },
+                tint = Color.Red
             )
+
+
         }
     }
 
@@ -210,18 +205,14 @@ fun FileEdit(file: FileModel, showEditView: MutableState<Boolean>, fileList: Fil
                         color = Color.Black,
                     )
 
-                    TextButton(onClick = { fileList.editFileList(file, query.value) }, modifier = Modifier.height(40.dp)) {
-                        Image(
-                            painter = painterResource("saveIcon.png"),
-                            contentDescription = "Save File Icon",
-                            modifier = Modifier.padding(4.dp)
+                    Icon(
+                            imageVector = Icons.Filled.Done, contentDescription = "Save",
+                            modifier = Modifier.clickable {
+                                fileList.editFileList(file, query.value)
+                                }.height(40.dp),
+                            tint = Color.Blue
                         )
-                        Text(
-                            text = "Save File",
-                            fontSize = 15.sp,
-                            color = Color.Blue,
-                        )
-                    }
+
                 }
                 Row(
                     modifier = Modifier
