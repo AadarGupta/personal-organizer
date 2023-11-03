@@ -116,7 +116,7 @@ fun ListFiles(fileLevel: MutableState<String>) {
 
             TextButton(onClick = { toCreate.value = !toCreate.value }, modifier = Modifier.height(50.dp)) {
                 if(toCreate.value) {
-                    FolderCreate(toCreate, fileList)
+                    FolderCreate(toCreate, fileList, fileLevel.value)
                 }
                 Image(
                     painter = painterResource("newFolderIcon.png"),
@@ -293,7 +293,7 @@ fun FileCreate(active: MutableState<Boolean>, fileList: FileViewModel) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FolderCreate(active: MutableState<Boolean>, fileList: FileViewModel) {
+fun FolderCreate(active: MutableState<Boolean>, fileList: FileViewModel, parentFolder: String) {
     var item by remember { mutableStateOf(TextFieldValue("")) }
 
     AlertDialog(
@@ -310,7 +310,7 @@ fun FolderCreate(active: MutableState<Boolean>, fileList: FileViewModel) {
                 onClick = {
 
                     // Need to figure this out
-                    fileList.addFileList(true, "root", item.text, "")
+                    fileList.addFileList(true, parentFolder, item.text, "")
                     active.value = false
                 }
             ) {
