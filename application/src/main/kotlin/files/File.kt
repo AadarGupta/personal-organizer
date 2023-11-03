@@ -196,6 +196,7 @@ fun FileEdit(file: FileModel, showEditView: MutableState<Boolean>, fileList: Fil
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier
                         .fillMaxWidth(1f)
                 ) {
@@ -208,9 +209,12 @@ fun FileEdit(file: FileModel, showEditView: MutableState<Boolean>, fileList: Fil
 
                     Icon(
                             imageVector = Icons.Filled.Done, contentDescription = "Save",
-                            modifier = Modifier.clickable {
-                                fileList.editFileList(file, query.value)
-                                }.height(40.dp),
+                            modifier = Modifier
+                                .clickable {
+                                    fileList.editFileList(file, query.value)
+                                }
+                                .height(40.dp)
+                                .padding(horizontal = 30.dp),
                             tint = Color.Blue
                         )
 
