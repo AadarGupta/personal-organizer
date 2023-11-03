@@ -47,7 +47,7 @@ fun ToDoContainer() {
                     .clickable {
                         selectedItemIdx.value = toDoVM.addToDoList()
                         activateDialog.value = true
-                    },
+                    }.padding(vertical = 4.dp),
                 tint = Color.White
             )
 

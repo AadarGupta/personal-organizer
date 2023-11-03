@@ -112,12 +112,27 @@ fun resetDefaultReminders() {
 
         ReminderDataObject.insert {
             it[itemName] = "Pay hydro"
+            it[year] = "2023"
+            it[month] = "12"
+            it[day] = "12"
+            it[time] = "12:12:12"
+            it[isChecked] = true
         }
         ReminderDataObject.insert {
             it[itemName] = "Pay rent"
+            it[year] = "2023"
+            it[month] = "12"
+            it[day] = "12"
+            it[time] = "12:12:12"
+            it[isChecked] = true
         }
         ReminderDataObject.insert {
             it[itemName] = "Go to bed earlier"
+            it[year] = "2023"
+            it[month] = "12"
+            it[day] = "12"
+            it[time] = "12:12:12"
+            it[isChecked] = true
         }
     }
 }
@@ -203,7 +218,7 @@ fun main() = application {
     }
 
     // UNCOMMENT THE COMMAND BELOW TO RESET YOUR DB FILE TO DEFAULTS
-    resetDatabase();
+//    resetDatabase();
 
     Window(onCloseRequest = ::exitApplication, title="Personal Organizer") {
         App()

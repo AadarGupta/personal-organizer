@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import sidebar.reminders.RemindersContainer
+import sidebar.reminders.ReminderContainer
 import sidebar.todos.ToDoContainer
 
 @Composable
@@ -65,7 +65,7 @@ fun SidebarContainer() {
                 .padding(5.dp)
 
         ) {
-            RemindersContainer()
+            ReminderContainer()
         }
     }
 }

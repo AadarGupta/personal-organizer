@@ -68,7 +68,6 @@ fun FileListItem(file: File, fileLevel: MutableState<String>) {
 @Composable
 fun FileEdit(file: File, showEditView: MutableState<Boolean>) {
     var isAskingToClose = remember { mutableStateOf(true) }
-
     if (isAskingToClose.value) {
         Window(
             onCloseRequest = {
