@@ -16,11 +16,25 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ReminderDialog(
-    active: MutableState<Boolean>,
+    mode: MutableState<String>,
     reminderItemIdx: Int,
     reminderVM: ReminderViewModel,) {
 
-    var reminderItem = reminderVM.getItemByIdx(reminderItemIdx)
+    // default reminder item
+    var reminderItem =
+        ReminderModel(
+            -1,
+            "",
+            "",
+            "",
+            "",
+            "",
+            false
+        )
+
+    if (mode.value == "edit") {
+        reminderItem = reminderVM.getItemByIdx(reminderItemIdx)
+    }
 
     var name by remember { mutableStateOf(TextFieldValue(reminderItem.itemName)) };
     var year by remember { mutableStateOf(TextFieldValue(reminderItem.year))};
@@ -30,25 +44,45 @@ fun ReminderDialog(
 
     AlertDialog(
         title = {
-            Text(
-                text = "Edit Reminder", modifier = Modifier.padding(20.dp),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
+            if (mode.value == "add") {
+                Text(
+                    text = "Edit Reminder", modifier = Modifier.padding(20.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+            if (mode.value == "edit") {
+                Text(
+                    text = "Edit Reminder", modifier = Modifier.padding(20.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
         },
-        onDismissRequest = { active.value = false },
+        onDismissRequest = { mode.value = "closed" },
         confirmButton = {
             TextButton(
                 onClick = {
-                    reminderVM.editReminderList(
-                        reminderItem,
-                        name.text,
-                        year.text,
-                        month.text,
-                        day.text,
-                        time.text
-                    )
-                    active.value = false
+                    if (mode.value == "edit") {
+                        reminderVM.editReminderList(
+                            reminderItem,
+                            name.text,
+                            year.text,
+                            month.text,
+                            day.text,
+                            time.text
+                        )
+                    }
+                    if (mode.value == "add") {
+                        reminderVM.addReminderList(
+                            name.text,
+                            year.text,
+                            month.text,
+                            day.text,
+                            time.text
+                        )
+                    }
+                    mode.value = "closed"
                 }
             ) {
                 Text("Confirm")
@@ -56,7 +90,7 @@ fun ReminderDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = { active.value = false }
+                onClick = { mode.value = "closed" }
             ) {
                 Text("Dismiss")
             }

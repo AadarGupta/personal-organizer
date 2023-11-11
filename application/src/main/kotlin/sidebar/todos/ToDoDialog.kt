@@ -20,13 +20,11 @@ fun ToDoDialog(
     toDoItemIdx: Int,
     toDoVM: ToDoViewModel,) {
 
-    var toDoItem = ToDoModel(-1  , "non-existant", false)
-    var currName = ""
+    var toDoItem = ToDoModel(-1  , "", false)
     if (mode.value == "edit") {
         toDoItem = toDoVM.getItemByIdx(toDoItemIdx)
-        currName = toDoItem.itemName
     }
-    var item by remember { mutableStateOf(TextFieldValue(currName)) }
+    var item by remember { mutableStateOf(TextFieldValue(toDoItem.itemName)) }
 
     AlertDialog(
         title = {

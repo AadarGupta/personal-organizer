@@ -26,7 +26,7 @@ fun ToDoContainer() {
 
     var toDoVM = ToDoViewModel()
     var selectedItemIdx = remember { mutableStateOf(-1) }
-    val dialogMode = remember { mutableStateOf("none") }
+    val dialogMode = remember { mutableStateOf("closed") }
 
     // pop up dialog for adding or editing a todo item
     if (dialogMode.value == "add" || dialogMode.value == "edit") {

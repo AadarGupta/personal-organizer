@@ -9,9 +9,6 @@ data class ToDoItem(val id: Int, val itemName: String, val isChecked: Boolean)
 data class ToDoCreationRequest(val name: String, val isChecked: Boolean)
 
 @Serializable
-data class ToDoDeletionRequest(val id: Int)
-
-@Serializable
 data class ToDoEditNameRequest(val id: Int, val name: String)
 
 @Serializable

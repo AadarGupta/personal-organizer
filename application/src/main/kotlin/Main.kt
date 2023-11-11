@@ -1,8 +1,12 @@
+
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -11,13 +15,11 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
-
-import files.FileModel
-import files.FileViewModel
 import files.ListFiles
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import sidebar.SidebarContainer
 
 // =================== HOMEPAGE SECTIONS ===================
@@ -88,8 +90,6 @@ fun App() {
 fun clearDatabase() {
     transaction {
         FileDataObject.deleteAll();
-        ReminderDataObject.deleteAll();
-        ToDoDataObject.deleteAll();
     }
 }
 
@@ -107,8 +107,6 @@ fun main() = application {
     transaction {
         // create schemas
         SchemaUtils.create (FileDataObject)
-        SchemaUtils.create (ReminderDataObject)
-        SchemaUtils.create (ToDoDataObject)
     }
 
     // UNCOMMENT THE COMMAND BELOW TO RESET YOUR DB FILE TO DEFAULTS

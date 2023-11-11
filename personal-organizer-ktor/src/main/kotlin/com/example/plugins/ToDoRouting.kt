@@ -5,22 +5,13 @@ import com.example.models.http.ToDoEditCheckedRequest
 import com.example.models.http.ToDoEditNameRequest
 import com.example.models.http.ToDoListResponse
 import com.example.services.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.configureSerialization() {
-    install(ContentNegotiation) {
-        json()
-    }
+fun Application.configureToDoRoutes() {
     routing {
-        get("/json/kotlinx-serialization") {
-                call.respond(mapOf("hello" to "world"))
-            }
-
         post("/todo") {
             val toDoToBeCreated = call.receive<ToDoCreationRequest>()
             val createdToDo = createToDo(toDoToBeCreated.name, toDoToBeCreated.isChecked)
@@ -45,8 +36,6 @@ fun Application.configureSerialization() {
             deleteToDo(toDeleteId)
             call.application.environment.log.info("ID: ${toDeleteId} - ToDo Deleted.")
         }
-
-
 
         get("/todos") {
             val toDoList : ToDoListResponse = getAllToDos();

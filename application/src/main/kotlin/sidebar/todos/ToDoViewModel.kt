@@ -44,7 +44,7 @@ class ToDoViewModel() {
         val newItem = Json.decodeFromString<ToDoModel>(createToDoResponse)
         toDoList.add(newItem)
 
-        return newItem.id
+        return toDoList.size - 1
     }
 
     fun changeToDoName(targetItem: ToDoModel, newName: String) {

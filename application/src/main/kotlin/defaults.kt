@@ -3,54 +3,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 
 fun resetDefaultToDos() {
-    transaction {
-        ToDoDataObject.insert {
-            it[itemName] = "Get groceries"
-            it[isChecked] = false
-        }
-        ToDoDataObject.insert {
-            it[itemName] = "Plan a heist"
-            it[isChecked] = false
-        }
-        ToDoDataObject.insert {
-            it[itemName] = "Learn how to walk"
-            it[isChecked] = true
-        }
-        ToDoDataObject.insert {
-            it[itemName] = "Hack NASA"
-            it[isChecked] = true
-        }
-    }
 }
 
 fun resetDefaultReminders() {
-    transaction {
-
-        ReminderDataObject.insert {
-            it[itemName] = "Pay hydro"
-            it[year] = "2023"
-            it[month] = "12"
-            it[day] = "12"
-            it[time] = "12:12:12"
-            it[isChecked] = true
-        }
-        ReminderDataObject.insert {
-            it[itemName] = "Pay rent"
-            it[year] = "2023"
-            it[month] = "12"
-            it[day] = "12"
-            it[time] = "12:12:12"
-            it[isChecked] = true
-        }
-        ReminderDataObject.insert {
-            it[itemName] = "Go to bed earlier"
-            it[year] = "2023"
-            it[month] = "12"
-            it[day] = "12"
-            it[time] = "12:12:12"
-            it[isChecked] = true
-        }
-    }
 }
 
 fun resetDefaultFiles() {
