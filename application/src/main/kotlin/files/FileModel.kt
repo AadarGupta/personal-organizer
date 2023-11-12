@@ -1,11 +1,12 @@
 package files
 
-import org.jetbrains.exposed.dao.id.EntityID
+import kotlinx.serialization.Serializable
 
-class FileModel(id: EntityID<Int>, isFolder: Boolean, parent: String, fileName: String, fileContent: String) {
-    var id = id
-    var isFolder = isFolder
-    var parent = parent
-    var fileName = fileName
-    var fileContent = fileContent
-}
+@Serializable
+data class FileModel(
+    val id: Int,
+    val isFolder: Boolean,
+    val parent: Int,
+    val fileName: String,
+    val fileContent: String
+)

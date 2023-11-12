@@ -15,19 +15,13 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import files.ListFiles
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.deleteAll
-import org.jetbrains.exposed.sql.transactions.transaction
+import files.FileListContainer
 import sidebar.SidebarContainer
 
 // =================== HOMEPAGE SECTIONS ===================
 
 @Composable
 fun WelcomePage() {
-
-    var fileLevel = remember { mutableStateOf("root") }
 
     Column (
         modifier = Modifier.fillMaxSize(),
@@ -49,7 +43,8 @@ fun WelcomePage() {
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            ListFiles(fileLevel)
+            FileListContainer()
+            //ListFiles(fileLevel)
 
         }
     }
@@ -87,30 +82,7 @@ fun App() {
     }
 }
 
-fun clearDatabase() {
-    transaction {
-        FileDataObject.deleteAll();
-    }
-}
-
-fun resetDatabase() {
-    clearDatabase()
-    resetDefaultFiles()
-    resetDefaultReminders()
-    resetDefaultToDos()
-}
-
 fun main() = application {
-
-    Database.connect("jdbc:sqlite:personal-organizer.db")
-
-    transaction {
-        // create schemas
-        SchemaUtils.create (FileDataObject)
-    }
-
-    // UNCOMMENT THE COMMAND BELOW TO RESET YOUR DB FILE TO DEFAULTS
-    resetDatabase();
 
     Window(
         onCloseRequest = ::exitApplication,

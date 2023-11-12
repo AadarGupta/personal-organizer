@@ -50,7 +50,7 @@ class ReminderViewModel() {
                 "isChecked" to JsonPrimitive(false)
             )
         )
-        println(body)
+
         val createReminderResponse = http.post("reminder", body)
         val newItem = Json.decodeFromString<ReminderModel>(createReminderResponse)
         reminderList.add(newItem)

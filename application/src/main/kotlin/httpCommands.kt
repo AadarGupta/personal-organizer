@@ -6,6 +6,12 @@ import java.net.http.HttpResponse
 
 class MyHttp {
 
+    fun printRequestAndResponse(request: HttpRequest, response: HttpResponse<String>, body: String = "") {
+        println("Request: ${request}\n${body}")
+        println("Response: ${response.statusCode()}\n" +
+                "BODY: ${response.body()}")
+    }
+
     fun get(endpoint: String) : String {
         val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
@@ -13,6 +19,7 @@ class MyHttp {
             .GET()
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        printRequestAndResponse(request, response)
         return response.body()
     }
 
@@ -24,6 +31,7 @@ class MyHttp {
             .POST(HttpRequest.BodyPublishers.ofString(jsonMap.toString()))
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        printRequestAndResponse(request, response, jsonMap.toString())
         return response.body()
     }
 
@@ -35,6 +43,7 @@ class MyHttp {
             .PUT(HttpRequest.BodyPublishers.ofString(jsonMap.toString()))
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        printRequestAndResponse(request, response, jsonMap.toString())
         return response.body()
     }
 
@@ -49,6 +58,7 @@ class MyHttp {
             .DELETE()
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        printRequestAndResponse(request, response)
         return response.body()
     }
 
