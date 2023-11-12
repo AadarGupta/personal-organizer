@@ -12,4 +12,4 @@ pluginManagement {
 
 rootProject.name = "personal-organizer"
 
-include("application")
+include("application", "personal-organizer-ktor")

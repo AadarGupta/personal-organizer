@@ -16,28 +16,44 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ToDoDialog(
-    active: MutableState<Boolean>,
+    mode: MutableState<String>,
     toDoItemIdx: Int,
     toDoVM: ToDoViewModel,) {
 
-    var toDoItem = toDoVM.getItemByIdx(toDoItemIdx)
-
+    var toDoItem = ToDoModel(-1  , "", false)
+    if (mode.value == "edit") {
+        toDoItem = toDoVM.getItemByIdx(toDoItemIdx)
+    }
     var item by remember { mutableStateOf(TextFieldValue(toDoItem.itemName)) }
 
     AlertDialog(
         title = {
-            Text(
-                text = "Edit To Do Item", modifier = Modifier.padding(20.dp),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
+            if (mode.value == "add") {
+                Text(
+                    text = "Add To Do Item", modifier = Modifier.padding(20.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
+            if (mode.value == "edit") {
+                Text(
+                    text = "Edit To Do Item", modifier = Modifier.padding(20.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
         },
-        onDismissRequest = { active.value = false },
+        onDismissRequest = { mode.value = "closed" },
         confirmButton = {
             TextButton(
                 onClick = {
-                    toDoVM.editToDoList(toDoItem, item.text)
-                    active.value = false
+                    if (mode.value == "edit") {
+                        toDoVM.changeToDoName(toDoItem, item.text)
+                    }
+                    if (mode.value == "add") {
+                        toDoVM.addToDo(item.text)
+                    }
+                    mode.value = "closed"
                 }
             ) {
                 Text("Confirm")
@@ -45,7 +61,7 @@ fun ToDoDialog(
         },
         dismissButton = {
             TextButton(
-                onClick = { active.value = false }
+                onClick = { mode.value = "closed" }
             ) {
                 Text("Dismiss")
             }

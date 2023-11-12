@@ -1,9 +1,6 @@
 package sidebar.todos
 
-import org.jetbrains.exposed.dao.id.EntityID
+import kotlinx.serialization.Serializable
 
-class ToDoModel(id: EntityID<Int>, itemName: String, isChecked: Boolean) {
-    var id = id
-    var itemName = itemName
-    var isChecked = isChecked
-}
+@Serializable
+data class ToDoModel(val id: Int, val itemName: String, val isChecked: Boolean) {}

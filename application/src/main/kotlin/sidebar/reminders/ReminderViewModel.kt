@@ -1,24 +1,26 @@
 package sidebar.reminders;
 
-import ReminderDataObject
+import MyHttp
 import androidx.compose.runtime.mutableStateListOf
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
+@Serializable
+data class ReminderList(val items: List<ReminderModel>)
 
 class ReminderViewModel() {
     private var reminderList = mutableStateListOf<ReminderModel>()
 
     init {
-        transaction {
-            for (reminder in ReminderDataObject.selectAll()) {
-                val reminderData = ReminderModel(reminder[ReminderDataObject.id], reminder[ReminderDataObject.itemName],  reminder[ReminderDataObject.year],  reminder[ReminderDataObject.month],  reminder[ReminderDataObject.day],  reminder[ReminderDataObject.time], reminder[ReminderDataObject.isChecked]);
-                reminderList.add(reminderData)
-            }
+        val http = MyHttp()
+        val getAllReminderResponse : String = http.get("reminders")
+        println(getAllReminderResponse)
+        val obj = Json.decodeFromString<ReminderList>(getAllReminderResponse)
+
+        for (reminder in obj.items) {
+            reminderList.add(reminder)
         }
     }
 
@@ -30,53 +32,92 @@ class ReminderViewModel() {
         return reminderList.isEmpty()
     }
 
-    fun addReminderList() : Int {
-        transaction {
-            var newItem = ReminderDataObject.insert {
-                it[itemName] = "Reminder"
-                it[year] = "2023"
-                it[month] = "12"
-                it[day] = "12"
-                it[time] = "12:12:12"
-                it[isChecked] = false
-            } get ReminderDataObject.id
+    fun addReminderList(
+        itemName: String,
+        year: String,
+        month: String,
+        day: String,
+        time: String
+    ) : Int {
+        val http = MyHttp()
+        val body = JsonObject(
+            mapOf(
+                "name" to JsonPrimitive(itemName),
+                "year" to JsonPrimitive(year),
+                "month" to JsonPrimitive(month),
+                "day" to JsonPrimitive(day),
+                "time" to JsonPrimitive(time),
+                "isChecked" to JsonPrimitive(false)
+            )
+        )
 
-            reminderList.add(ReminderModel(newItem, "","2023" , "12", "12", "12:12:12",false))
-        }
+        val createReminderResponse = http.post("reminder", body)
+        val newItem = Json.decodeFromString<ReminderModel>(createReminderResponse)
+        reminderList.add(newItem)
+
         return reminderList.size - 1
     }
 
-    fun editReminderList(reminderItem: ReminderModel, inputName: String, inputYear: String, inputMonth: String, inputDay: String, inputTime: String) {
-        val idx = reminderList.indexOf(reminderItem)
-        reminderList[idx] = ReminderModel(reminderList[idx].id, inputName,inputYear,inputMonth,inputDay,inputTime, reminderList[idx].isChecked)
-        transaction {
-            ReminderDataObject.update({ ReminderDataObject.id eq reminderItem.id }) {
-                it[itemName] = inputName 
-                it[year] = inputYear
-                it[month] = inputMonth
-                it[day] = inputDay
-                it[time] = inputTime
-            }
-        }
+    fun editReminderList(
+        targetItem: ReminderModel,
+        inputName: String,
+        inputYear: String,
+        inputMonth: String,
+        inputDay: String,
+        inputTime: String
+    ) {
+        val idx = reminderList.indexOf(targetItem)
+        reminderList[idx] =
+            ReminderModel(
+                reminderList[idx].id,
+                inputName,
+                inputYear,
+                inputMonth,
+                inputDay,
+                inputTime,
+                reminderList[idx].isChecked
+            )
+
+        val http = MyHttp()
+        val body = JsonObject(
+            mapOf(
+                "id" to JsonPrimitive(targetItem.id),
+                "name" to JsonPrimitive(inputName),
+                "year" to JsonPrimitive(inputYear),
+                "month" to JsonPrimitive(inputMonth),
+                "day" to JsonPrimitive(inputDay),
+                "time" to JsonPrimitive(inputTime)
+            )
+        )
+        http.put("reminder", body)
     }
 
-    fun removeReminderItem(reminderItem: ReminderModel) {
-
-        reminderList.remove(reminderItem)
-        transaction {
-            ReminderDataObject.deleteWhere { ReminderDataObject.id eq reminderItem.id }
-        }
+    fun removeReminderItem(targetItem: ReminderModel) {
+        val http = MyHttp()
+        http.delete("reminder", mapOf("id" to targetItem.id.toString()))
+        reminderList.remove(targetItem)
     }
 
-    fun checkReminderItem(reminderItem: ReminderModel, value: Boolean) {
-        val idx = reminderList.indexOf(reminderItem)
-        reminderList[idx] = ReminderModel(reminderList[idx].id, reminderList[idx].itemName, reminderList[idx].year, reminderList[idx].month, reminderList[idx].day, reminderList[idx].time, value)
+    fun checkReminderItem(targetItem: ReminderModel, value: Boolean) {
+        val idx = reminderList.indexOf(targetItem)
+        reminderList[idx] = ReminderModel(
+            reminderList[idx].id,
+            reminderList[idx].itemName,
+            reminderList[idx].year,
+            reminderList[idx].month,
+            reminderList[idx].day,
+            reminderList[idx].time,
+            !reminderList[idx].isChecked
+        )
 
-        transaction {
-            ReminderDataObject.update({ ReminderDataObject.id eq reminderItem.id }) {
-                it[isChecked] = value;
-            }
-        }
+        val http = MyHttp()
+        val body = JsonObject(
+            mapOf(
+                "id" to JsonPrimitive(targetItem.id),
+                "isChecked" to JsonPrimitive((!targetItem.isChecked).toString())
+            )
+        )
+        http.put("reminder/checked", body)
     }
 
     fun getItemByIdx(idx: Int): ReminderModel {

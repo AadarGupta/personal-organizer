@@ -2,6 +2,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization") version "1.8.20"
     id("org.jetbrains.compose")
 }
 
@@ -13,6 +14,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     google()
 }
+
 
 dependencies {
     // Note, if you develop a library, you should use compose.desktop.common.
@@ -27,6 +29,10 @@ dependencies {
     implementation("org.jetbrains.exposed", "exposed-dao", "0.44.0")
     implementation("org.jetbrains.exposed", "exposed-jdbc", "0.44.0")
 
+    implementation("io.ktor:ktor-client-core:2.3.6")
+    implementation("io.ktor:ktor-client-cio:2.3.6")
+    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.6")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
 
 compose.desktop {
