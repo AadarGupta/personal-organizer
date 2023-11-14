@@ -1,12 +1,15 @@
 
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -70,14 +73,32 @@ fun App() {
         ) {
             WelcomePage()
         }
-
-        Box(
-            modifier = Modifier
-                .background(androidx.compose.ui.graphics.Color.Gray)
-                .width(400.dp)
-                .fillMaxHeight(1f)
+        var sidebarVisible by remember { mutableStateOf(true) }
+        Button(onClick = {sidebarVisible = !sidebarVisible},
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray),
+            shape = RoundedCornerShape(10.dp, 0.dp, 0.dp, 10.dp)
         ) {
-            SidebarContainer()
+            if (sidebarVisible) {
+                Icon(
+                    imageVector = Icons.Filled.Close, contentDescription = "Close",
+                    tint = Color.White
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.Menu, contentDescription = "Close",
+                    tint = Color.White
+                )
+            }
+        }
+        AnimatedVisibility(sidebarVisible) {
+            Box(
+                modifier = Modifier
+                    .background(androidx.compose.ui.graphics.Color.Gray)
+                    .width(400.dp)
+                    .fillMaxHeight(1f)
+            ) {
+                SidebarContainer()
+            }
         }
     }
 }
