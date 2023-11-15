@@ -12,6 +12,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
@@ -75,7 +77,7 @@ fun App() {
         }
         var sidebarVisible by remember { mutableStateOf(true) }
         Button(onClick = {sidebarVisible = !sidebarVisible},
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
             shape = RoundedCornerShape(10.dp, 0.dp, 0.dp, 10.dp)
         ) {
             if (sidebarVisible) {
@@ -93,7 +95,7 @@ fun App() {
         AnimatedVisibility(sidebarVisible) {
             Box(
                 modifier = Modifier
-                    .background(androidx.compose.ui.graphics.Color.Gray)
+                    .background(androidx.compose.ui.graphics.Color.DarkGray)
                     .width(400.dp)
                     .fillMaxHeight(1f)
             ) {
