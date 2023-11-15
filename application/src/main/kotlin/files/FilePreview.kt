@@ -98,8 +98,7 @@ fun FilePreview(
                         else if(string.length > 1 && string[0] == '-') {
                         PointForm(string.substring(1).trim())
                         } else {
-                            MultipleStylesInText(string)
-                            //TextLine(string)
+                            TextInline(string)
                         }
                     }
                 }

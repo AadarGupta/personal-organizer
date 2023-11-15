@@ -91,38 +91,7 @@ fun PointForm(string: String) {
 }
 
 @Composable
-fun TextLine(string: String) {
-
-    val text = buildAnnotatedString {
-
-        val it: ListIterator<Char> = string.toList().listIterator()
-        var toBold = false;
-        var toItalicize = false;
-
-        while (it.hasNext()) {
-            val curr = it.next()
-
-            if(curr == '*' && it.next() != '*') {
-                toItalicize = !toItalicize
-            }
-            if(curr == '*'&& it.next() == '*') {
-                toBold = !toBold
-            }
-            if(toBold) {
-                append(AnnotatedString(curr.toString(), spanStyle = SpanStyle(fontWeight = FontWeight.Bold)))
-            } else if(toItalicize) {
-                append(AnnotatedString(curr.toString(), spanStyle = SpanStyle(fontStyle = FontStyle.Italic)))
-            } else {
-                append(AnnotatedString(curr.toString()))
-            }
-
-        }
-    }
-    BasicText(text = text, style = TextStyle(fontSize = 17.sp))
-}
-
-@Composable
-fun MultipleStylesInText(string: String) {
+fun TextInline(string: String) {
     Text(
         buildAnnotatedString {
             var bold = false;
