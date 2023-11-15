@@ -113,7 +113,6 @@ fun TextInline(string: String) {
                         italics = !italics
                     }
                 }
-                println("$prev, $curr")
                 prev = curr
 
                 if(curr != "*") {
