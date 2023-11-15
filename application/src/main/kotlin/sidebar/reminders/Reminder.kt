@@ -20,6 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Timer
+import kotlin.concurrent.timerTask
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun ReminderContainer() {
@@ -27,12 +34,32 @@ fun ReminderContainer() {
     var ReminderVM = ReminderViewModel()
     var selectedItemIdx = remember { mutableStateOf(-1) }
     val dialogMode = remember { mutableStateOf("closed") }
+    val alertMode = remember { mutableStateOf("closed") }
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    val scheduler: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+//    var currTime = remember { mutableStateOf(LocalDateTime.now().format(formatter))}
+    var currTime = LocalDateTime.now().format(formatter)
+    var timer = remember { mutableStateOf(0) }
 
-    // pop up dialog for adding or editing a reminder item
+    for (it in ReminderVM.getReminderList()) {
+        currTime = LocalDateTime.now().format(formatter)
+
+        val dtime = it.year + "-" + it.month + "-" + it.day + " " + it.time
+        println("curr" + currTime)
+        println("dt" + dtime)
+        if (currTime == dtime) {
+            alertMode.value = "show"
+            println("match")
+        }
+        if (alertMode.value == "show") {
+            println(it.id)
+            Alert(it.id, alertMode, dtime, it.itemName, ReminderVM)
+        }
+    }
+
     if (dialogMode.value == "add" || dialogMode.value == "edit") {
         ReminderDialog(dialogMode, selectedItemIdx.value, ReminderVM)
     }
-
     Column (
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -48,19 +75,16 @@ fun ReminderContainer() {
             )
             Icon(
                 imageVector = Icons.Filled.Add, contentDescription = "Add",
-
                 modifier = Modifier
                     .clickable {
                         dialogMode.value = "add"
                     }.padding(vertical = 4.dp),
                 tint = Color.White
             )
-
         }
-
         if (ReminderVM.isReminderEmpty()) {
             Text(
-                text = "No to do items.", textAlign = TextAlign.Center,
+                text = "No Reminders.", textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxHeight()
             )
         } else {
@@ -79,10 +103,6 @@ fun ReminderContainer() {
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Checkbox(
-                                checked = it.isChecked,
-                                onCheckedChange = { value -> ReminderVM.checkReminderItem(it, value)}
-                            )
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween,

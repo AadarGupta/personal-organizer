@@ -46,8 +46,7 @@ class ReminderViewModel() {
                 "year" to JsonPrimitive(year),
                 "month" to JsonPrimitive(month),
                 "day" to JsonPrimitive(day),
-                "time" to JsonPrimitive(time),
-                "isChecked" to JsonPrimitive(false)
+                "time" to JsonPrimitive(time)
             )
         )
 
@@ -74,8 +73,7 @@ class ReminderViewModel() {
                 inputYear,
                 inputMonth,
                 inputDay,
-                inputTime,
-                reminderList[idx].isChecked
+                inputTime
             )
 
         val http = MyHttp()
@@ -98,30 +96,25 @@ class ReminderViewModel() {
         reminderList.remove(targetItem)
     }
 
-    fun checkReminderItem(targetItem: ReminderModel, value: Boolean) {
-        val idx = reminderList.indexOf(targetItem)
-        reminderList[idx] = ReminderModel(
-            reminderList[idx].id,
-            reminderList[idx].itemName,
-            reminderList[idx].year,
-            reminderList[idx].month,
-            reminderList[idx].day,
-            reminderList[idx].time,
-            !reminderList[idx].isChecked
-        )
-
+    fun removeReminderItemById(id: Int) {
         val http = MyHttp()
-        val body = JsonObject(
-            mapOf(
-                "id" to JsonPrimitive(targetItem.id),
-                "isChecked" to JsonPrimitive((!targetItem.isChecked).toString())
-            )
-        )
-        http.put("reminder/checked", body)
+        http.delete("reminder", mapOf("id" to id.toString()))
+        for(r in reminderList) {
+            if(r.id == id){
+                reminderList.remove(r)
+
+            }
+        }
     }
 
     fun getItemByIdx(idx: Int): ReminderModel {
-        return reminderList[idx]
+        var temp : ReminderModel = reminderList[0]
+        for(r in reminderList) {
+            if(r.id == idx){
+                return r;
+            }
+        }
+        return temp
     }
 
     fun getItemIdx(item: ReminderModel): Int {

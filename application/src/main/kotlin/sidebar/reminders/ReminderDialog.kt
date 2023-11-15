@@ -28,12 +28,11 @@ fun ReminderDialog(
             "",
             "",
             "",
-            "",
-            false
+            ""
         )
 
     if (mode.value == "edit") {
-        reminderItem = reminderVM.getItemByIdx(reminderItemIdx)
+        reminderItem = reminderVM.getItemByIdx(reminderItemIdx-1)
     }
 
     var name by remember { mutableStateOf(TextFieldValue(reminderItem.itemName)) };
