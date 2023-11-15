@@ -36,9 +36,9 @@ fun FileListContainer() {
     if (dialogMode.value == "add" || dialogMode.value == "edit") {
         FileDialog(dialogMode, dialogType, parentLevel, selectedItemIdx.value, fileVM)
     }
-    if (dialogMode.value == "editContent") {
-        FileEditDialog(dialogMode, selectedItemIdx.value, fileVM)
-    }
+    //if (dialogMode.value == "editContent") {
+        //FileEditDialog(dialogMode, selectedItemIdx.value, fileVM)
+    //}
     if(dialogMode.value == "preview") {
         FilePreview(dialogMode, selectedItemIdx.value, fileVM)
     }
@@ -133,7 +133,7 @@ fun FileListContainer() {
                                 if (it.isFolder) {
                                     parentLevel.value = it.id
                                 } else {
-                                    dialogMode.value = "editContent"
+                                    dialogMode.value = "preview"
                                 }
                             }
                             .padding(vertical = 5.dp)
@@ -173,16 +173,6 @@ fun FileListContainer() {
                                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
                                     )
                                     Row() {
-                                        Icon(
-                                            imageVector = Icons.Filled.Send, contentDescription = "Preview",
-
-                                            modifier = Modifier.clickable {
-                                                // Need to edit this
-                                                selectedItemIdx.value = fileVM.getFileIdx(it)
-                                                dialogMode.value = "preview"
-                                            },
-                                            tint = Color.DarkGray
-                                        )
                                         Icon(
                                             imageVector = Icons.Filled.Edit, contentDescription = "Edit",
 
