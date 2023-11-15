@@ -48,17 +48,24 @@ fun PreviewPage(
                     fontWeight = FontWeight.Bold,
                 )
 
-                Icon(
+                Column( modifier = Modifier
+                    .clickable {
+                        dialogMode.value = "edit"
+                    }
+                    .padding(horizontal = 20.dp)) {
+                    Icon(
                         imageVector = Icons.Filled.Edit, contentDescription = "Edit",
-                        modifier = Modifier
-                            .clickable {
-                                dialogMode.value = "edit"
-                                //editState.value = "closed"
-                            }
-                            .height(40.dp)
-                            .padding(horizontal = 30.dp),
-                        tint = Color.Blue
+                        tint = Color.Blue,
+                        modifier = Modifier.height(40.dp)
                     )
+                    Text (
+                        text = "Edit",
+                        fontSize = 10.sp,
+                        color = Color.Blue,
+                    )
+                }
+
+
 
             }
 

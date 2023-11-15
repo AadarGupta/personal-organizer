@@ -116,6 +116,7 @@ class FileViewModel {
         http.delete("file", mapOf("id" to targetItem.id.toString()))
         fileList.remove(targetItem)
     }
+
     fun moveFile(targetItem: FileModel) {
         val http = MyHttp()
         http.delete("file", mapOf("id" to targetItem.id.toString()))

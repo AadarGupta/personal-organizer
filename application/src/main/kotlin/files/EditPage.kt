@@ -10,6 +10,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -47,18 +48,23 @@ fun EditPage(
                     fontWeight = FontWeight.Bold,
                 )
 
-                Icon(
+                Column( modifier = Modifier
+                    .clickable {
+                        fileVM.editFileContent(fileItem, query.value)
+                        dialogMode.value = "preview"
+                    }
+                    .padding(horizontal = 20.dp)) {
+                    Icon(
                         imageVector = Icons.Filled.Done, contentDescription = "Preview",
-                        modifier = Modifier
-                            .clickable {
-                                fileVM.editFileContent(fileItem, query.value)
-                                dialogMode.value = "preview"
-                                //editState.value = "closed"
-                            }
-                            .height(40.dp)
-                            .padding(horizontal = 30.dp),
-                        tint = Color.Blue
+                        tint = Color.Blue,
+                        modifier = Modifier.height(40.dp)
                     )
+                    Text (
+                        text = "Preview",
+                        fontSize = 10.sp,
+                        color = Color.Blue,
+                    )
+                }
 
 
             }
