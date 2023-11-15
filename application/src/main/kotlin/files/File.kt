@@ -12,9 +12,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +38,9 @@ fun FileListContainer() {
     }
     if (dialogMode.value == "editContent") {
         FileEditDialog(dialogMode, selectedItemIdx.value, fileVM)
+    }
+    if(dialogMode.value == "preview") {
+        FilePreview(dialogMode, selectedItemIdx.value, fileVM)
     }
 
     Column (
@@ -169,9 +170,19 @@ fun FileListContainer() {
                                     Text(
                                         text = it.fileName,
                                         fontSize = 12.sp,
-                                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
                                     )
                                     Row() {
+                                        Icon(
+                                            imageVector = Icons.Filled.Send, contentDescription = "Preview",
+
+                                            modifier = Modifier.clickable {
+                                                // Need to edit this
+                                                selectedItemIdx.value = fileVM.getFileIdx(it)
+                                                dialogMode.value = "preview"
+                                            },
+                                            tint = Color.DarkGray
+                                        )
                                         Icon(
                                             imageVector = Icons.Filled.Edit, contentDescription = "Edit",
 
