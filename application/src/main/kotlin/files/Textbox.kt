@@ -1,11 +1,14 @@
 package files
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.Text
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
@@ -84,8 +87,85 @@ fun PointForm(string: String) {
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
         color = Color.Black,
         fontSize = 16.sp,
-        fontWeight = FontWeight.Bold,
     )
 }
+
+@Composable
+fun TextLine(string: String) {
+
+    val text = buildAnnotatedString {
+
+        val it: ListIterator<Char> = string.toList().listIterator()
+        var toBold = false;
+        var toItalicize = false;
+
+        while (it.hasNext()) {
+            val curr = it.next()
+
+            if(curr == '*' && it.next() != '*') {
+                toItalicize = !toItalicize
+            }
+            if(curr == '*'&& it.next() == '*') {
+                toBold = !toBold
+            }
+            if(toBold) {
+                append(AnnotatedString(curr.toString(), spanStyle = SpanStyle(fontWeight = FontWeight.Bold)))
+            } else if(toItalicize) {
+                append(AnnotatedString(curr.toString(), spanStyle = SpanStyle(fontStyle = FontStyle.Italic)))
+            } else {
+                append(AnnotatedString(curr.toString()))
+            }
+
+        }
+    }
+    BasicText(text = text, style = TextStyle(fontSize = 17.sp))
+}
+
+@Composable
+fun MultipleStylesInText(string: String) {
+    Text(
+        buildAnnotatedString {
+            var bold = false;
+            var italics = false;
+            var prev = "";
+
+            for (i in string.indices) {
+                // Need to fix this
+                // Check if there are double * first
+                    // Remove any * seen after the first two
+                // Check if there are *
+                    // Remove any * seen after the first one
+                var curr = string[i].toString()
+
+                if(curr == "*") {
+                    if(prev == "*") {
+                        bold = !bold
+                    } else {
+                        italics = !italics
+                    }
+                }
+                println("$prev, $curr")
+                prev = curr
+
+                if(curr != "*") {
+                    if(bold) {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(curr)
+                        }
+                    } else if (italics) {
+                        withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
+                            append(curr)
+                        }
+                    } else {
+                        append(curr)
+                    }
+                }
+
+            }
+        },
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 3.dp)
+    )
+}
+
 
 

@@ -94,13 +94,13 @@ fun FilePreview(
                             H2(string.substring(2).trim())
                         } else if(string.length > 1 && string[0] == '#') {
                             H1(string.substring(1).trim())
+                        } // Create bullet points
+                        else if(string.length > 1 && string[0] == '-') {
+                        PointForm(string.substring(1).trim())
+                        } else {
+                            MultipleStylesInText(string)
+                            //TextLine(string)
                         }
-
-                        // Create bullet points
-                        if(string.length > 1 && string[0] == '-') {
-                            PointForm(string.substring(1).trim())
-                        }
-
                     }
                 }
             }
