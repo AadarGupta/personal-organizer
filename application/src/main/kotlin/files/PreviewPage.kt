@@ -86,6 +86,8 @@ fun PreviewPage(
                     lines.forEach {
                         var string = it.trim()
 
+                        println(it)
+
                         // Create headings
                         if(string.length > 6 && string.substring(0,6) == "######"){
                             H6(string.substring(6).trim())
@@ -100,8 +102,10 @@ fun PreviewPage(
                         } else if(string.length > 1 && string[0] == '#') {
                             H1(string.substring(1).trim())
                         } // Create bullet points
-                        else if(string.length > 1 && string[0] == '-') {
-                            PointForm(string.substring(1).trim())
+                        else if (it.length > 4 && it.substring(0, 6) == "    -") {
+                            PointForm(string.substring(1).trim(), "    ◦")
+                        } else if(string.length > 1 && string[0] == '-') {
+                            PointForm(string.substring(1).trim(), "•")
                         } else {
                             TextInline(string)
                         }

@@ -81,9 +81,9 @@ fun H6(string: String) {
 }
 
 @Composable
-fun PointForm(string: String) {
+fun PointForm(string: String, spacing: String) {
     Text(
-        text = "• $string",
+        text = "    $spacing $string",
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
         color = Color.Black,
         fontSize = 16.sp,

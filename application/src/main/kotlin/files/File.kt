@@ -36,11 +36,12 @@ fun FileListContainer() {
     if (dialogMode.value == "add" || dialogMode.value == "edit") {
         FileDialog(dialogMode, dialogType, parentLevel, selectedItemIdx.value, fileVM)
     }
-    //if (dialogMode.value == "editContent") {
-        //FileEditDialog(dialogMode, selectedItemIdx.value, fileVM)
-    //}
     if(dialogMode.value == "preview") {
         FilePreview(dialogMode, selectedItemIdx.value, fileVM)
+    }
+
+    if(dialogMode.value == "move") {
+        MoveDialog(dialogMode, parentLevel, selectedItemIdx.value, fileVM)
     }
 
     Column (
@@ -182,6 +183,19 @@ fun FileListContainer() {
                                             },
                                             tint = Color.DarkGray
                                         )
+
+                                        Icon(
+                                            imageVector = Icons.Filled.Send, contentDescription = "Move",
+
+                                            modifier = Modifier.clickable {
+                                                // fileVM.moveItem(it);
+                                                // Open move dialog and move item to selected folder
+                                                selectedItemIdx.value = fileVM.getFileIdx(it)
+                                                dialogMode.value = "move"
+                                            },
+                                            tint = Color.DarkGray
+                                        )
+
                                         Icon(
                                             imageVector = Icons.Filled.Delete, contentDescription = "Delete",
 
