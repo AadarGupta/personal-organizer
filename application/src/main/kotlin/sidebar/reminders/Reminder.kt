@@ -36,8 +36,6 @@ fun ReminderContainer() {
     val dialogMode = remember { mutableStateOf("closed") }
     val alertMode = remember { mutableStateOf("closed") }
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-    val scheduler: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
-//    var currTime = remember { mutableStateOf(LocalDateTime.now().format(formatter))}
     var currTime = LocalDateTime.now().format(formatter)
     var timer = remember { mutableStateOf(0) }
 
@@ -45,14 +43,14 @@ fun ReminderContainer() {
         currTime = LocalDateTime.now().format(formatter)
 
         val dtime = it.year + "-" + it.month + "-" + it.day + " " + it.time
-        println("curr" + currTime)
-        println("dt" + dtime)
+//        println("curr" + currTime)
+//        println("dt" + dtime)
         if (currTime == dtime) {
             alertMode.value = "show"
-            println("match")
+//            println("match")
         }
         if (alertMode.value == "show") {
-            println(it.id)
+//            println(it.id)
             Alert(it.id, alertMode, dtime, it.itemName, ReminderVM)
         }
     }
@@ -82,12 +80,71 @@ fun ReminderContainer() {
                 tint = Color.White
             )
         }
+
+        Text(
+            text = "Today's Reminders", textAlign = TextAlign.Center,
+            modifier = Modifier.padding()
+        )
+        if (ReminderVM.isTodayReminderEmpty()) {
+            Text(
+                text = "No Reminders For Today.", textAlign = TextAlign.Center,
+                modifier = Modifier.padding()
+            )
+        }
+        else {
+            LazyColumn {
+                items(ReminderVM.getTodayReminderList()) {
+                    Card(
+                        backgroundColor = Color.Gray,
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .clickable {
+                                selectedItemIdx.value = ReminderVM.getItemIdx(it)
+                                dialogMode.value = "edit"
+                            }
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = it.itemName,
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                color = Color.White,
+                            )
+                            Row() {
+                                Text(
+                                    text = it.year + "." + it.month + "." + it.day + ":" + it.time,
+                                    fontSize = 10.sp,
+                                    modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                    color = Color.LightGray,
+                                )
+                                Icon(
+                                    imageVector = Icons.Filled.Delete, contentDescription = "Delete",
+
+                                    modifier = Modifier.clickable {
+                                        ReminderVM.removeReminderItem(it);
+                                    },
+                                    tint = Color.Red
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Text(
+            text = "All Reminders", textAlign = TextAlign.Center,
+            modifier = Modifier.padding()
+        )
         if (ReminderVM.isReminderEmpty()) {
             Text(
-                text = "No Reminders.", textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxHeight()
+                text = "No Reminders", textAlign = TextAlign.Center,
+                modifier = Modifier.padding()
             )
-        } else {
+        }else{
             LazyColumn {
                 items(ReminderVM.getReminderList()) {
                     Card(
@@ -99,6 +156,7 @@ fun ReminderContainer() {
                                 dialogMode.value = "edit"
                             }
                     ) {
+
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth(),
@@ -116,7 +174,7 @@ fun ReminderContainer() {
                                 )
                                 Row() {
                                     Text(
-                                        text = it.year + "." + it.month + "."+ it.day + ":"+ it.time ,
+                                        text = it.year + "." + it.month + "." + it.day + ":" + it.time,
                                         fontSize = 10.sp,
                                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
                                         color = Color.LightGray,
@@ -125,7 +183,7 @@ fun ReminderContainer() {
                                         imageVector = Icons.Filled.Delete, contentDescription = "Delete",
 
                                         modifier = Modifier.clickable {
-                                            ReminderVM.removeReminderItem(it);
+                                            ReminderVM.removeReminderItem(it)
                                         },
                                         tint = Color.Red
                                     )
@@ -135,6 +193,8 @@ fun ReminderContainer() {
                     }
                 }
             }
+
         }
+
     }
 }

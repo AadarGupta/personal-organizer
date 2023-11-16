@@ -8,6 +8,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -16,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Window
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -27,8 +28,13 @@ fun FileEditDialog(
 ) {
     var fileItem = fileVM.getFileByIdx(fileItemIdx)
     var query = remember { mutableStateOf(fileItem.fileContent) }
+    val dialogMode = remember { mutableStateOf("closed") }
 
-    Dialog(onCloseRequest = { editState.value = "closed" })
+    if(dialogMode.value == "preview") {
+        FilePreview(dialogMode, fileItemIdx, fileVM)
+    }
+
+    Window(onCloseRequest = { editState.value = "closed" })
     {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -46,17 +52,31 @@ fun FileEditDialog(
                     color = Color.Black,
                 )
 
-                Icon(
-                    imageVector = Icons.Filled.Done, contentDescription = "Save",
-                    modifier = Modifier
-                        .clickable {
-                            fileVM.editFileContent(fileItem, query.value)
-                            editState.value = "closed"
-                        }
-                        .height(40.dp)
-                        .padding(horizontal = 30.dp),
-                    tint = Color.Blue
-                )
+                Row() {
+                    Icon(
+                        imageVector = Icons.Filled.Send, contentDescription = "Preview",
+                        modifier = Modifier
+                            .clickable {
+                                fileVM.editFileContent(fileItem, query.value)
+                                dialogMode.value = "preview"
+                            }
+                            .height(40.dp)
+                            .padding(horizontal = 15.dp),
+                        tint = Color.Blue
+                    )
+
+                    Icon(
+                        imageVector = Icons.Filled.Done, contentDescription = "Save",
+                        modifier = Modifier
+                            .clickable {
+                                fileVM.editFileContent(fileItem, query.value)
+                                editState.value = "closed"
+                            }
+                            .height(40.dp)
+                            .padding(horizontal = 15.dp),
+                        tint = Color.Blue
+                    )
+                }
 
             }
             Row(
