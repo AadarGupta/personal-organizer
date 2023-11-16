@@ -116,10 +116,32 @@ class FileViewModel {
         http.delete("file", mapOf("id" to targetItem.id.toString()))
         fileList.remove(targetItem)
     }
-    fun moveFile(targetItem: FileModel) {
+
+    fun moveFile(
+        targetItem: FileModel,
+        newParent: Int
+    ) {
+        val idx = fileList.indexOf(targetItem)
+        fileList[idx] =
+            FileModel(
+                fileList[idx].id,
+                fileList[idx].isFolder,
+                newParent,
+                fileList[idx].fileName,
+                fileList[idx].fileContent
+            )
+
         val http = MyHttp()
-        http.delete("file", mapOf("id" to targetItem.id.toString()))
-        fileList.remove(targetItem)
+        val body = JsonObject(
+            mapOf(
+                "id" to JsonPrimitive(targetItem.id),
+                "isFolder" to JsonPrimitive(targetItem.isFolder),
+                "parent" to JsonPrimitive(newParent),
+                "fileName" to JsonPrimitive(targetItem.fileName),
+                "fileContent" to JsonPrimitive(targetItem.fileContent)
+            )
+        )
+        http.put("file", body)
     }
 
     fun getFileByIdx(idx: Int): FileModel {
