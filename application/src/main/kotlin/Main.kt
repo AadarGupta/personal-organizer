@@ -1,14 +1,23 @@
 
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
@@ -31,11 +40,17 @@ fun WelcomePage() {
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
+            Image(
+                painter = painterResource("mypoLogo.png"),
+                contentDescription = "app logo",
+                modifier = Modifier.padding(4.dp)
+            )
             Text(
-                text = "Personal Organizer",
-                fontSize = 40.sp,
-                modifier = Modifier.padding(horizontal = 50.dp, vertical = 20.dp),
-                color = Color.Black,
+                text = "My Personal Organizer",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Black,
+                modifier = Modifier.padding(start = 100.dp, top = 30.dp),
+                color = Color.DarkGray,
             )
 
         }
@@ -62,7 +77,7 @@ fun App() {
 
         Box(
             modifier = Modifier
-                .background(androidx.compose.ui.graphics.Color.White)
+                .background(Color.White)
                 .weight(1f)
                 .fillMaxWidth(1f)
                 .fillMaxHeight(1f)
@@ -70,14 +85,33 @@ fun App() {
         ) {
             WelcomePage()
         }
-
-        Box(
-            modifier = Modifier
-                .background(androidx.compose.ui.graphics.Color.Gray)
-                .width(400.dp)
-                .fillMaxHeight(1f)
+        var sidebarVisible by remember { mutableStateOf(true) }
+        Button(onClick = {sidebarVisible = !sidebarVisible},
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3)),
+            shape = RoundedCornerShape(10.dp, 0.dp, 0.dp, 10.dp)
         ) {
-            SidebarContainer()
+            if (sidebarVisible) {
+                Icon(
+                    imageVector = Icons.Filled.Close, contentDescription = "Close",
+                    tint = Color.White
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.Menu, contentDescription = "Close",
+                    tint = Color.White
+                )
+            }
+        }
+        AnimatedVisibility(sidebarVisible) {
+            val backgroundBrush = Brush.verticalGradient(listOf(Color(0xFF67c2b3), Color(0xFF7fe26d)))
+            Box(
+                modifier = Modifier
+                    .background(backgroundBrush)
+                    .width(400.dp)
+                    .fillMaxHeight(1f)
+            ) {
+                SidebarContainer()
+            }
         }
     }
 }

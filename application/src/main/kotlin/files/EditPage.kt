@@ -56,13 +56,13 @@ fun EditPage(
                     .padding(horizontal = 20.dp)) {
                     Icon(
                         imageVector = Icons.Filled.Done, contentDescription = "Preview",
-                        tint = Color.Blue,
+                        tint = Color(0xFF67c2b3),
                         modifier = Modifier.height(40.dp)
                     )
                     Text (
                         text = "Preview",
                         fontSize = 10.sp,
-                        color = Color.Blue,
+                        color = Color(0xFF67c2b3),
                     )
                 }
 

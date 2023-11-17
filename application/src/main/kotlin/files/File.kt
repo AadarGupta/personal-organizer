@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
@@ -20,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role.Companion.Button
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,45 +53,47 @@ fun FileListContainer() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "My Files",
-                fontSize = 25.sp
+                text = "Files & Folders",
+                fontWeight = FontWeight.Light,
+                color = Color.DarkGray,
+                fontSize = 20.sp
             )
-            Row() {
-                TextButton(
+            Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                Button(
                     onClick = {
                         dialogMode.value = "add"
                         dialogType.value = "file"
                     },
-                    modifier = Modifier.height(40.dp))
+                    modifier = Modifier.height(40.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3)))
                 {
-                    Image(
-                        painter = painterResource("createFileIcon.png"),
-                        contentDescription = "Create New File Icon",
-                        modifier = Modifier.padding(4.dp)
+                    Icon(
+                        imageVector = Icons.Filled.Add, contentDescription = "Create New File Icon",
+                        tint = Color.White
                     )
                     Text(
-                        text = "Create New File",
-                        fontSize = 15.sp,
-                        color = Color.Blue,
+                        text = "New File",
+                        fontSize = 12.sp,
+                        color = Color.White,
                     )
                 }
 
-                TextButton(
+                Button(
                     onClick = {
                         dialogMode.value = "add"
                         dialogType.value = "folder"
                     },
-                    modifier = Modifier.height(40.dp))
+                    modifier = Modifier.height(40.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3)))
                 {
-                    Image(
-                        painter = painterResource("newFolderIcon.png"),
-                        contentDescription = "Create New Folder Icon",
-                        modifier = Modifier.padding(4.dp)
+                    Icon(
+                        imageVector = Icons.Filled.Add, contentDescription = "Create New File Icon",
+                        tint = Color.White
                     )
                     Text(
-                        text = "Create New Folder",
-                        fontSize = 15.sp,
-                        color = Color.Blue,
+                        text = "New Folder",
+                        fontSize = 12.sp,
+                        color = Color.White,
                     )
                 }
             }
@@ -125,6 +126,36 @@ fun FileListContainer() {
                     )
                 }
             }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(start = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    Text(
+                        text = "Type",
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        color = Color.Gray,
+                    )
+                    Text(
+                        text = "Name",
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        color = Color.Gray,
+                    )
+                }
+
+                Text(
+                    text = "Actions",
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(top = 2.dp, bottom = 2.dp, end = 25.dp),
+                    color = Color.Gray,
+                )
+            }
+
             LazyColumn {
                 items(fileVM.getFileList(parentLevel.value)) {
                     Card(
@@ -138,10 +169,6 @@ fun FileListContainer() {
                                 }
                             }
                             .padding(vertical = 5.dp)
-                            .border( width = 0.5.dp,
-                                color = Color.Black,
-                                shape = RoundedCornerShape(10.dp)
-                            )
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -173,7 +200,7 @@ fun FileListContainer() {
                                         fontSize = 12.sp,
                                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
                                     )
-                                    Row() {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                                         Icon(
                                             imageVector = Icons.Filled.Edit, contentDescription = "Edit",
 
@@ -193,7 +220,7 @@ fun FileListContainer() {
                                                 selectedItemIdx.value = fileVM.getFileIdx(it)
                                                 dialogMode.value = "move"
                                             },
-                                            tint = Color.DarkGray
+                                            tint = Color(0xFF7fe26d)
                                         )
 
                                         Icon(
@@ -202,7 +229,7 @@ fun FileListContainer() {
                                             modifier = Modifier.clickable {
                                                 fileVM.removeFileItem(it);
                                             },
-                                            tint = Color.Red
+                                            tint = Color(0xFF67c2b3)
                                         )
                                     }
                                 }
