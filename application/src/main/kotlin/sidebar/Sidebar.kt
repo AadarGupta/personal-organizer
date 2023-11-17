@@ -105,7 +105,7 @@ fun SidebarContainer() {
                 )
                 .clip(shape = RoundedCornerShape(10.dp))
                 .background(Color.Transparent)
-                .height(200.dp)
+                .height(300.dp)
                 .fillMaxWidth(1f)
                 .padding(5.dp)
             ) {
