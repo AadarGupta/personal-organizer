@@ -9,6 +9,7 @@ object ReminderDbObject: IntIdTable() {
     var month = varchar("month", 50)
     var day = varchar("day", 50)
     var time = varchar("time", 50)
+    var isChecked = bool("isChecked")
 }
 
 
@@ -20,4 +21,5 @@ data class ReminderDbModel(
     val month: String,
     val day: String,
     val time: String,
+    val isChecked: Boolean
 )

@@ -18,6 +18,7 @@ fun createReminder(
     newMonth: String,
     newDay: String,
     newTime: String,
+    checkedStatus: Boolean
 ) : ReminderDbModel {
     var targetReminderItem : ReminderDbModel =
         ReminderDbModel(
@@ -26,7 +27,8 @@ fun createReminder(
             "",
             "",
             "",
-            ""
+            "",
+            true
         )
 
     transaction {
@@ -37,6 +39,7 @@ fun createReminder(
                 it[month] = newMonth
                 it[day] = newDay
                 it[time] = newTime
+                it[isChecked] = checkedStatus
             } get ReminderDbObject.id
 
         targetReminderItem =
@@ -46,7 +49,8 @@ fun createReminder(
                 newYear,
                 newMonth,
                 newDay,
-                newTime
+                newTime,
+                checkedStatus
             )
     }
     return targetReminderItem
@@ -71,6 +75,15 @@ fun editReminder(
     }
 }
 
+fun editReminderChecked(id: Int, checkedStatus: Boolean) {
+    transaction {
+        ReminderDbObject.update({ReminderDbObject.id eq id}) {
+            it[isChecked] = checkedStatus
+        }
+    }
+}
+
+
 fun deleteReminder(id: Int) {
     transaction {
         ReminderDbObject.deleteWhere { ReminderDbObject.id eq id }
@@ -89,7 +102,8 @@ fun getAllReminders() : ReminderListResponse {
                     reminder[ReminderDbObject.year],
                     reminder[ReminderDbObject.month],
                     reminder[ReminderDbObject.day],
-                    reminder[ReminderDbObject.time]
+                    reminder[ReminderDbObject.time],
+                    reminder[ReminderDbObject.isChecked]
                 )
             reminderList.add(reminderData)
         }

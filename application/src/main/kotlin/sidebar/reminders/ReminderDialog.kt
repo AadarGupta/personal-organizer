@@ -28,7 +28,8 @@ fun ReminderDialog(
             "",
             "",
             "",
-            ""
+            "",
+            false
         )
 
     if (mode.value == "edit") {
@@ -145,7 +146,7 @@ fun ReminderDialog(
                     color = Color.DarkGray,
                 )
                 TextField(
-                    value = month, onValueChange = { newText->
+                    value = month, onValueChange = { newText ->
                         month = newText
                     },
                     modifier = Modifier
@@ -156,10 +157,7 @@ fun ReminderDialog(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent
-                    ),
-                    placeholder = {
-                        Text(text = "12")
-                    }
+                    )
                 )
                 Text(
                     text = "Day" ,
@@ -168,8 +166,7 @@ fun ReminderDialog(
                     color = Color.DarkGray,
                 )
                 TextField(
-                    value = day,
-                    onValueChange = { newText ->
+                    value = day, onValueChange = { newText ->
                         day = newText
                     },
                     modifier = Modifier

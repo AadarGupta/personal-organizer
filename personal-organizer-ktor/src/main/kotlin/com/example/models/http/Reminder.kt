@@ -10,6 +10,7 @@ data class ReminderItem(
     val month: String,
     val day: String,
     val time: String,
+    val isChecked: Boolean
 )
 
 @Serializable
@@ -19,6 +20,7 @@ data class ReminderCreationRequest(
     val month: String,
     val day: String,
     val time: String,
+    val isChecked: Boolean
 )
 
 @Serializable
@@ -32,7 +34,7 @@ data class ReminderEditRequest(
 )
 
 @Serializable
-data class ReminderEditCheckedRequest(val id: Int)
+data class ReminderEditCheckedRequest(val id: Int, val isChecked: Boolean)
 
 @Serializable
 data class ReminderListResponse(val items: MutableList<ReminderItem>)
