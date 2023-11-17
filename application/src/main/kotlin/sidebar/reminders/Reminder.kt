@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ReminderContainer() {
@@ -33,23 +35,41 @@ fun ReminderContainer() {
     var ReminderVM = ReminderViewModel()
     var selectedItemIdx = remember { mutableStateOf(-1) }
     val dialogMode = remember { mutableStateOf("closed") }
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd h:m a")
+    var currTime = LocalDateTime.now().format(formatter)
+    val alertMode = remember { mutableStateOf("closed") }
+    var refreshDailyReminders = remember { mutableStateOf(false) }
+
 
     // pop up dialog for adding or editing a reminder item
     if (dialogMode.value == "add" || dialogMode.value == "edit") {
         ReminderDialog(dialogMode, selectedItemIdx.value, ReminderVM)
     }
 
-    var refreshDailyReminders = remember { mutableStateOf(false) }
-
     // check for reminders that are due today
     LaunchedEffect(Unit) {
         val refresh = withContext(Dispatchers.IO) {
             while (true) {
-                delay(10000)
+                delay( 5000)
                 refreshDailyReminders.value = true
             }
         }
     }
+    for ((index, it) in ReminderVM.getReminderList().withIndex()) {
+        currTime = LocalDateTime.now().format(formatter)
+        val dTime = it.year + "-" + it.month + "-" + it.day + " " + it.time
+        if (currTime == dTime) {
+            if(alertMode.value == "closed"){
+                alertMode.value = index.toString()
+            }
+        }
+        if (alertMode.value  == index.toString() ) {
+            Alert(index, alertMode, ReminderVM)
+            break;
+        }
+    }
+
+
 
     val state = rememberLazyListState()
 
@@ -105,10 +125,6 @@ fun ReminderContainer() {
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.fillMaxWidth(),
                                 ) {
-                                    Checkbox(
-                                        checked = it.isChecked,
-                                        onCheckedChange = { value -> ReminderVM.checkReminderItem(it, value)}
-                                    )
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -142,12 +158,10 @@ fun ReminderContainer() {
                         }
                     }
                 }
-
                 Text(
                     text = "All Reminders", textAlign = TextAlign.Center,
                     modifier = Modifier.padding()
                 )
-
 
                 LazyColumn(Modifier.padding(end = 12.dp), state) {
                     items(ReminderVM.getReminderList()) {
@@ -164,10 +178,6 @@ fun ReminderContainer() {
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth(),
                             ) {
-                                Checkbox(
-                                    checked = it.isChecked,
-                                    onCheckedChange = { value -> ReminderVM.checkReminderItem(it, value) }
-                                )
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween,

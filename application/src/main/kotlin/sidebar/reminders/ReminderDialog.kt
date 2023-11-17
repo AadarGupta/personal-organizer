@@ -42,11 +42,11 @@ fun ReminderDialog(
     var day by remember { mutableStateOf(TextFieldValue(reminderItem.day))};
 
     var today = java.time.LocalTime.now()
-    var amPMdefault = "AM"
+    var amPMdefault = "a.m."
     var hourDefault = today.hour.toString()
     if (today.hour > 12) {
         hourDefault = (today.hour - 12).toString()
-        amPMdefault = "PM"
+        amPMdefault = "p.m."
     }
     var timeSplit = mutableListOf(hourDefault, today.minute.toString(), amPMdefault)
     if (reminderItem.time != "") {
@@ -367,23 +367,23 @@ fun ReminderDialog(
                             ) {
                                 DropdownMenuItem(
                                     onClick = {
-                                        amPM = TextFieldValue("AM")
+                                        amPM = TextFieldValue("a.m.")
                                         time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
                                         amPMexpanded.value = false
                                     },
                                     modifier = Modifier.width(150.dp)
                                 ) {
-                                    Text("AM")
+                                    Text("a.m.")
                                 }
                                 DropdownMenuItem(
                                     onClick = {
-                                        amPM = TextFieldValue("PM")
+                                        amPM = TextFieldValue("p.m.")
                                         time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
                                         amPMexpanded.value = false
                                     },
                                     modifier = Modifier.width(150.dp)
                                 ) {
-                                    Text("PM")
+                                    Text("p.m.")
                                 }
                             }
                         }
