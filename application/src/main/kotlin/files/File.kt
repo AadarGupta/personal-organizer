@@ -8,11 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,8 +34,12 @@ fun FileListContainer() {
     if (dialogMode.value == "add" || dialogMode.value == "edit") {
         FileDialog(dialogMode, dialogType, parentLevel, selectedItemIdx.value, fileVM)
     }
-    if (dialogMode.value == "editContent") {
-        FileEditDialog(dialogMode, selectedItemIdx.value, fileVM)
+    if(dialogMode.value == "preview") {
+        FilePreview(dialogMode, selectedItemIdx.value, fileVM)
+    }
+
+    if(dialogMode.value == "move") {
+        MoveDialog(dialogMode, parentLevel, selectedItemIdx.value, fileVM)
     }
 
     Column (
@@ -164,7 +164,7 @@ fun FileListContainer() {
                                 if (it.isFolder) {
                                     parentLevel.value = it.id
                                 } else {
-                                    dialogMode.value = "editContent"
+                                    dialogMode.value = "preview"
                                 }
                             }
                             .padding(vertical = 5.dp)
@@ -197,7 +197,7 @@ fun FileListContainer() {
                                     Text(
                                         text = it.fileName,
                                         fontSize = 12.sp,
-                                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
                                     )
                                     Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                                         Icon(
@@ -209,6 +209,19 @@ fun FileListContainer() {
                                             },
                                             tint = Color.DarkGray
                                         )
+
+                                        Icon(
+                                            imageVector = Icons.Filled.Send, contentDescription = "Move",
+
+                                            modifier = Modifier.clickable {
+                                                // fileVM.moveItem(it);
+                                                // Open move dialog and move item to selected folder
+                                                selectedItemIdx.value = fileVM.getFileIdx(it)
+                                                dialogMode.value = "move"
+                                            },
+                                            tint = Color.DarkGray
+                                        )
+
                                         Icon(
                                             imageVector = Icons.Filled.Delete, contentDescription = "Delete",
 
