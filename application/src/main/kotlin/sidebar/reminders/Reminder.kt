@@ -58,6 +58,8 @@ fun ReminderContainer() {
     for ((index, it) in ReminderVM.getReminderList().withIndex()) {
         currTime = LocalDateTime.now().format(formatter)
         val dTime = it.year + "-" + it.month + "-" + it.day + " " + it.time
+        println("curr "+ currTime)
+        println("d "+ dTime)
         if (currTime == dTime) {
             if(alertMode.value == "closed"){
                 alertMode.value = index.toString()
