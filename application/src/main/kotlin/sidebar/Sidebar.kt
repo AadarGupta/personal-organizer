@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TabRowDefaults.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -33,18 +36,24 @@ fun SidebarContainer() {
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
-        Box(
+        Column (
             modifier = Modifier
-                .background(Color.DarkGray)
+                .background(Color.Transparent)
                 .fillMaxWidth(1f)
                 .height(80.dp)
         ) {
             Text(
                 text = "Widget Bar",
-                fontSize = 35.sp,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
+                fontSize = 30.sp,
+                modifier = Modifier.padding(horizontal = 30.dp, vertical = 20.dp ),
                 color = Color.White,
                 fontWeight = FontWeight.Bold
+            )
+            Box(
+                modifier = Modifier.width(350.dp)
+                    .height(2.dp)
+                    .background(color = Color.White)
+                    .align(Alignment.CenterHorizontally)
             )
         }
         TextButton(onClick = ({ todoVisible = !todoVisible })) {
@@ -67,7 +76,7 @@ fun SidebarContainer() {
                         shape = RoundedCornerShape(10.dp)
                     )
                     .clip(shape = RoundedCornerShape(10.dp))
-                    .background(Color.Gray)
+                    .background(Color.Transparent)
                     .height(200.dp)
                     .fillMaxWidth(1f)
                     .padding(5.dp)
@@ -95,7 +104,7 @@ fun SidebarContainer() {
                     shape = RoundedCornerShape(10.dp)
                 )
                 .clip(shape = RoundedCornerShape(10.dp))
-                .background(Color.Gray)
+                .background(Color.Transparent)
                 .height(200.dp)
                 .fillMaxWidth(1f)
                 .padding(5.dp)

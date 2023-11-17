@@ -64,7 +64,7 @@ fun FileListContainer() {
                         dialogType.value = "file"
                     },
                     modifier = Modifier.height(40.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray))
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3)))
                 {
                     Icon(
                         imageVector = Icons.Filled.Add, contentDescription = "Create New File Icon",
@@ -83,7 +83,7 @@ fun FileListContainer() {
                         dialogType.value = "folder"
                     },
                     modifier = Modifier.height(40.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Gray))
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3)))
                 {
                     Icon(
                         imageVector = Icons.Filled.Add, contentDescription = "Create New File Icon",
@@ -215,7 +215,7 @@ fun FileListContainer() {
                                             modifier = Modifier.clickable {
                                                 fileVM.removeFileItem(it);
                                             },
-                                            tint = Color.Red
+                                            tint = Color(0xFF67c2b3)
                                         )
                                     }
                                 }

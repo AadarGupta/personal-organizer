@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -76,7 +77,7 @@ fun App() {
 
         Box(
             modifier = Modifier
-                .background(androidx.compose.ui.graphics.Color.White)
+                .background(Color.White)
                 .weight(1f)
                 .fillMaxWidth(1f)
                 .fillMaxHeight(1f)
@@ -86,7 +87,7 @@ fun App() {
         }
         var sidebarVisible by remember { mutableStateOf(true) }
         Button(onClick = {sidebarVisible = !sidebarVisible},
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3)),
             shape = RoundedCornerShape(10.dp, 0.dp, 0.dp, 10.dp)
         ) {
             if (sidebarVisible) {
@@ -102,9 +103,10 @@ fun App() {
             }
         }
         AnimatedVisibility(sidebarVisible) {
+            val backgroundBrush = Brush.verticalGradient(listOf(Color(0xFF67c2b3), Color(0xFF7fe26d)))
             Box(
                 modifier = Modifier
-                    .background(androidx.compose.ui.graphics.Color.DarkGray)
+                    .background(backgroundBrush)
                     .width(400.dp)
                     .fillMaxHeight(1f)
             ) {

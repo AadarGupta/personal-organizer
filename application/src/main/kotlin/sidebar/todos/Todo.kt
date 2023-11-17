@@ -40,7 +40,10 @@ fun ToDoContainer() {
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Row() {
-            Button(onClick = ({dialogMode.value = "add"}), shape = CircleShape, colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray)) {
+            Button(onClick = ({dialogMode.value = "add"}),
+                shape = CircleShape,
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                modifier = Modifier.padding(start = 12.dp)) {
                 Icon(
                     imageVector = Icons.Filled.Add, contentDescription = "Add",
                     tint = Color.White
@@ -61,13 +64,13 @@ fun ToDoContainer() {
                 LazyColumn(Modifier.padding(end = 12.dp), state) {
                     items(toDoVM.getToDoList()) {
                         Card(
-                            backgroundColor = Color.LightGray,
+                            backgroundColor = Color(0xFFDBE9CF),
                             modifier = Modifier
                                 .clickable {
                                     selectedItemIdx.value = toDoVM.getIdxById(it)
                                     dialogMode.value = "edit"
                                 }
-                                .padding(vertical = 2.dp)
+                                .padding(start = 12.dp, top = 2.dp, bottom = 2.dp)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -97,7 +100,7 @@ fun ToDoContainer() {
                                         modifier = Modifier.clickable {
                                             toDoVM.removeToDoItem(it);
                                         },
-                                        tint = Color.Red
+                                        tint = Color(0xFF67c2b3)
                                     )
                                 }
                             }

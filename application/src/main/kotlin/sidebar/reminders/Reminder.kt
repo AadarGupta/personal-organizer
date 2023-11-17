@@ -39,8 +39,11 @@ fun ReminderContainer() {
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        Row() {
-            Button(onClick = ({dialogMode.value = "add"}), shape = CircleShape, colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray)) {
+        Row(){
+            Button(onClick = ({dialogMode.value = "add"}),
+                shape = CircleShape,
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                modifier = Modifier.padding(start = 12.dp)) {
                 Icon(
                     imageVector = Icons.Filled.Add, contentDescription = "Add",
                     tint = Color.White
@@ -61,9 +64,9 @@ fun ReminderContainer() {
                 LazyColumn(Modifier.padding(end = 12.dp), state) {
                     items(ReminderVM.getReminderList()) {
                         Card(
-                            backgroundColor = Color.LightGray,
+                            backgroundColor = Color(0xFFDBE9CF),
                             modifier = Modifier
-                                .padding(2.dp)
+                                .padding(start = 12.dp, top = 2.dp, bottom = 2.dp)
                                 .clickable {
                                     selectedItemIdx.value = ReminderVM.getItemIdx(it)
                                     dialogMode.value = "edit"
@@ -90,11 +93,11 @@ fun ReminderContainer() {
                                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
                                         color = Color.DarkGray,
                                     )
-                                    Row() {
+                                    Row(modifier = Modifier.padding(end = 10.dp)) {
                                         Text(
                                             text = it.year + "." + it.month + "." + it.day + ":" + it.time,
                                             fontSize = 10.sp,
-                                            modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
                                             color = Color.Gray,
                                         )
                                         Icon(
@@ -103,7 +106,7 @@ fun ReminderContainer() {
                                             modifier = Modifier.clickable {
                                                 ReminderVM.removeReminderItem(it);
                                             },
-                                            tint = Color.Red
+                                            tint = Color(0xFF67c2b3)
                                         )
                                     }
                                 }
