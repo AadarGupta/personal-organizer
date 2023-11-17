@@ -55,13 +55,13 @@ fun PreviewPage(
                     .padding(horizontal = 20.dp)) {
                     Icon(
                         imageVector = Icons.Filled.Edit, contentDescription = "Edit",
-                        tint = Color.Blue,
+                        tint = Color(0xFF67c2b3),
                         modifier = Modifier.height(40.dp)
                     )
                     Text (
                         text = "Edit",
                         fontSize = 10.sp,
-                        color = Color.Blue,
+                        color = Color(0xFF67c2b3),
                     )
                 }
 
