@@ -1,9 +1,11 @@
 package com.example
 
 import com.example.models.db.FileDbObject
+import com.example.models.db.PomodoroDbObject
 import com.example.models.db.ReminderDbObject
 import com.example.models.db.ToDoDbObject
 import com.example.plugins.configureFileRoutes
+import com.example.plugins.configurePomodoroRoutes
 import com.example.plugins.configureReminderRoutes
 import com.example.plugins.configureToDoRoutes
 import io.ktor.serialization.kotlinx.json.*
@@ -22,6 +24,7 @@ fun main() {
     transaction {
         SchemaUtils.create (ToDoDbObject)
         SchemaUtils.create (ReminderDbObject)
+        SchemaUtils.create (PomodoroDbObject)
         SchemaUtils.create (FileDbObject)
     }
 
@@ -35,5 +38,6 @@ fun Application.module() {
     }
     configureToDoRoutes()
     configureReminderRoutes()
+    configurePomodoroRoutes()
     configureFileRoutes()
 }

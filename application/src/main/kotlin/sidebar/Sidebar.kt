@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import sidebar.pomodoro.PomodoroContainer
 import sidebar.reminders.ReminderContainer
 import sidebar.todos.ToDoContainer
 
@@ -30,6 +31,7 @@ import sidebar.todos.ToDoContainer
 fun SidebarContainer() {
     var todoVisible by remember { mutableStateOf(true) }
     var remindersVisible by remember { mutableStateOf(true) }
+    var pomodoroVisible by remember { mutableStateOf(true) }
 
     Column (
         modifier = Modifier.fillMaxSize(),
@@ -56,6 +58,35 @@ fun SidebarContainer() {
                     .align(Alignment.CenterHorizontally)
             )
         }
+        TextButton(onClick = ({ pomodoroVisible = !pomodoroVisible })) {
+            Text(
+                text = "> Pomodoro",
+                fontSize = 15.sp,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(start = 5.dp)
+            )
+        }
+        AnimatedVisibility(pomodoroVisible) {
+            Box(
+                modifier = Modifier
+                    .padding(start = 5.dp, end = 5.dp, bottom = 5.dp)
+                    .border(
+                        width = 2.dp,
+                        color = Color.White,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .background(Color.Transparent)
+                    .height(250.dp)
+                    .fillMaxWidth(1f)
+                    .padding(5.dp)
+            ) {
+                PomodoroContainer()
+            }
+        }
+
         TextButton(onClick = ({ todoVisible = !todoVisible })) {
             Text(
                 text = "> To-Do",
@@ -84,7 +115,6 @@ fun SidebarContainer() {
                 ToDoContainer()
             }
         }
-
         TextButton(onClick = ({ remindersVisible = !remindersVisible })) {
             Text(
                 text = "> Reminders",
