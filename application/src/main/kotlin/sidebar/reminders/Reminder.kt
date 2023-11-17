@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,6 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ReminderContainer() {
@@ -31,6 +35,18 @@ fun ReminderContainer() {
     // pop up dialog for adding or editing a reminder item
     if (dialogMode.value == "add" || dialogMode.value == "edit") {
         ReminderDialog(dialogMode, selectedItemIdx.value, ReminderVM)
+    }
+
+    var refreshDailyReminders = remember { mutableStateOf(false) }
+
+    // check for reminders that are due today
+    LaunchedEffect(Unit) {
+        val refresh = withContext(Dispatchers.IO) {
+            while (true) {
+                delay(10000)
+                refreshDailyReminders.value = true
+            }
+        }
     }
 
     Column (
@@ -64,6 +80,79 @@ fun ReminderContainer() {
                 modifier = Modifier.fillMaxHeight()
             )
         } else {
+
+            Text(
+                text = "Today's Reminders", textAlign = TextAlign.Center,
+                modifier = Modifier.padding()
+            )
+            if (ReminderVM.getTodayReminderList().size == 0) {
+                Text(
+                    text = "No Reminders For Today.", textAlign = TextAlign.Center,
+                    modifier = Modifier.padding()
+                )
+            }
+            else {
+                if (refreshDailyReminders.value) {
+                    // used to refresh the reminders every 10s
+                    refreshDailyReminders.value = false
+                }
+                LazyColumn {
+                    items(ReminderVM.getTodayReminderList()) {
+                        Card(
+                            backgroundColor = Color.Gray,
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .clickable {
+                                    selectedItemIdx.value = ReminderVM.getItemIdx(it)
+                                    dialogMode.value = "edit"
+                                }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Checkbox(
+                                    checked = it.isChecked,
+                                    onCheckedChange = { value -> ReminderVM.checkReminderItem(it, value)}
+                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = it.itemName,
+                                        fontSize = 12.sp,
+                                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                        color = Color.White,
+                                    )
+                                    Row() {
+                                        Text(
+                                            text = it.year + "." + it.month + "."+ it.day + ":"+ it.time ,
+                                            fontSize = 10.sp,
+                                            modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+                                            color = Color.LightGray,
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Filled.Delete, contentDescription = "Delete",
+
+                                            modifier = Modifier.clickable {
+                                                ReminderVM.removeReminderItem(it);
+                                            },
+                                            tint = Color.Red
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Text(
+                text = "All Reminders", textAlign = TextAlign.Center,
+                modifier = Modifier.padding()
+            )
             LazyColumn {
                 items(ReminderVM.getReminderList()) {
                     Card(

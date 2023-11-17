@@ -1,8 +1,6 @@
 package sidebar.reminders
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -10,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -36,11 +35,38 @@ fun ReminderDialog(
         reminderItem = reminderVM.getItemByIdx(reminderItemIdx)
     }
 
-    var name by remember { mutableStateOf(TextFieldValue(reminderItem.itemName)) };
+    var name by remember { mutableStateOf(TextFieldValue(reminderItem.itemName))};
+
     var year by remember { mutableStateOf(TextFieldValue(reminderItem.year))};
     var month by remember { mutableStateOf(TextFieldValue(reminderItem.month))};
     var day by remember { mutableStateOf(TextFieldValue(reminderItem.day))};
+
+    var today = java.time.LocalTime.now()
+    var amPMdefault = "AM"
+    var hourDefault = today.hour.toString()
+    if (today.hour > 12) {
+        hourDefault = (today.hour - 12).toString()
+        amPMdefault = "PM"
+    }
+    var timeSplit = mutableListOf(hourDefault, today.minute.toString(), amPMdefault)
+    if (reminderItem.time != "") {
+        reminderItem.time.substring(reminderItem.time.length-2, reminderItem.time.length).split(":").toMutableList()
+        timeSplit.add(reminderItem.time.substring(reminderItem.time.length-2, reminderItem.time.length))
+    }
+
+    var hour by remember { mutableStateOf(TextFieldValue(timeSplit[0])) };
+    var minute by remember { mutableStateOf(TextFieldValue(timeSplit[1])) };
+    var amPM by remember { mutableStateOf(TextFieldValue(timeSplit[2])) };
+
     var time by remember { mutableStateOf(TextFieldValue(reminderItem.time))};
+
+    var dayExpanded = remember { mutableStateOf(false) }
+    var monthExpanded = remember { mutableStateOf(false) }
+    var yearExpanded = remember { mutableStateOf(false) }
+
+    var hourExpanded = remember { mutableStateOf(false) }
+    var minuteExpanded = remember { mutableStateOf(false) }
+    var amPMexpanded = remember { mutableStateOf(false) }
 
     AlertDialog(
         title = {
@@ -64,6 +90,7 @@ fun ReminderDialog(
             TextButton(
                 onClick = {
                     if (mode.value == "edit") {
+                        time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
                         reminderVM.editReminderList(
                             reminderItem,
                             name.text,
@@ -119,88 +146,250 @@ fun ReminderDialog(
                         disabledIndicatorColor = Color.Transparent
                     )
                 )
-                Text(
-                    text = "Year" ,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp),
-                    color = Color.DarkGray,
-                )
-                TextField(
-                    value = year, onValueChange = { newText ->
-                        year = newText
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp, top= 5.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
-                )
-                Text(
-                    text = "Month" ,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp),
-                    color = Color.DarkGray,
-                )
-                TextField(
-                    value = month, onValueChange = { newText ->
-                        month = newText
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp, top= 5.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
-                )
-                Text(
-                    text = "Day" ,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 5.dp),
-                    color = Color.DarkGray,
-                )
-                TextField(
-                    value = day, onValueChange = { newText ->
-                        day = newText
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp, top= 5.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
-                )
-                Text(
-                    text = "Time" ,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 0.dp),
-                    color = Color.DarkGray,
-                )
-                TextField(
-                    value = time, onValueChange = { newText ->
-                        time = newText
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp, top= 5.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
-                )
-            }
 
+                Row {
+                    Column() {
+                        Text(
+                            text = "Year" ,
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp,
+                            modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+                            color = Color.DarkGray,
+                        )
+                        Box {
+                            TextButton(
+                                onClick = { yearExpanded.value = !yearExpanded.value },
+                                modifier = Modifier.width(150.dp)
+                            ) {
+                                var defaultYear = year.text
+                                if (defaultYear == "") {
+                                    defaultYear = java.time.LocalDate.now().year.toString()
+                                }
+                                Text(text = defaultYear, textAlign = TextAlign.Center)
+                                year = TextFieldValue(defaultYear);
+                            }
+
+                            DropdownMenu(
+                                expanded = yearExpanded.value,
+                                onDismissRequest = { yearExpanded.value = !yearExpanded.value },
+                            ) {
+                                for (i in 2010..2040) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            year = TextFieldValue(i.toString());
+                                            yearExpanded.value = false
+                                        },
+                                        modifier = Modifier.width(150.dp)
+                                    ) {
+                                        Text(i.toString())
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Column() {
+                        Text(
+                            text = "Month" ,
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp,
+                            modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+                            color = Color.DarkGray,
+                        )
+                        Box {
+                            TextButton(
+                                onClick = { monthExpanded.value = !monthExpanded.value },
+                                modifier = Modifier.width(150.dp)
+                            ) {
+                                var defaultMonth = month.text
+                                if (defaultMonth == "") {
+                                    defaultMonth = java.time.LocalDate.now().monthValue.toString()
+                                }
+                                Text(text = defaultMonth, textAlign = TextAlign.Center)
+                                month = TextFieldValue(defaultMonth);
+                            }
+
+                            DropdownMenu(
+                                expanded = monthExpanded.value,
+                                onDismissRequest = { monthExpanded.value = !monthExpanded.value },
+                            ) {
+                                for (i in 1..12) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            month = TextFieldValue(i.toString());
+                                            monthExpanded.value = false
+                                        },
+                                        modifier = Modifier.width(150.dp)
+                                    ) {
+                                        Text(i.toString())
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Column() {
+                        Text(
+                            text = "Day" ,
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp,
+                            modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+                            color = Color.DarkGray,
+                        )
+                        Box {
+                            TextButton(
+                                onClick = { dayExpanded.value = !dayExpanded.value },
+                                modifier = Modifier.width(150.dp)
+                            ) {
+                                var defaultDay = day.text
+                                if (defaultDay == "") {
+                                    defaultDay = java.time.LocalDate.now().dayOfMonth.toString()
+                                }
+                                Text(text = defaultDay, textAlign = TextAlign.Center)
+                                day = TextFieldValue(defaultDay);
+                            }
+
+                            DropdownMenu(
+                                expanded = dayExpanded.value,
+                                onDismissRequest = { dayExpanded.value = !dayExpanded.value },
+                            ) {
+                                for (i in 1..31) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            day = TextFieldValue(i.toString());
+                                            dayExpanded.value = false
+                                        },
+                                        modifier = Modifier.width(150.dp)
+                                    ) {
+                                        Text(i.toString())
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Row {
+                    Column() {
+                        Text(
+                            text = "Hour" ,
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp,
+                            modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+                            color = Color.DarkGray,
+                        )
+                        Box {
+                            TextButton(
+                                onClick = { hourExpanded.value = !hourExpanded.value },
+                                modifier = Modifier.width(150.dp)
+                            ) {
+                                Text(text = hour.text, textAlign = TextAlign.Center)
+                                time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                            }
+
+                            DropdownMenu(
+                                expanded = hourExpanded.value,
+                                onDismissRequest = { hourExpanded.value = !hourExpanded.value },
+                            ) {
+                                for (i in 0..23) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            hour = TextFieldValue(i.toString());
+                                            time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                            hourExpanded.value = false
+                                        },
+                                        modifier = Modifier.width(150.dp)
+                                    ) {
+                                        Text(i.toString())
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Column() {
+                        Text(
+                            text = "Minute" ,
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp,
+                            modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+                            color = Color.DarkGray,
+                        )
+                        Box {
+                            TextButton(
+                                onClick = { minuteExpanded.value = !minuteExpanded.value },
+                                modifier = Modifier.width(150.dp)
+                            ) {
+                                Text(text = minute.text, textAlign = TextAlign.Center)
+                                time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                            }
+
+                            DropdownMenu(
+                                expanded = minuteExpanded.value,
+                                onDismissRequest = { minuteExpanded.value = !minuteExpanded.value },
+                            ) {
+                                for (i in 0..59) {
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            minute = TextFieldValue(i.toString())
+                                            time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                            minuteExpanded.value = false
+                                        },
+                                        modifier = Modifier.width(150.dp)
+                                    ) {
+                                        Text(i.toString())
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Column() {
+                        Text(
+                            text = "AM/PM" ,
+                            textAlign = TextAlign.Center,
+                            fontSize = 12.sp,
+                            modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+                            color = Color.DarkGray,
+                        )
+                        Box {
+                            TextButton(
+                                onClick = { amPMexpanded.value = !amPMexpanded.value },
+                                modifier = Modifier.width(150.dp)
+                            ) {
+                                Text(text = amPM.text, textAlign = TextAlign.Center)
+                                time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                            }
+
+                            DropdownMenu(
+                                expanded = amPMexpanded.value,
+                                onDismissRequest = { amPMexpanded.value = !amPMexpanded.value },
+                            ) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        amPM = TextFieldValue("AM")
+                                        time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                        amPMexpanded.value = false
+                                    },
+                                    modifier = Modifier.width(150.dp)
+                                ) {
+                                    Text("AM")
+                                }
+                                DropdownMenuItem(
+                                    onClick = {
+                                        amPM = TextFieldValue("PM")
+                                        time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                        amPMexpanded.value = false
+                                    },
+                                    modifier = Modifier.width(150.dp)
+                                ) {
+                                    Text("PM")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         },
     )
 }

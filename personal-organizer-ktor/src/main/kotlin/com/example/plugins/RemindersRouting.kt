@@ -31,9 +31,9 @@ fun Application.configureReminderRoutes() {
             editReminder(
                 reminderToEdit.id,
                 reminderToEdit.name,
-                reminderToEdit.day,
-                reminderToEdit.month,
                 reminderToEdit.year,
+                reminderToEdit.month,
+                reminderToEdit.day,
                 reminderToEdit.time
             )
             call.application.environment.log.info("ID: ${reminderToEdit.id} - Reminder Changed.")
