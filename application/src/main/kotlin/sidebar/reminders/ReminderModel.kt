@@ -9,6 +9,5 @@ data class ReminderModel(
     val year: String,
     val month: String,
     val day: String,
-    val time: String,
-    val isChecked: Boolean
+    val time: String
 )
