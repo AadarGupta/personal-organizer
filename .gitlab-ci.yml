@@ -2,27 +2,17 @@ workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
+include: 'https://gitlab.com/gitlab-cd/ssh-template/raw/master/ssh.yml'
 
-jobs:
-  deploy:
-    steps:
-      - name: Deploy Personal Organizer Backend
-        uses: appleboy/ssh-action@v0.1.2
-        with:
-          host: personal-organizer.petarvico.com
-          key: ${{secrets.SSH_KEY}}
-          username: root
-          
-          script : |
-            pwd
-            ls
-            cd personal-organizer
-            git checkout main
-            git pull
-            gradle buildFarJar
-            cp personal-organizer-ktor/build/libs/personal-organizer-ktor-all.jar ~/
-            cd
-            kill -9 `cat backendProcessId.txt`
-            nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &
-            echo $! > backendProcessId.txt
+clean:
+stage: build
+script:
+- ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "pwd && ls && cd personal-organizer && git checkout main && git pull"
+- ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "gradle buildFarJar && cp personal-organizer-ktor/build/libs/personal-organizer-ktor-all.jar ~/"
+- ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "kill -9 `cat backendProcessId.txt`"
+- ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &"
+- ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "kill -9 `cat backendProcessId.txt`"
+- ssh_run "root" "personal-organizer.petarvico.com" "echo $! > backendProcessId.txt"
+
+
 
