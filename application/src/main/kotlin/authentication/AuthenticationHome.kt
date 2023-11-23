@@ -46,6 +46,7 @@ fun AuthenticationPage(
                 Text("Login")
             }
         }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
@@ -57,6 +58,20 @@ fun AuthenticationPage(
                 }
             ) {
                 Text("Register")
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(1f)
+        ) {
+            Button(
+                onClick = {
+                    // check if credentials are valid
+                    currUser.value = "demo-user"
+                }
+            ) {
+                Text("Login as Demo User")
             }
         }
     }
