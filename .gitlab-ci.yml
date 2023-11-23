@@ -8,6 +8,7 @@ before_script:
   - ssh -tT root@personal-organizer.petarvico.com
 
   ## get latest from main
+  - ls
   - cd personal-organizer
   - git checkout main
   - git pull
