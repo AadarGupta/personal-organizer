@@ -30,14 +30,14 @@ kill-old-process:
     - replace-jar
   stage: deploy-backend
   script:
-    - ssh root@personal-organizer.petarvico.com "kill -9 \$(cat 'backendProcessId.txt')"
+    - ssh root@personal-organizer.petarvico.com "killall -9 java"
 
 run-new-backend-deployment:
   needs:
     - kill-old-process
   stage: deploy-backend
   script:    
-    - ssh root@personal-organizer.petarvico.com "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &; echo $! > backendProcessId.txt"
+    - ssh root@personal-organizer.petarvico.com "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &"
 
 
 
