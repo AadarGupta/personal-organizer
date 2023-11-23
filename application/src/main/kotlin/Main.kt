@@ -52,9 +52,7 @@ fun WelcomePage(
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileListContainer()
-            //ListFiles(fileLevel)
-
+            FileListContainer(currUser)
         }
     }
 }
@@ -106,7 +104,7 @@ fun App(
                     .width(400.dp)
                     .fillMaxHeight(1f)
             ) {
-                SidebarContainer()
+                SidebarContainer(currUser)
             }
         }
     }
