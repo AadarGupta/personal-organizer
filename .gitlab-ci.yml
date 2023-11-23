@@ -31,7 +31,7 @@ kill-old-process:
     - replace-jar
   stage: deploy-backend
   script:
-    - ssh root@personal-organizer.petarvico.com "kill -9 `cat backendProcessId.txt`"
+    - ssh root@personal-organizer.petarvico.com "ls && kill -9 `cat backendProcessId.txt`"
 
 run-new-backend-deployment:
   needs:
