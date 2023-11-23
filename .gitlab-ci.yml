@@ -4,7 +4,7 @@ before_script:
   - git config --global user.name "Petar Vico"
 
   ## ssh into backend server
-  - ssh -tT personal-organizer.petarvico.com
+  - ssh -tT -o StrictHostKeyChecking=no personal-organizer.petarvico.com
 
 
 stages:
