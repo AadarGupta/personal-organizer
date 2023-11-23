@@ -17,7 +17,7 @@ build-jar:
     - pull-latest
   stage: deploy-backend
   script:
-    - ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "cd personal-organizer && gradle buildFarJar && cp personal-organizer-ktor/build/libs/personal-organizer-ktor-all.jar ~/"
+    - ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "cd personal-organizer/personal-organizer-ktor/ && gradle buildFatJar"
 
 replace-jar:
   needs:
