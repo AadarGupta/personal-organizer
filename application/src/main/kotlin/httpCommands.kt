@@ -6,7 +6,7 @@ import java.net.http.HttpResponse
 
 val BACKEND_URL_REMOTE = "http://personal-organizer.petarvico.com:8080/"
 val BACKEND_URL_LOCAL = "http://0.0.0.0:8080/"
-val BACKEND_URL = BACKEND_URL_LOCAL
+val BACKEND_URL = BACKEND_URL_REMOTE
 
 class MyHttp {
 
