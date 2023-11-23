@@ -6,7 +6,7 @@ workflow:
 before_script:
   ## ssh into backend server
   - ssh -tT root@personal-organizer.petarvico.com
-  - cd ~/
+  - cd /root
 
   ## get latest from main
   - ls
