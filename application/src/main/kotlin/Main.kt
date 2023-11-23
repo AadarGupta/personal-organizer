@@ -5,10 +5,11 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
@@ -17,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +25,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import authentication.AuthenticationPage
 import files.FileListContainer
 import sidebar.SidebarContainer
 
@@ -71,7 +71,9 @@ fun WelcomePage() {
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    userAuthToken: MutableState<String>
+) {
     Row(
         modifier = Modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -128,7 +130,13 @@ fun main() = application {
             position = WindowPosition(50.dp, 50.dp)
         )
     ) {
-        App()
+        var userAuthToken = remember { mutableStateOf("") }
+
+        if (userAuthToken.value != "") {
+            App(userAuthToken)
+        } else {
+            AuthenticationPage(userAuthToken)
+        }
     }
 
 }

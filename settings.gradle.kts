@@ -13,3 +13,5 @@ pluginManagement {
 rootProject.name = "personal-organizer"
 
 include("application", "personal-organizer-ktor")
+
+
