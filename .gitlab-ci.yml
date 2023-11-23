@@ -1,10 +1,16 @@
-before_script:
-  ## Set git credentials
-  - git config --global user.email "pvico@uwaterloo.ca"
-  - git config --global user.name "Petar Vico"
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
 
+
+before_script:
   ## ssh into backend server
   - ssh -tT root@personal-organizer.petarvico.com
+
+  ## get latest from main
+  - cd personal-organizer
+  - git checkout main
+  - git pull
 
 
 stages:
@@ -15,12 +21,16 @@ stages:
 build-backend-job:
   stage: build-backend
   script:
-    - echo "Testing backend build job"
+    - gradle buildFarJar
+    - cp personal-organizer-ktor/build/libs/personal-organizer-ktor-all.jar ~/
 
 deploy-backend-job:
   stage: deploy-backend
   script:
-    - echo "Testing backend deployment job"
+    - cd ~/
+    - kill -9 `cat backendProcessId.txt`
+    - nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &
+    - echo $! > backendProcessId.txt
 
 
 
