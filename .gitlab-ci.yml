@@ -10,7 +10,7 @@ stages:
 pull-latest:
   stage: deploy-backend
   script:
-    - ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "pwd && ls && cd personal-organizer && git checkout main && git pull"
+    - ssh root@personal-organizer.petarvico.com "pwd && ls && cd personal-organizer && git checkout main && git pull"
 
 build-jar:
   needs:
