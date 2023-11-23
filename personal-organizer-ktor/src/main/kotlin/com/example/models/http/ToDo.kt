@@ -3,7 +3,7 @@ package com.example.models.http
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ToDoItem(val id: Int, val itemName: String, val isChecked: Boolean)
+data class ToDoItem(val id: Int, var owner: String, val itemName: String, val isChecked: Boolean)
 
 @Serializable
 data class ToDoCreationRequest(val name: String, val isChecked: Boolean)

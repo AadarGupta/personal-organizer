@@ -1,6 +1,7 @@
 package sidebar.todos;
 
 import MyHttp
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -10,12 +11,13 @@ import kotlinx.serialization.json.JsonPrimitive
 @Serializable
 data class ToDoList(val items: List<ToDoModel>)
 
-class ToDoViewModel() {
+class ToDoViewModel(currUser: MutableState<String>) {
+    var currUser = currUser
     private var toDoList = mutableStateListOf<ToDoModel>()
 
     init {
         val http = MyHttp()
-        val getAllToDoResponse : String = http.get("todos")
+        val getAllToDoResponse : String = http.get("todos?user=${currUser.value}")
         println(getAllToDoResponse)
         val obj = Json.decodeFromString<ToDoList>(getAllToDoResponse)
 
@@ -40,7 +42,7 @@ class ToDoViewModel() {
                 "isChecked" to JsonPrimitive(false)
             )
         )
-        val createToDoResponse = http.post("todo", body)
+        val createToDoResponse = http.post("todo?user=${currUser.value}", body)
         val newItem = Json.decodeFromString<ToDoModel>(createToDoResponse.body())
         toDoList.add(newItem)
 
@@ -49,7 +51,7 @@ class ToDoViewModel() {
 
     fun changeToDoName(targetItem: ToDoModel, newName: String) {
         val idx = toDoList.indexOf(targetItem)
-        toDoList[idx] = ToDoModel(toDoList[idx].id, newName, toDoList[idx].isChecked)
+        toDoList[idx] = ToDoModel(toDoList[idx].id, toDoList[idx].owner, newName, toDoList[idx].isChecked)
 
         val http = MyHttp()
         val body = JsonObject(
@@ -58,12 +60,12 @@ class ToDoViewModel() {
                 "name" to JsonPrimitive(newName)
             )
         )
-        http.put("todo/name", body)
+        http.put("todo/name?user=${currUser.value}", body)
     }
 
     fun changeToDoCheckStatus(targetItem: ToDoModel) {
         val idx = toDoList.indexOf(targetItem)
-        toDoList[idx] = ToDoModel(toDoList[idx].id, toDoList[idx].itemName, !toDoList[idx].isChecked)
+        toDoList[idx] = ToDoModel(toDoList[idx].id, toDoList[idx].owner, toDoList[idx].itemName, !toDoList[idx].isChecked)
 
         val http = MyHttp()
         val body = JsonObject(
@@ -72,12 +74,18 @@ class ToDoViewModel() {
                 "isChecked" to JsonPrimitive((!targetItem.isChecked).toString())
             )
         )
-        http.put("todo/checked", body)
+        http.put("todo/checked?user=${currUser.value}", body)
     }
 
     fun removeToDoItem(targetItem: ToDoModel) {
         val http = MyHttp()
-        http.delete("todo", mapOf("id" to targetItem.id.toString()))
+        http.delete(
+            "todo",
+            mapOf(
+                "id" to targetItem.id.toString(),
+                "user" to currUser.value
+            )
+        )
         toDoList.remove(targetItem)
     }
 
