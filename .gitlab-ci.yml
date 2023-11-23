@@ -2,7 +2,6 @@ workflow:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 
-include: 'https://gitlab.com/gitlab-cd/ssh-template/raw/master/ssh.yml'
 
 stages:
   - deploy-backend
