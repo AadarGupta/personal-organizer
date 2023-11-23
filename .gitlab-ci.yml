@@ -27,13 +27,13 @@ replace-jar:
 
 kill-old-process:
   needs:
-    - build-jar
+    - replace-jar
   stage: deploy-backend
     - ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "kill -9 `cat backendProcessId.txt`"
 
 run-new-backend-deployment:
   needs:
-    - build-jar
+    - kill-old-process
   stage: deploy-backend    
     - ssh_run "root" "personal-organizer.petarvico.com" "$SSH_PRIVATE_KEY" "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 & && echo $! > backendProcessId.txt"
 
