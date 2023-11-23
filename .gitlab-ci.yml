@@ -37,7 +37,7 @@ run-new-backend-deployment:
     - kill-old-process
   stage: deploy-backend
   script:    
-    - ssh root@personal-organizer.petarvico.com "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 & && echo $! > backendProcessId.txt"
+    - ssh root@personal-organizer.petarvico.com "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &; echo $! > backendProcessId.txt"
 
 
 
