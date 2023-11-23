@@ -1,5 +1,6 @@
 package authentication
 
+import MyHttp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -21,6 +24,7 @@ fun SignupDialog(
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var usernameInUse by remember { mutableStateOf(false) }
 
     AlertDialog(
         title = {
@@ -36,8 +40,20 @@ fun SignupDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    // check if credentials are valid
-                    mode.value = "closed"
+                    val http = MyHttp()
+                    val body = JsonObject(
+                        mapOf(
+                            "username" to JsonPrimitive(username),
+                            "password" to JsonPrimitive(password)
+                        )
+                    )
+
+                    val createUserResponse = http.post("user/signup", body)
+                    if (createUserResponse.statusCode() == 200) {
+                        mode.value = "closed"
+                    } else {
+                        usernameInUse = true
+                    }
                 }
             ) {
                 Text("Register")
@@ -84,6 +100,14 @@ fun SignupDialog(
                         disabledIndicatorColor = Color.Transparent
                     )
                 )
+
+                if (usernameInUse) {
+                    Text(
+                        text = "Username already in use",
+                        color = Color.Red,
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
             }
 
         },

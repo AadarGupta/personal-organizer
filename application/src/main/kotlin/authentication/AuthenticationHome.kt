@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun AuthenticationPage(
-    userAuthToken: MutableState<String>
+    currUser: MutableState<String>
 ) {
 
     var loginPopup = remember { mutableStateOf("closed") }
@@ -25,7 +25,7 @@ fun AuthenticationPage(
 
 
     if (loginPopup.value == "open") {
-        LoginDialog(mode = loginPopup, token = userAuthToken)
+        LoginDialog(mode = loginPopup, currUser = currUser)
     }
     if (signupPopup.value == "open") {
         SignupDialog(mode = signupPopup)

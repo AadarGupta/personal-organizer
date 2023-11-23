@@ -130,12 +130,12 @@ fun main() = application {
             position = WindowPosition(50.dp, 50.dp)
         )
     ) {
-        var userAuthToken = remember { mutableStateOf("") }
+        var currUser = remember { mutableStateOf("") }
 
-        if (userAuthToken.value != "") {
-            App(userAuthToken)
+        if (currUser.value != "") {
+            App(currUser)
         } else {
-            AuthenticationPage(userAuthToken)
+            AuthenticationPage(currUser)
         }
     }
 

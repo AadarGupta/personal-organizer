@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class UserCreationRequest(
+data class UserSignupRequest(
     var username: String,
     var password: String
 )
@@ -13,12 +13,6 @@ data class UserCreationRequest(
 data class UserLoginRequest(
     var username: String,
     var password: String
-)
-
-
-@Serializable
-data class UserLoginResponse(
-    var userAuthToken: String
 )
 
 

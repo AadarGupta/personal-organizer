@@ -41,7 +41,7 @@ class ToDoViewModel() {
             )
         )
         val createToDoResponse = http.post("todo", body)
-        val newItem = Json.decodeFromString<ToDoModel>(createToDoResponse)
+        val newItem = Json.decodeFromString<ToDoModel>(createToDoResponse.body())
         toDoList.add(newItem)
 
         return toDoList.size - 1

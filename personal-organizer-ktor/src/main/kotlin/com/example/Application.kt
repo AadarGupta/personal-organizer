@@ -3,6 +3,8 @@ package com.example
 import com.example.models.db.FileDbObject
 import com.example.models.db.ReminderDbObject
 import com.example.models.db.ToDoDbObject
+import com.example.models.db.UserDbObject
+import com.example.plugins.configureAuthRoutes
 import com.example.plugins.configureFileRoutes
 import com.example.plugins.configureReminderRoutes
 import com.example.plugins.configureToDoRoutes
@@ -23,6 +25,7 @@ fun main() {
         SchemaUtils.create (ToDoDbObject)
         SchemaUtils.create (ReminderDbObject)
         SchemaUtils.create (FileDbObject)
+        SchemaUtils.create (UserDbObject)
     }
 
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -36,4 +39,5 @@ fun Application.module() {
     configureToDoRoutes()
     configureReminderRoutes()
     configureFileRoutes()
+    configureAuthRoutes()
 }

@@ -51,7 +51,7 @@ class FileViewModel {
         )
 
         val createFileResponse = http.post("file", body)
-        val newItem = Json.decodeFromString<FileModel>(createFileResponse)
+        val newItem = Json.decodeFromString<FileModel>(createFileResponse.body())
         fileList.add(newItem)
 
         return fileList.size - 1

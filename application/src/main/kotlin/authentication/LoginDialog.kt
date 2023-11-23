@@ -1,5 +1,6 @@
 package authentication
 
+import MyHttp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,16 +13,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LoginDialog(
     mode: MutableState<String>,
-    token: MutableState<String>
+    currUser: MutableState<String>
 ) {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var invalidCredentials by remember { mutableStateOf(false) }
 
     AlertDialog(
         title = {
@@ -37,9 +41,21 @@ fun LoginDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    // check if credentials are valid
-                    mode.value = "closed"
-                    token.value = "asdf"
+                    val http = MyHttp()
+                    val body = JsonObject(
+                        mapOf(
+                            "username" to JsonPrimitive(username),
+                            "password" to JsonPrimitive(password)
+                        )
+                    )
+
+                    val createUserResponse = http.post("user/login", body)
+                    if (createUserResponse.statusCode() == 200) {
+                        currUser.value = username
+                        mode.value = "closed"
+                    } else {
+                        invalidCredentials = true
+                    }
                 }
             ) {
                 Text("Login")
@@ -86,8 +102,15 @@ fun LoginDialog(
                         disabledIndicatorColor = Color.Transparent
                     )
                 )
-            }
 
+                if (invalidCredentials) {
+                    Text(
+                        text = "Invalid username/password",
+                        color = Color.Red,
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
+                }
+            }
         },
     )
 }

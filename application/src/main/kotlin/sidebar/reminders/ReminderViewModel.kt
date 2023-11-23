@@ -68,7 +68,7 @@ class ReminderViewModel() {
         )
 
         val createReminderResponse = http.post("reminder", body)
-        val newItem = Json.decodeFromString<ReminderModel>(createReminderResponse)
+        val newItem = Json.decodeFromString<ReminderModel>(createReminderResponse.body())
         reminderList.add(newItem)
 
         return reminderList.size - 1

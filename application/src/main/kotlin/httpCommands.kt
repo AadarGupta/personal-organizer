@@ -27,7 +27,7 @@ class MyHttp {
         return response.body()
     }
 
-    fun post(endpoint: String, jsonMap: JsonObject) : String {
+    fun post(endpoint: String, jsonMap: JsonObject) : HttpResponse<String> {
         val client = HttpClient.newBuilder().build();
         val request = HttpRequest.newBuilder()
             .uri(URI.create(BACKEND_URL + endpoint))
@@ -36,7 +36,7 @@ class MyHttp {
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString());
         printRequestAndResponse(request, response, jsonMap.toString())
-        return response.body()
+        return response
     }
 
     fun put(endpoint: String, jsonMap: JsonObject) : String {
