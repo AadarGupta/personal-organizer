@@ -1,6 +1,3 @@
-application/personal-organizer.db
-personal-organizer-ktor/personal-organizer.db
-
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
