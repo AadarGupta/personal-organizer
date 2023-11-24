@@ -73,42 +73,47 @@ fun LoginDialog(
                 modifier = Modifier.padding(10.dp),
             ) {
 
-                TextField(
-                    value = username, onValueChange = { newText ->
-                        username = newText
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
+                Column(modifier = Modifier.padding(5.dp)) {
+                    Text("Username")
+                    TextField(
+                        value = username, onValueChange = { newText ->
+                            username = newText
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
                     )
-                )
+                }
 
-                TextField(
-                    value = password, onValueChange = { newText ->
-                        password = newText
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
+                Column(modifier = Modifier.padding(5.dp)) {
+                    Text("Password")
+                    TextField(
+                        value = password, onValueChange = { newText ->
+                            password = newText
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
                     )
-                )
-
-                if (invalidCredentials) {
-                    Text(
-                        text = "Invalid username/password",
-                        color = Color.Red,
-                        modifier = Modifier.padding(top = 10.dp)
-                    )
+                    if (invalidCredentials) {
+                        Text(
+                            text = "Invalid credentials.",
+                            color = Color.Red,
+                            modifier = Modifier.padding(top = 10.dp)
+                        )
+                    }
                 }
             }
         },

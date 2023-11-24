@@ -8,7 +8,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import components.LogoHeader
 
 @Composable
@@ -28,14 +27,13 @@ fun AuthenticationPage(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+        modifier = Modifier.fillMaxSize()
     ) {
         LogoHeader()
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(1f)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
             Button(
                 onClick = {
@@ -47,9 +45,9 @@ fun AuthenticationPage(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(1f)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
             Button(
                 onClick = {
@@ -61,9 +59,9 @@ fun AuthenticationPage(
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(1f)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
         ) {
             Button(
                 onClick = {

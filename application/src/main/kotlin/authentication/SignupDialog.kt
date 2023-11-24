@@ -29,7 +29,7 @@ fun SignupDialog(
     AlertDialog(
         title = {
             Text(
-                text = "Login",
+                text = "Signup",
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp
@@ -56,7 +56,7 @@ fun SignupDialog(
                     }
                 }
             ) {
-                Text("Register")
+                Text("Signup")
             }
         },
         dismissButton = {
@@ -71,42 +71,47 @@ fun SignupDialog(
                 modifier = Modifier.padding(10.dp),
             ) {
 
-                TextField(
-                    value = username, onValueChange = { newText ->
-                        username = newText
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
+                Column(modifier = Modifier.padding(5.dp)) {
+                    Text("Username")
+                    TextField(
+                        value = username, onValueChange = { newText ->
+                            username = newText
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
                     )
-                )
+                }
 
-                TextField(
-                    value = password, onValueChange = { newText ->
-                        password = newText
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
+                Column(modifier = Modifier.padding(5.dp)) {
+                    Text("Password")
+                    TextField(
+                        value = password, onValueChange = { newText ->
+                            password = newText
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 20.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
                     )
-                )
-
-                if (usernameInUse) {
-                    Text(
-                        text = "Username already in use",
-                        color = Color.Red,
-                        modifier = Modifier.padding(top = 10.dp)
-                    )
+                    if (usernameInUse) {
+                        Text(
+                            text = "Username already in use",
+                            color = Color.Red,
+                            modifier = Modifier.padding(top = 10.dp)
+                        )
+                    }
                 }
             }
 
