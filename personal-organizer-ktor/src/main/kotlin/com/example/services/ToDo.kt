@@ -9,23 +9,42 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
-fun createToDo(itemOwner: String, name: String, checkedStatus: Boolean) : ToDoDbModel {
-    var targetToDoItem : ToDoDbModel = ToDoDbModel(0, "", "", true);
+fun createToDo(
+    itemOwner: String,
+    name: String,
+    checkedStatus: Boolean
+) : ToDoDbModel {
+    var targetToDoItem : ToDoDbModel =
+        ToDoDbModel(
+            0,
+            "",
+            "",
+            true
+        );
     transaction {
         val newToDo = ToDoDbObject.insert {
             it[owner] = itemOwner
             it[itemName] = name
             it[isChecked] = checkedStatus
         } get ToDoDbObject.id
-        println(newToDo.value)
-        targetToDoItem = ToDoDbModel(newToDo.value, itemOwner, name, checkedStatus)
-        println(newToDo)
+
+        targetToDoItem =
+            ToDoDbModel(
+                newToDo.value,
+                itemOwner,
+                name,
+                checkedStatus
+            )
 
     }
     return targetToDoItem
 }
 
-fun editToDoName(itemOwner: String, id: Int, name: String) {
+fun editToDoName(
+    itemOwner: String,
+    id: Int,
+    name: String
+) {
     transaction {
         ToDoDbObject.update({ToDoDbObject.id.eq(id) and ToDoDbObject.owner.eq(itemOwner)}) {
             it[itemName] = name
@@ -33,7 +52,11 @@ fun editToDoName(itemOwner: String, id: Int, name: String) {
     }
 }
 
-fun editToDoChecked(itemOwner: String, id: Int, checkedStatus: Boolean) {
+fun editToDoChecked(
+    itemOwner: String,
+    id: Int,
+    checkedStatus: Boolean
+) {
     transaction {
         ToDoDbObject.update({ToDoDbObject.id.eq(id) and ToDoDbObject.owner.eq(itemOwner)}) {
             it[isChecked] = checkedStatus

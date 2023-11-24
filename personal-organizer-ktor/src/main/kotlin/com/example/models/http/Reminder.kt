@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ReminderItem(
     val id: Int,
+    var owner: String,
     val itemName: String,
     val year: String,
     val month: String,

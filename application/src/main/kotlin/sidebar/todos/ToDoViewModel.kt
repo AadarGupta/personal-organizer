@@ -18,7 +18,6 @@ class ToDoViewModel(currUser: MutableState<String>) {
     init {
         val http = MyHttp()
         val getAllToDoResponse : String = http.get("todos?user=${currUser.value}")
-        println(getAllToDoResponse)
         val obj = Json.decodeFromString<ToDoList>(getAllToDoResponse)
 
         for (todo in obj.items) {
@@ -51,7 +50,13 @@ class ToDoViewModel(currUser: MutableState<String>) {
 
     fun changeToDoName(targetItem: ToDoModel, newName: String) {
         val idx = toDoList.indexOf(targetItem)
-        toDoList[idx] = ToDoModel(toDoList[idx].id, toDoList[idx].owner, newName, toDoList[idx].isChecked)
+        toDoList[idx] =
+            ToDoModel(
+                toDoList[idx].id,
+                toDoList[idx].owner,
+                newName,
+                toDoList[idx].isChecked
+            )
 
         val http = MyHttp()
         val body = JsonObject(

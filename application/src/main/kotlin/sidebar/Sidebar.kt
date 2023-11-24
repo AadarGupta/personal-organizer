@@ -101,7 +101,7 @@ fun SidebarContainer(currUser: MutableState<String>) {
                 .fillMaxWidth(1f)
                 .padding(5.dp)
             ) {
-                ReminderContainer()
+                ReminderContainer(currUser)
             }
         }
     }

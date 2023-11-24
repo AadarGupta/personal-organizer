@@ -24,7 +24,7 @@ fun Application.configureToDoRoutes() {
                         toDoToBeCreated.isChecked
                     )
                 call.respond(HttpStatusCode.OK, createdToDo)
-                call.application.environment.log.info("ID: ${createdToDo.id}, User: ${createdToDo.owner} - ToDo created.")
+                call.application.environment.log.info("ID: ${createdToDo.id}, User: ${toCreateOwner} - ToDo created.")
             } else {
                 call.respond(HttpStatusCode.Unauthorized, "User not provided.")
             }

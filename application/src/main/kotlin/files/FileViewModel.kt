@@ -19,7 +19,6 @@ class FileViewModel(currUser: MutableState<String>) {
     init {
         val http = MyHttp()
         val getAllFilesResponse : String = http.get("files?user=${currUser.value}")
-        println(getAllFilesResponse)
         val obj = Json.decodeFromString<FileList>(getAllFilesResponse)
 
         for (file in obj.items) {
