@@ -13,7 +13,7 @@ class MyHttp {
     fun printRequestAndResponse(request: HttpRequest, response: HttpResponse<String>, body: String = "") {
         println("Request: ${request}\n${body}")
         println("Response: ${response.statusCode()}\n" +
-                "BODY: ${response.body()}")
+                "BODY: ${response.body()}\n\n\n")
     }
 
     fun get(endpoint: String) : String {
@@ -27,7 +27,7 @@ class MyHttp {
         return response.body()
     }
 
-    fun post(endpoint: String, jsonMap: JsonObject) : String {
+    fun post(endpoint: String, jsonMap: JsonObject) : HttpResponse<String> {
         val client = HttpClient.newBuilder().build();
         val request = HttpRequest.newBuilder()
             .uri(URI.create(BACKEND_URL + endpoint))
@@ -36,7 +36,7 @@ class MyHttp {
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString());
         printRequestAndResponse(request, response, jsonMap.toString())
-        return response.body()
+        return response
     }
 
     fun put(endpoint: String, jsonMap: JsonObject) : String {

@@ -20,7 +20,7 @@ fun ToDoDialog(
     toDoItemIdx: Int,
     toDoVM: ToDoViewModel,) {
 
-    var toDoItem = ToDoModel(-1  , "", false)
+    var toDoItem = ToDoModel(-1  , "", "", false)
     if (mode.value == "edit") {
         toDoItem = toDoVM.getItemByIdx(toDoItemIdx)
     }

@@ -86,8 +86,6 @@ fun PreviewPage(
                     lines.forEach {
                         var string = it.trim()
 
-                        println(it)
-
                         // Create headings
                         if(string.length > 6 && string.substring(0,6) == "######"){
                             H6(string.substring(6).trim())

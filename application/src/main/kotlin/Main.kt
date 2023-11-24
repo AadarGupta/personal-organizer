@@ -2,13 +2,13 @@
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
@@ -16,53 +16,43 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import authentication.AuthenticationPage
+import components.LogoHeader
 import files.FileListContainer
 import sidebar.SidebarContainer
 
 // =================== HOMEPAGE SECTIONS ===================
 
 @Composable
-fun WelcomePage() {
+fun WelcomePage(
+    currUser: MutableState<String>
+) {
 
     Column (
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(1f)
-        ) {
-            Image(
-                painter = painterResource("mypoLogo.png"),
-                contentDescription = "app logo",
-                modifier = Modifier.padding(4.dp)
-            )
-            Text(
-                text = "My Personal Organizer",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Black,
-                modifier = Modifier.padding(start = 100.dp, top = 30.dp),
-                color = Color.DarkGray,
-            )
+        LogoHeader()
 
+        Button(
+            onClick = {
+                // check if credentials are valid
+                currUser.value = ""
+            }
+        ) {
+            Text("Logout")
         }
+
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            FileListContainer()
-            //ListFiles(fileLevel)
-
+            FileListContainer(currUser)
         }
     }
 }
@@ -71,7 +61,9 @@ fun WelcomePage() {
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    currUser: MutableState<String>
+) {
     Row(
         modifier = Modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -85,7 +77,7 @@ fun App() {
                 .fillMaxHeight(1f)
                 .padding(horizontal = 30.dp)
         ) {
-            WelcomePage()
+            WelcomePage(currUser)
         }
         var sidebarVisible by remember { mutableStateOf(true) }
         Button(onClick = {sidebarVisible = !sidebarVisible},
@@ -112,7 +104,7 @@ fun App() {
                     .width(400.dp)
                     .fillMaxHeight(1f)
             ) {
-                SidebarContainer()
+                SidebarContainer(currUser)
             }
         }
     }
@@ -128,7 +120,13 @@ fun main() = application {
             position = WindowPosition(50.dp, 50.dp)
         )
     ) {
-        App()
+        var currUser = remember { mutableStateOf("") }
+
+        if (currUser.value != "") {
+            App(currUser)
+        } else {
+            AuthenticationPage(currUser)
+        }
     }
 
 }

@@ -12,10 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,9 +27,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ReminderContainer() {
+fun ReminderContainer(currUser: MutableState<String>) {
 
-    var ReminderVM = ReminderViewModel()
+    var ReminderVM = ReminderViewModel(currUser)
     var selectedItemIdx = remember { mutableStateOf(-1) }
     val dialogMode = remember { mutableStateOf("closed") }
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd h:m a")
@@ -58,8 +55,6 @@ fun ReminderContainer() {
     for ((index, it) in ReminderVM.getReminderList().withIndex()) {
         currTime = LocalDateTime.now().format(formatter)
         val dTime = it.year + "-" + it.month + "-" + it.day + " " + it.time
-        println("curr "+ currTime)
-        println("d "+ dTime)
         if (currTime == dTime) {
             if(alertMode.value == "closed"){
                 alertMode.value = index.toString()

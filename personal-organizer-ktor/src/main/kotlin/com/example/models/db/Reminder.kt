@@ -5,6 +5,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 object ReminderDbObject: IntIdTable() {
     var itemName = varchar("itemName", 50)
+    var owner = varchar("owner", 50)
     var year = varchar("year", 50)
     var month = varchar("month", 50)
     var day = varchar("day", 50)
@@ -16,6 +17,7 @@ object ReminderDbObject: IntIdTable() {
 @Serializable
 data class ReminderDbModel(
     val id: Int,
+    var owner: String,
     val itemName: String,
     val year: String,
     val month: String,
