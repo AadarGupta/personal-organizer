@@ -10,17 +10,19 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditPage(
     fileItemIdx: Int,
@@ -32,7 +34,18 @@ fun EditPage(
 
 
         Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .onPreviewKeyEvent { keyEvent ->
+                    if(keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.S && (keyEvent.isCtrlPressed || keyEvent.isMetaPressed)) {
+                        fileVM.editFileContent(fileItem, query.value)
+                        dialogMode.value = "preview"
+                        true
+                    } else {
+                        false
+                    }
+                },
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             Row(
