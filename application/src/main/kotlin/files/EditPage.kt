@@ -20,7 +20,16 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.ktor.util.debug.*
 import java.util.*
+
+fun checkColour(stack: ArrayDeque<String>): Long {
+    return if (stack.isNotEmpty()) {
+        0xFF67c2b3
+    } else {
+        0x80D3D3D3
+    }
+}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -98,13 +107,13 @@ fun EditPage(
                         .padding(horizontal = 20.dp)) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack, contentDescription = "Undo",
-                            tint = Color(0xFF67c2b3),
+                            tint = Color(checkColour(undoStack)),
                             modifier = Modifier.height(40.dp)
                         )
                         Text(
                             text = "Undo",
                             fontSize = 10.sp,
-                            color = Color(0xFF67c2b3),
+                            color = Color(checkColour(undoStack)),
                         )
                     }
 
@@ -113,13 +122,13 @@ fun EditPage(
                         .padding(horizontal = 20.dp)) {
                         Icon(
                             imageVector = Icons.Filled.ArrowForward, contentDescription = "Redo",
-                            tint = Color(0xFF67c2b3),
+                            tint = Color(checkColour(redoStack)),
                             modifier = Modifier.height(40.dp)
                         )
                         Text(
                             text = "Redo",
                             fontSize = 10.sp,
-                            color = Color(0xFF67c2b3),
+                            color = Color(checkColour(redoStack)),
                         )
                     }
 
@@ -142,6 +151,7 @@ fun EditPage(
                     }
                 }
             }
+
 
 
             Row(
