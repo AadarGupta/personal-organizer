@@ -47,7 +47,7 @@ fun EditPage(
 
     fun updateStacks(newText: String, oldText: String) {
         // Check if a word boundary (space or punctuation) was added
-        if ((newText.length > oldText.length) && newText.last().isWhitespace() || newText.last() in listOf('.', ',', '?', '!') && !undoStack.contains(oldText)) {
+        if (newText.last().isWhitespace() || newText.last() in listOf('.', ',', '?', '!') && !undoStack.contains(oldText)) {
             undoStack.addFirst(oldText)
         }
     }
@@ -103,7 +103,9 @@ fun EditPage(
 
                 Row {
                     Column(modifier = Modifier
-                        .clickable { undo() }
+                        .clickable(enabled = undoStack.isNotEmpty()) {
+                            undo()
+                        }
                         .padding(horizontal = 20.dp)) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack, contentDescription = "Undo",
@@ -118,7 +120,9 @@ fun EditPage(
                     }
 
                     Column(modifier = Modifier
-                        .clickable { redo() }
+                        .clickable(enabled = redoStack.isNotEmpty()) {
+                            redo()
+                        }
                         .padding(horizontal = 20.dp)) {
                         Icon(
                             imageVector = Icons.Filled.ArrowForward, contentDescription = "Redo",
