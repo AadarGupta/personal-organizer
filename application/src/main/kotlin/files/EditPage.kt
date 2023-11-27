@@ -10,8 +10,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -80,72 +80,69 @@ fun EditPage(
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .fillMaxWidth(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 15.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = fileItem.fileName,
                     fontSize = 40.sp,
-                    modifier = Modifier.padding(horizontal = 15.dp).padding(top = 10.dp, bottom = 0.dp),
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                 )
 
-                Column( modifier = Modifier
-                    .clickable {
-                        undo()
+                Row {
+                    Column(modifier = Modifier
+                        .clickable { undo() }
+                        .padding(horizontal = 20.dp)) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack, contentDescription = "Undo",
+                            tint = Color(0xFF67c2b3),
+                            modifier = Modifier.height(40.dp)
+                        )
+                        Text(
+                            text = "Undo",
+                            fontSize = 10.sp,
+                            color = Color(0xFF67c2b3),
+                        )
                     }
-                    .padding(horizontal = 20.dp)) {
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowLeft, contentDescription = "Undo",
-                        tint = Color(0xFF67c2b3),
-                        modifier = Modifier.height(40.dp)
-                    )
-                    Text (
-                        text = "Undo",
-                        fontSize = 10.sp,
-                        color = Color(0xFF67c2b3),
-                    )
-                }
 
-                Column( modifier = Modifier
-                    .clickable {
-                        redo()
+                    Column(modifier = Modifier
+                        .clickable { redo() }
+                        .padding(horizontal = 20.dp)) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowForward, contentDescription = "Redo",
+                            tint = Color(0xFF67c2b3),
+                            modifier = Modifier.height(40.dp)
+                        )
+                        Text(
+                            text = "Redo",
+                            fontSize = 10.sp,
+                            color = Color(0xFF67c2b3),
+                        )
                     }
-                    .padding(horizontal = 20.dp)) {
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = "Redo",
-                        tint = Color(0xFF67c2b3),
-                        modifier = Modifier.height(40.dp)
-                    )
-                    Text (
-                        text = "Redo",
-                        fontSize = 10.sp,
-                        color = Color(0xFF67c2b3),
-                    )
-                }
 
-                Column( modifier = Modifier
-                    .clickable {
-                        fileVM.editFileContent(fileItem, query.value)
-                        dialogMode.value = "preview"
+                    Column(modifier = Modifier
+                        .clickable {
+                            fileVM.editFileContent(fileItem, query.value)
+                            dialogMode.value = "preview"
+                        }
+                        .padding(horizontal = 20.dp)) {
+                        Icon(
+                            imageVector = Icons.Filled.Done, contentDescription = "Preview",
+                            tint = Color(0xFF67c2b3),
+                            modifier = Modifier.height(40.dp)
+                        )
+                        Text(
+                            text = "Preview",
+                            fontSize = 10.sp,
+                            color = Color(0xFF67c2b3),
+                        )
                     }
-                    .padding(horizontal = 20.dp)) {
-                    Icon(
-                        imageVector = Icons.Filled.Done, contentDescription = "Preview",
-                        tint = Color(0xFF67c2b3),
-                        modifier = Modifier.height(40.dp)
-                    )
-                    Text (
-                        text = "Preview",
-                        fontSize = 10.sp,
-                        color = Color(0xFF67c2b3),
-                    )
                 }
-
-
             }
+
 
             Row(
                 horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 100.dp)
