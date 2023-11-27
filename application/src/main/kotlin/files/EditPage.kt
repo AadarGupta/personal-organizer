@@ -10,10 +10,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,6 +20,7 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.*
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -31,6 +31,31 @@ fun EditPage(
 ) {
     var fileItem = fileVM.getFileByIdx(fileItemIdx)
     var query = remember { mutableStateOf(fileItem.fileContent) }
+
+    var lastState = remember { fileItem.fileContent }
+    val undoStack = remember { ArrayDeque<String>() }
+    val redoStack = remember { ArrayDeque<String>() }
+
+    fun updateStacks(newText: String, oldText: String) {
+        // Check if a word boundary (space or punctuation) was added
+        if ((newText.length > oldText.length) && newText.last().isWhitespace() || newText.last() in listOf('.', ',', '?', '!') && !undoStack.contains(oldText)) {
+            undoStack.addFirst(oldText)
+        }
+    }
+
+    fun undo() {
+        if (undoStack.isNotEmpty()) {
+            redoStack.addFirst(query.value)
+            query.value = undoStack.removeFirst()
+        }
+    }
+
+    fun redo() {
+        if (redoStack.isNotEmpty()) {
+            undoStack.addFirst(query.value)
+            query.value = redoStack.removeFirst()
+        }
+    }
 
 
         Column(
@@ -60,6 +85,40 @@ fun EditPage(
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                 )
+
+                Column( modifier = Modifier
+                    .clickable {
+                        undo()
+                    }
+                    .padding(horizontal = 20.dp)) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowLeft, contentDescription = "Undo",
+                        tint = Color(0xFF67c2b3),
+                        modifier = Modifier.height(40.dp)
+                    )
+                    Text (
+                        text = "Undo",
+                        fontSize = 10.sp,
+                        color = Color(0xFF67c2b3),
+                    )
+                }
+
+                Column( modifier = Modifier
+                    .clickable {
+                        redo()
+                    }
+                    .padding(horizontal = 20.dp)) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = "Redo",
+                        tint = Color(0xFF67c2b3),
+                        modifier = Modifier.height(40.dp)
+                    )
+                    Text (
+                        text = "Redo",
+                        fontSize = 10.sp,
+                        color = Color(0xFF67c2b3),
+                    )
+                }
 
                 Column( modifier = Modifier
                     .clickable {
@@ -95,7 +154,10 @@ fun EditPage(
                 Column(modifier = Modifier.fillMaxSize()) {
                     BasicTextField(
                         value = query.value,
-                        onValueChange = { query.value = it },
+                        onValueChange = {
+                            val oldValue = query.value
+                            query.value = it
+                            updateStacks(it, oldValue) },
                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 0.dp),
                     )
                 }
