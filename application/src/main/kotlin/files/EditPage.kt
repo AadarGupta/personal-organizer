@@ -67,6 +67,12 @@ fun EditPage(
                         fileVM.editFileContent(fileItem, query.value)
                         dialogMode.value = "preview"
                         true
+                    } else if(keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.Z && keyEvent.isShiftPressed  && (keyEvent.isCtrlPressed || keyEvent.isMetaPressed)) {
+                        redo()
+                        true
+                    } else if(keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.Z && (keyEvent.isCtrlPressed || keyEvent.isMetaPressed)) {
+                        undo()
+                        true
                     } else {
                         false
                     }
