@@ -17,11 +17,11 @@ run-tests:
   needs:
     - pull-latest
   stage: test
-  script: ssh root@personal-organizer.petarvico.com "gradle test"
+  script: ssh root@personal-organizer.petarvico.com "cd personal-organizer && gradle test"
 
 build-jar:
   needs:
-    - pull-latest
+    - run-tests
   stage: deploy-backend
   script:
     - ssh root@personal-organizer.petarvico.com "cd personal-organizer/personal-organizer-ktor/ && gradle buildFatJar"
