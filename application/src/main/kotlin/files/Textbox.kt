@@ -1,18 +1,26 @@
 package files
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
+import java.awt.Desktop
+import java.net.URI
+import java.net.URL
+import javax.imageio.ImageIO
 
 
 @Composable
@@ -74,7 +82,7 @@ fun H5(string: String) {
 fun H6(string: String) {
     Text(
         text = string,
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 3.dp),
         color = Color.Black,
         fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
@@ -82,10 +90,10 @@ fun H6(string: String) {
 }
 
 @Composable
-fun PointForm(string: String, spacing: String) {
+fun PointForm(string: String) {
     Text(
-        text = "    $spacing $string",
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+        text = "• $string",
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 2.dp),
         color = Color.Black,
         fontSize = 16.sp,
     )
@@ -95,12 +103,18 @@ fun PointForm(string: String, spacing: String) {
 fun CodeLine(string: String) {
     Text(
         text = string,
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
-        color = Color.Black,
-        fontSize = 16.sp,
-        fontFamily = FontFamily.Serif,
+        style = TextStyle(
+            fontSize = 16.sp,
+            fontFamily = FontFamily.Monospace
+        ),
+        modifier = Modifier
+            .padding(horizontal = 24.dp, vertical = 5.dp) // Padding applied first
+            .background(Color.DarkGray)
+            .padding(horizontal = 4.dp, vertical = 2.dp),
+        color = Color.Yellow
     )
 }
+
 
 @Composable
 fun TextInline(string: String) {
@@ -138,7 +152,48 @@ fun TextInline(string: String) {
 
             }
         },
-        modifier = Modifier.padding(horizontal = 15.dp, vertical = 3.dp)
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
+    )
+}
+
+@Composable
+fun ClickableURL(url: String) {
+    var link = url
+    if (url.substring(0, 5) != "https") {
+        link = "https://${url}"
+    }
+    val annotatedText = buildAnnotatedString {
+        pushStringAnnotation(tag = "URL", annotation = link)
+        withStyle(style = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
+            append(link)
+        }
+        pop()
+    }
+
+    fun openLink(url: String) {
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().browse(URI(url))
+        }
+    }
+
+    ClickableText(
+        text = annotatedText,
+        onClick = { offset ->
+            annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                .firstOrNull()?.let { annotation ->
+                    openLink(annotation.item)
+                }
+        },
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+    )
+}
+
+@Composable
+fun ShowImage(url: String) {
+    Image(
+        bitmap = ImageIO.read(URL(url)).toComposeImageBitmap(),
+        contentDescription = null,
+        modifier = Modifier.height(50.dp).padding(horizontal = 15.dp, vertical = 2.dp)
     )
 }
 

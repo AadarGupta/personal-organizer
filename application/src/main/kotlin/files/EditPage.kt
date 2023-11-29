@@ -24,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.ktor.util.debug.*
 import java.util.*
 
 fun checkColour(stack: ArrayDeque<TextFieldValue>): Long {
