@@ -77,6 +77,7 @@ fun SignupDialog(
                         value = username, onValueChange = { newText ->
                             username = newText
                         },
+                        maxLines = 1,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 20.dp),
@@ -95,6 +96,7 @@ fun SignupDialog(
                         value = password, onValueChange = { newText ->
                             password = newText
                         },
+                        maxLines = 1,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 20.dp),

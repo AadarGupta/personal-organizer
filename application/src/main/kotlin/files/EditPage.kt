@@ -15,15 +15,19 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.ktor.util.debug.*
 import java.util.*
 
-fun checkColour(stack: ArrayDeque<String>): Long {
+fun checkColour(stack: ArrayDeque<TextFieldValue>): Long {
     return if (stack.isNotEmpty()) {
         0xFF67c2b3
     } else {
@@ -39,16 +43,18 @@ fun EditPage(
     dialogMode: MutableState<String>,
 ) {
     var fileItem = fileVM.getFileByIdx(fileItemIdx)
-    var query = remember { mutableStateOf(fileItem.fileContent) }
+    val query = remember { mutableStateOf(TextFieldValue(fileItem.fileContent)) }
 
-    var lastState = remember { fileItem.fileContent }
-    val undoStack = remember { ArrayDeque<String>() }
-    val redoStack = remember { ArrayDeque<String>() }
+    val undoStack = remember { ArrayDeque<TextFieldValue>() }
+    val redoStack = remember { ArrayDeque<TextFieldValue>() }
+    val focusRequester = remember { FocusRequester() }
 
-    fun updateStacks(newText: String, oldText: String) {
+    fun updateStacks(newText: String, oldText: TextFieldValue) {
         // Check if a word boundary (space or punctuation) was added
-        if (newText.last().isWhitespace() || newText.last() in listOf('.', ',', '?', '!') && !undoStack.contains(oldText)) {
-            undoStack.addFirst(oldText)
+        if (newText.last().isWhitespace() || newText.last() in listOf('.', ',', '?', '!')) {
+            if (undoStack.isEmpty() || undoStack.first().text != oldText.text) {
+                undoStack.addFirst(oldText)
+            }
         }
     }
 
@@ -73,7 +79,7 @@ fun EditPage(
                 .verticalScroll(rememberScrollState())
                 .onPreviewKeyEvent { keyEvent ->
                     if(keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.S && (keyEvent.isCtrlPressed || keyEvent.isMetaPressed)) {
-                        fileVM.editFileContent(fileItem, query.value)
+                        fileVM.editFileContent(fileItem, query.value.text)
                         dialogMode.value = "preview"
                         true
                     } else if(keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.Z && keyEvent.isShiftPressed  && (keyEvent.isCtrlPressed || keyEvent.isMetaPressed)) {
@@ -138,7 +144,7 @@ fun EditPage(
 
                     Column(modifier = Modifier
                         .clickable {
-                            fileVM.editFileContent(fileItem, query.value)
+                            fileVM.editFileContent(fileItem, query.value.text)
                             dialogMode.value = "preview"
                         }
                         .padding(horizontal = 20.dp)) {
@@ -173,13 +179,22 @@ fun EditPage(
                         value = query.value,
                         onValueChange = {
                             val oldValue = query.value
-                            query.value = it
-                            updateStacks(it, oldValue) },
-                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 0.dp),
+                            query.value = it.copy(text = it.text)
+                            updateStacks(it.text, oldValue)
+                        },
+                        modifier = Modifier
+                            .padding(horizontal = 15.dp, vertical = 0.dp)
+                            .focusRequester(focusRequester),
                     )
                 }
             }
 
 
+        }
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+            query.value = query.value.copy(
+                selection = TextRange(query.value.text.length)
+            )
         }
     }
