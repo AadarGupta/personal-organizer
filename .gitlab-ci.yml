@@ -9,9 +9,15 @@ stages:
 
 
 pull-latest:
-  stage: deploy-backend
+  stage: test
   script:
     - ssh root@personal-organizer.petarvico.com "pwd && ls && cd personal-organizer && git checkout main && git pull"
+
+run-tests:
+  needs:
+    - pull-latest
+  stage: test
+  script: ssh root@personal-organizer.petarvico.com "gradle test"
 
 build-jar:
   needs:
@@ -40,10 +46,3 @@ run-new-backend-deployment:
   stage: deploy-backend
   script:    
     - ssh root@personal-organizer.petarvico.com "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &"
-
-
-run-tests:
-  needs:
-    - pull-latest
-  stage: test
-  script: ssh root@personal-organizer.petarvico.com "gradle test"
