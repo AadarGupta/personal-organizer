@@ -91,6 +91,7 @@ fun FileDialog(
                     value = item, onValueChange = { newText ->
                         item = newText
                     },
+                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp),

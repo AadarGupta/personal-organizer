@@ -99,11 +99,6 @@ fun TextInline(string: String) {
             var prev = "";
 
             for (i in string.indices) {
-                // Need to fix this
-                // Check if there are double * first
-                    // Remove any * seen after the first two
-                // Check if there are *
-                    // Remove any * seen after the first one
                 var curr = string[i].toString()
 
                 if(curr == "*") {

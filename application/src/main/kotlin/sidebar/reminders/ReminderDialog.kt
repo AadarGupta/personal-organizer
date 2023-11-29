@@ -137,6 +137,7 @@ fun ReminderDialog(
                     value = name, onValueChange = { newText ->
                         name = newText
                     },
+                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 20.dp, top= 5.dp),
