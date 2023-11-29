@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import sidebar.pomodoro.PomodoroContainer
 import sidebar.reminders.ReminderContainer
 import sidebar.todos.ToDoContainer
 
@@ -22,6 +23,7 @@ import sidebar.todos.ToDoContainer
 fun SidebarContainer(currUser: MutableState<String>) {
     var todoVisible by remember { mutableStateOf(true) }
     var remindersVisible by remember { mutableStateOf(true) }
+    var pomodoroVisible by remember { mutableStateOf(true) }
 
     Column (
         modifier = Modifier.fillMaxSize(),
@@ -32,7 +34,7 @@ fun SidebarContainer(currUser: MutableState<String>) {
             modifier = Modifier
                 .background(Color.Transparent)
                 .fillMaxWidth(1f)
-                .height(80.dp)
+                .height(70.dp)
         ) {
             Text(
                 text = "Widget Bar",
@@ -48,6 +50,35 @@ fun SidebarContainer(currUser: MutableState<String>) {
                     .align(Alignment.CenterHorizontally)
             )
         }
+        TextButton(onClick = ({ pomodoroVisible = !pomodoroVisible })) {
+            Text(
+                text = "> Pomodoro",
+                fontSize = 15.sp,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(start = 5.dp)
+            )
+        }
+        AnimatedVisibility(pomodoroVisible) {
+            Box(
+                modifier = Modifier
+                    .padding(start = 5.dp, end = 5.dp, bottom = 5.dp)
+                    .border(
+                        width = 2.dp,
+                        color = Color.White,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .clip(shape = RoundedCornerShape(10.dp))
+                    .background(Color.Transparent)
+                    .height(200.dp)
+                    .fillMaxWidth(1f)
+                    .padding(5.dp)
+            ) {
+                PomodoroContainer(currUser)
+            }
+        }
+
         TextButton(onClick = ({ todoVisible = !todoVisible })) {
             Text(
                 text = "> To-Do",
@@ -76,7 +107,6 @@ fun SidebarContainer(currUser: MutableState<String>) {
                 ToDoContainer(currUser)
             }
         }
-
         TextButton(onClick = ({ remindersVisible = !remindersVisible })) {
             Text(
                 text = "> Reminders",

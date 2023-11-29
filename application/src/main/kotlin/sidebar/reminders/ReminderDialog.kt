@@ -148,7 +148,6 @@ fun ReminderDialog(
                         disabledIndicatorColor = Color.Transparent
                     )
                 )
-
                 Row {
                     Column() {
                         Text(

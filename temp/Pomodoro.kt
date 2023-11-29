@@ -1,21 +1,18 @@
-package sidebar.todos
+package sidebar.pomodoro
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,19 +20,71 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import androidx.compose.runtime.MutableState
+import androidx.compose.foundation.lazy.rememberLazyListState
+
 
 @Composable
-fun ToDoContainer(currUser: MutableState<String>) {
+fun PomodoroContainer(currUser: MutableState<String>) {
 
-    var toDoVM = ToDoViewModel(currUser)
-    var selectedItemIdx = remember { mutableStateOf(-1) }
+    var pomodoroVM = PomodoroViewModel(currUser)
+    var working = remember { mutableStateOf(true) }
+    var breaking = remember { mutableStateOf(false) }
+    var selectedItemIdx = remember { mutableStateOf(1) }
     val dialogMode = remember { mutableStateOf("closed") }
+    val workingDialogMode = remember { mutableStateOf("closed") }
+    val breakingDialogMode = remember { mutableStateOf("closed") }
 
-    // pop up dialog for adding or editing a todo item
-    if (dialogMode.value == "add" || dialogMode.value == "edit") {
-        ToDoDialog(dialogMode, selectedItemIdx.value, toDoVM)
+
+    LaunchedEffect(Unit) {
+        val refresh = withContext(Dispatchers.IO) {
+            while (true) {
+                if (working.value) {
+                    workingDialogMode.value = "wopen"
+                    delay(100000)
+                    workingDialogMode.value = "closed"
+                    breakingDialogMode.value = "bopen"
+
+                    println("t1")
+                    println("w" + working.value)
+                    working.value = false
+                    breaking.value = true
+                    println("w" + working.value)
+                    println("b" + breaking.value)
+
+                }
+                if (breaking.value) {
+                    println("t2")
+                    println("b" + breaking.value)
+                    breakingDialogMode.value = "bopen"
+                    delay(100000)
+                    breakingDialogMode.value = "closed"
+                    workingDialogMode.value = "wopen"
+                    working.value = true
+                    breaking.value = false
+                    println("w" + working.value)
+                    println("b" + breaking.value)
+                }
+
+            }
+        }
     }
-
+    // pop up dialog for adding or editing a pomodoro item
+    if (dialogMode.value == "edit") {
+        PomodoroDialog(dialogMode, selectedItemIdx.value, pomodoroVM)
+    }
+    if (working.value && workingDialogMode.value == "wopen") {
+        println("hello?1")
+        println(selectedItemIdx.value)
+        Alert(workingDialogMode, selectedItemIdx.value , pomodoroVM)
+    }
+    if (breaking.value && breakingDialogMode.value == "bopen") {
+        println("hello?2")
+        Alert(breakingDialogMode, selectedItemIdx.value, pomodoroVM)
+    }
     Column (
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -52,7 +101,7 @@ fun ToDoContainer(currUser: MutableState<String>) {
             }
         }
 
-        if (toDoVM.isToDoEmpty()) {
+        if (pomodoroVM.isPomodoroEmpty()) {
             Text(
                 text = "No to do items.", textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxHeight().align(Alignment.CenterHorizontally),
@@ -63,12 +112,12 @@ fun ToDoContainer(currUser: MutableState<String>) {
 
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(Modifier.padding(end = 12.dp), state) {
-                    items(toDoVM.getToDoList()) {
+                    items(pomodoroVM.getPomodoroList()) {
                         Card(
                             backgroundColor = Color(0xFFDBE9CF),
                             modifier = Modifier
                                 .clickable {
-                                    selectedItemIdx.value = toDoVM.getIdxById(it)
+                                    selectedItemIdx.value = pomodoroVM.getIdxById(it)
                                     dialogMode.value = "edit"
                                 }
                                 .padding(start = 12.dp, top = 2.dp, bottom = 2.dp)
@@ -81,7 +130,10 @@ fun ToDoContainer(currUser: MutableState<String>) {
                             ) {
                                 Checkbox(
                                     checked = it.isChecked,
-                                    onCheckedChange = { value -> toDoVM.changeToDoCheckStatus(it)}
+                                    onCheckedChange = { value ->
+                                        workingDialogMode.value = "closed"
+                                        breakingDialogMode.value = "bopen"
+                                    }
                                 )
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -89,19 +141,11 @@ fun ToDoContainer(currUser: MutableState<String>) {
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
-                                        text = it.itemName,
+                                        text = "Option 1: "+it.worktime+ " Min Work! " +it.breaktime+ " Min Break!",
                                         fontSize = 15.sp,
                                         fontWeight = FontWeight.Medium,
                                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
                                         color = Color.DarkGray,
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Filled.Delete, contentDescription = "Delete",
-
-                                        modifier = Modifier.clickable {
-                                            toDoVM.removeToDoItem(it);
-                                        },
-                                        tint = Color(0xFF67c2b3)
                                     )
                                 }
                             }
@@ -118,4 +162,3 @@ fun ToDoContainer(currUser: MutableState<String>) {
         }
     }
 }
-

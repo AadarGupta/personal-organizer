@@ -90,7 +90,7 @@ fun ReminderContainer(currUser: MutableState<String>) {
 
             if (ReminderVM.isReminderEmpty()) {
                 Text(
-                    text = "No to do items.", textAlign = TextAlign.Center,
+                    text = "No Reminders.", textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxHeight().align(Alignment.CenterHorizontally),
                     color = Color.White
                 )
