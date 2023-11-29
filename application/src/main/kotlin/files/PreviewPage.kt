@@ -100,10 +100,15 @@ fun PreviewPage(
                         } else if(string.length > 1 && string[0] == '#') {
                             H1(string.substring(1).trim())
                         } // Create bullet points
-                        else if (it.length > 4 && it.substring(0, 6) == "    -") {
-                            PointForm(string.substring(1).trim(), "    ◦")
-                        } else if(string.length > 1 && string[0] == '-') {
-                            PointForm(string.substring(1).trim(), "•")
+                        else if(string.length > 1 && string[0] == '-') {
+                            PointForm(string.substring(1).trim())
+                        } else if(string.length > 1 && string[0] == '`' && string[string.length - 1] == '`') {
+                            CodeLine(string.substring(1,string.length - 1))
+                        } else if (string.length > 1 && string[0] == '<' && string[string.length - 1] == '>') {
+                            ClickableURL(string.substring(1,string.length - 1))
+                        } else if (string.length > 2 && string.substring(0, 2) == "!(" && string[string.length - 1] == ')') {
+                            println(string.substring(2, string.length - 1))
+                            ShowImage(string.substring(2,string.length - 1))
                         } else {
                             TextInline(string)
                         }
