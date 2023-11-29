@@ -4,7 +4,9 @@ workflow:
 
 
 stages:
+  - test
   - deploy-backend
+
 
 pull-latest:
   stage: deploy-backend
@@ -40,4 +42,8 @@ run-new-backend-deployment:
     - ssh root@personal-organizer.petarvico.com "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &"
 
 
-
+run-tests:
+  needs:
+    - pull-latest
+  stage: test
+  script: ssh root@personal-organizer.petarvico.com "gradle test"
