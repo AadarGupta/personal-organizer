@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -87,6 +88,17 @@ fun PointForm(string: String, spacing: String) {
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
         color = Color.Black,
         fontSize = 16.sp,
+    )
+}
+
+@Composable
+fun CodeLine(string: String) {
+    Text(
+        text = string,
+        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
+        color = Color.Black,
+        fontSize = 16.sp,
+        fontFamily = FontFamily.Serif,
     )
 }
 
