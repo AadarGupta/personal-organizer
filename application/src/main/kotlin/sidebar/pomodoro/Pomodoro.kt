@@ -22,17 +22,28 @@ fun PomodoroContainer(currUser: MutableState<String>) {
     var pomodoroVM = PomodoroViewModel()
     var working = remember { mutableStateOf(true) }
     var breaking = remember { mutableStateOf(false) }
-    var selectedItemIdx = remember { mutableStateOf(1) }
     val workingDialogMode = remember { mutableStateOf("closed") }
     val breakingDialogMode = remember { mutableStateOf("closed") }
     var timeLeft by remember { mutableStateOf(pomodoroVM.getPomodoro().worktime) }
 
+    var minutes2 = (timeLeft % 3600) / 60;
+    var seconds2 = timeLeft % 60;
 
-    var timeLeftString by remember { mutableStateOf("25:00") }
+    var timeString2 = String.format("%02d:%02d", minutes2, seconds2);
+
+    var timeLeftString by remember {(mutableStateOf(timeString2))}
     var isPaused by remember { mutableStateOf(true) }
     var isStart by remember { mutableStateOf(true) }
-    var breakTime by remember { mutableStateOf(TextFieldValue("")) }
-    var workTime by remember { mutableStateOf(TextFieldValue("")) }
+    var workTime by remember { mutableStateOf(timeString2) }
+
+    minutes2 = (pomodoroVM.getPomodoro().breaktime % 3600) / 60;
+    seconds2 = pomodoroVM.getPomodoro().breaktime % 60;
+
+    timeString2 = String.format("%02d:%02d", minutes2, seconds2);
+
+    var breakTime by remember { mutableStateOf(timeString2) }
+    var workTimeInt by remember { mutableStateOf(pomodoroVM.getPomodoro().worktime) }
+    var breakTimeInt by remember { mutableStateOf(pomodoroVM.getPomodoro().breaktime) }
     var breakTimeExpanded = remember { mutableStateOf(false) }
     var workTimeExpanded = remember { mutableStateOf(false) }
 
@@ -62,7 +73,7 @@ fun PomodoroContainer(currUser: MutableState<String>) {
                     breaking.value = true
                     workingDialogMode.value = "closed"
                     breakingDialogMode.value = "bopen"
-                    timeLeft = curr.breaktime
+                    timeLeft = breakTimeInt
                     isPaused = false
                     isStart = false
                 }else{
@@ -70,36 +81,44 @@ fun PomodoroContainer(currUser: MutableState<String>) {
                     breaking.value = false
                     breakingDialogMode.value = "closed"
                     workingDialogMode.value = "wopen"
-                    timeLeft = curr.worktime
+                    timeLeft = workTimeInt
                     isPaused = false
                     isStart = false
                 }
             }
         }
     }
-    var curr = pomodoroVM.getPomodoro();
     fun resetTimer() {
-        if(working.value) {
-            timeLeft = curr.worktime
+        if(working.value){
+            timeLeft = workTimeInt
         }else{
-            timeLeft = curr.breaktime
+            timeLeft = breakTimeInt
         }
         if(breaking.value){
-            timeLeft = curr.breaktime
+            timeLeft = breakTimeInt
         }else{
-            timeLeft = curr.worktime
+            timeLeft = workTimeInt
         }
         isPaused = true
         isStart = true
         workingDialogMode.value = "closed"
         breakingDialogMode.value = "closed"
 
-        var minutes = (timeLeft % 3600) / 60;
-        var seconds = timeLeft % 60;
+        val minutes = (timeLeft % 3600) / 60;
+        val seconds = timeLeft % 60;
 
-        var timeString = String.format("%02d:%02d", minutes, seconds);
+        val timeString = String.format("%02d:%02d", minutes, seconds);
         timeLeftString = timeString;
     }
+
+    fun editTimer(timeLeft:Int): String {
+        val minutes = (timeLeft % 3600) / 60;
+        val seconds = timeLeft % 60;
+
+        val timeString = String.format("%02d:%02d", minutes, seconds);
+        return timeString;
+    }
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -110,10 +129,96 @@ fun PomodoroContainer(currUser: MutableState<String>) {
             text = "TIME TO " + if(working.value) "STUDY!" else "TAKE A BREAK!",
             color = Color.White,
             fontWeight = FontWeight.W500,
-            fontSize = 35.sp,
+            fontSize = 25.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 2.5.dp),
             )
+        Row(){
+            Column() {
+                Text(
+                    text = "Work Time" ,
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp,
+                    modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+                    color = Color.DarkGray,
+                )
+                Box {
+                    TextButton(
+                        onClick = { workTimeExpanded.value = !workTimeExpanded.value },
+                        modifier = Modifier.width(150.dp)
+                    ) {
+                        Text(text = workTime, textAlign = TextAlign.Center)
+                    }
+
+                    DropdownMenu(
+                        expanded = workTimeExpanded.value,
+                        onDismissRequest = { workTimeExpanded.value = !workTimeExpanded.value },
+                    ) {
+                        for (i in 0..59) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    pomodoroVM.editWorkTime(i*60)
+                                    workTimeExpanded.value = false
+                                    if(!breaking.value){
+                                        timeLeftString = editTimer(i*60)
+                                    }
+                                    workTime = editTimer(i*60)
+                                    workTimeInt = i*60
+                                    resetTimer()
+
+                                },
+                                modifier = Modifier.width(150.dp)
+                            ) {
+                                Text(i.toString())
+                            }
+                        }
+                    }
+                }
+            }
+            Column {
+                Text(
+                    text = "Break Time" ,
+                    textAlign = TextAlign.Center,
+                    fontSize = 12.sp,
+                    modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+                    color = Color.DarkGray,
+                )
+                Box {
+                    TextButton(
+                        onClick = { breakTimeExpanded.value = !breakTimeExpanded.value },
+                        modifier = Modifier.width(150.dp)
+                    ) {
+                        Text(text =  breakTime, textAlign = TextAlign.Center)
+                    }
+
+                    DropdownMenu(
+                        expanded = breakTimeExpanded.value,
+                        onDismissRequest = { breakTimeExpanded.value = !breakTimeExpanded.value },
+                    ) {
+                        for (i in 0..59) {
+                            DropdownMenuItem(
+                                onClick = {
+                                    pomodoroVM.editBreakTime(i*60)
+                                    breakTimeExpanded.value = false
+                                    if(breaking.value){
+                                        timeLeftString = editTimer(i*60)
+                                    }
+                                    breakTime = editTimer(i*60)
+                                    breakTimeInt = i*60
+                                    resetTimer()
+
+                                },
+                                modifier = Modifier.width(150.dp)
+                            ) {
+                                Text(i.toString())
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
         Row {
             Box(
                 modifier = Modifier.background(Color.Black,  shape = RoundedCornerShape(8.dp))
@@ -130,9 +235,7 @@ fun PomodoroContainer(currUser: MutableState<String>) {
                     fontSize = 45.sp,
                     )
             }
-            Column(
-
-            ) {
+            Column{
                 Button(
                     onClick = {
                         isPaused = !isPaused

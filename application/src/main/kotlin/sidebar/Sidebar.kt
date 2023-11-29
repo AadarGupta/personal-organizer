@@ -71,7 +71,7 @@ fun SidebarContainer(currUser: MutableState<String>) {
                     )
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(Color.Transparent)
-                    .height(200.dp)
+                    .height(220.dp)
                     .fillMaxWidth(1f)
                     .padding(5.dp)
             ) {
