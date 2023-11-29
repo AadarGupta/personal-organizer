@@ -110,86 +110,54 @@ fun PomodoroContainer(currUser: MutableState<String>) {
             text = "TIME TO " + if(working.value) "STUDY!" else "TAKE A BREAK!",
             color = Color.White,
             fontWeight = FontWeight.W500,
-            fontSize = 25.sp,
+            fontSize = 35.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 2.5.dp),
             )
-        Box(
-            modifier = Modifier.background(Color.Black,  shape = RoundedCornerShape(8.dp))
-                .height(80.dp)
-                .width(210.dp)
-                .border(4.dp, Color.Green, shape = RoundedCornerShape(8.dp))
-                .padding(vertical = 5.dp, horizontal = 14.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text= timeLeftString ,
-                color = Color.Green,
-                fontWeight = FontWeight.W800,
-                fontSize = 45.sp,
-                )
-        }
-//        Column() {
-//            Text(
-//                text = "Worktime" ,
-//                textAlign = TextAlign.Center,
-//                fontSize = 12.sp,
-//                modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
-//                color = Color.DarkGray,
-//            )
-//            Box {
-//                TextButton(
-//                    onClick = { workTimeExpanded.value = !workTimeExpanded.value },
-//                    modifier = Modifier.width(150.dp)
-//                ) {
-//                    Text(text = workTime.text, textAlign = TextAlign.Center)
-//                }
-//
-//                DropdownMenu(
-//                    expanded = workTimeExpanded.value,
-//                    onDismissRequest = { workTimeExpanded.value = !workTimeExpanded.value },
-//                ) {
-//                    for (i in 0..59) {
-//                        DropdownMenuItem(
-//                            onClick = {
-//                                workTime = TextFieldValue(i.toString())
-//                                workTimeExpanded.value = false
-//                                pomodoroVM.editWorkTime(i)
-//                            },
-//                            modifier = Modifier.width(150.dp)
-//                        ) {
-//                            Text(i.toString())
-//                        }
-//                    }
-//                }
-//            }
-//        }
-        Row (
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.5.dp),
-        ){
-            Button(onClick = {
-                isPaused = !isPaused
-                if(isStart){
-                    if(working.value){
-                        breakingDialogMode.value = "closed"
-                        workingDialogMode.value = "wopen"
-                    }else{
-                        breakingDialogMode.value = "bopen"
-                        workingDialogMode.value = "closed"
-                    }
-                }
-                isStart = false
-
-            },
-                modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp).width(100.dp),
+        Row {
+            Box(
+                modifier = Modifier.background(Color.Black,  shape = RoundedCornerShape(8.dp))
+                    .height(100.dp)
+                    .width(210.dp)
+                    .border(4.dp, Color.Green, shape = RoundedCornerShape(8.dp))
+                    .padding(vertical = 5.dp, horizontal = 14.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text(text = if (isPaused) (if(isStart)"Start" else "Resume")else "Pause")
+                Text(
+                    text= timeLeftString ,
+                    color = Color.Green,
+                    fontWeight = FontWeight.W800,
+                    fontSize = 45.sp,
+                    )
             }
-            Button(
-                onClick = { resetTimer() },
-                modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp).width(100.dp),
+            Column(
+
             ) {
-                Text(text = "Reset")
+                Button(
+                    onClick = {
+                        isPaused = !isPaused
+                        if (isStart) {
+                            if (working.value) {
+                                breakingDialogMode.value = "closed"
+                                workingDialogMode.value = "wopen"
+                            } else {
+                                breakingDialogMode.value = "bopen"
+                                workingDialogMode.value = "closed"
+                            }
+                        }
+                        isStart = false
+
+                    },
+                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp).width(100.dp),
+                ) {
+                    Text(text = if (isPaused) (if (isStart) "Start" else "Resume") else "Pause")
+                }
+                Button(
+                    onClick = { resetTimer() },
+                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp).width(100.dp),
+                ) {
+                    Text(text = "Reset")
+                }
             }
         }
     }

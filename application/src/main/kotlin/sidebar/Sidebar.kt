@@ -34,7 +34,7 @@ fun SidebarContainer(currUser: MutableState<String>) {
             modifier = Modifier
                 .background(Color.Transparent)
                 .fillMaxWidth(1f)
-                .height(80.dp)
+                .height(70.dp)
         ) {
             Text(
                 text = "Widget Bar",
