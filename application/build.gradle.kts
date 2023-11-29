@@ -33,6 +33,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:2.3.6")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.6")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
 }
 
 compose.desktop {
