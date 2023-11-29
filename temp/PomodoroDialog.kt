@@ -40,7 +40,6 @@ fun PomodoroDialog(
             TextButton(
                 onClick = {
                     if (mode.value == "edit") {
-                        pomodoroVM.changePomodoroCheckStatus(pomodoroItem)
                     }
                     mode.value = "closed"
                 }

@@ -28,6 +28,7 @@ fun ReminderDialog(
             "",
             "",
             "",
+            "",
             false
         )
 
@@ -72,7 +73,7 @@ fun ReminderDialog(
         title = {
             if (mode.value == "add") {
                 Text(
-                    text = "Edit Reminder", modifier = Modifier.padding(20.dp),
+                    text = "Add Reminder", modifier = Modifier.padding(20.dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
@@ -146,7 +147,6 @@ fun ReminderDialog(
                         disabledIndicatorColor = Color.Transparent
                     )
                 )
-
                 Row {
                     Column() {
                         Text(

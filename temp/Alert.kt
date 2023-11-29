@@ -12,22 +12,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import sidebar.reminders.ReminderViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Alert(mode: MutableState<String> , pomodoroVM: PomodoroViewModel) {
+fun Alert(
+    mode: MutableState<String>,
+    pomodoroItemIdx: Int,
+    pomodoroVM: PomodoroViewModel,) {
 
-    var pomodoroItem =  pomodoroVM.getPomodoro();
-    var minutes = (pomodoroItem.worktime % 3600) / 60;
-    var seconds = pomodoroItem.worktime % 60;
-
-    var formattedWorkTime = String.format("%02d:%02d", minutes, seconds);
-
-    minutes = (pomodoroItem.breaktime % 3600) / 60;
-    seconds = pomodoroItem.breaktime % 60;
-
-    var formattedBreakTime = String.format("%02d:%02d", minutes, seconds);
+    var pomodoroItem = PomodoroModel(-1  , 0,0, false)
+    pomodoroItem = pomodoroVM.getItemByIdx(pomodoroItemIdx)
 
     AlertDialog(
         title = {
@@ -48,6 +42,13 @@ fun Alert(mode: MutableState<String> , pomodoroVM: PomodoroViewModel) {
         },
         onDismissRequest = { mode.value = "closed" },
         confirmButton = {
+            TextButton(
+                onClick = {
+                    mode.value = "closed"
+                }
+            ) {
+                Text("Start")
+            }
         },
         dismissButton = {
             TextButton(
@@ -62,7 +63,7 @@ fun Alert(mode: MutableState<String> , pomodoroVM: PomodoroViewModel) {
             ) {
                 if(mode.value =="wopen"){
                     Text(
-                        text = "$formattedWorkTime  MINUTES WORK STARTS NOW!",
+                        text = pomodoroItem.worktime.toString() + " MINUTES STARTS NOW!",
                         modifier = Modifier.padding(20.dp),
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
@@ -70,7 +71,7 @@ fun Alert(mode: MutableState<String> , pomodoroVM: PomodoroViewModel) {
                 }
                 if(mode.value =="bopen"){
                     Text(
-                        text =  "$formattedBreakTime MINUTES BREAK STARTS NOW!",
+                        text = pomodoroItem.breaktime.toString() + " MINUTES STARTS NOW!",
                         modifier = Modifier.padding(20.dp),
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp

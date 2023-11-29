@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FileItem(
     val id: Int,
+    var owner: String,
     var isFolder: Boolean,
     var parent: Int,
     var fileName: String,

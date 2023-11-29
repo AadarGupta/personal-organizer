@@ -24,7 +24,7 @@ fun FileDialog(
     fileVM: FileViewModel
 ) {
 
-    var fileItem = FileModel(-1  , false, -1, "", "")
+    var fileItem = FileModel(-1  , fileVM.currUser.value, false, -1, "", "")
     if (mode.value == "edit") {
         fileItem = fileVM.getFileByIdx(fileItemIdx)
     }

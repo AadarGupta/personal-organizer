@@ -1,0 +1,43 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+
+stages:
+  - deploy-backend
+
+pull-latest:
+  stage: deploy-backend
+  script:
+    - ssh root@personal-organizer.petarvico.com "pwd && ls && cd personal-organizer && git checkout main && git pull"
+
+build-jar:
+  needs:
+    - pull-latest
+  stage: deploy-backend
+  script:
+    - ssh root@personal-organizer.petarvico.com "cd personal-organizer/personal-organizer-ktor/ && gradle buildFatJar"
+
+replace-jar:
+  needs:
+    - build-jar
+  stage: deploy-backend
+  script:
+    - ssh root@personal-organizer.petarvico.com "cp personal-organizer/personal-organizer-ktor/build/libs/personal-organizer-ktor-all.jar ."
+
+kill-old-process:
+  needs:
+    - replace-jar
+  stage: deploy-backend
+  script:
+    - ssh root@personal-organizer.petarvico.com "killall -9 java"
+
+run-new-backend-deployment:
+  needs:
+    - kill-old-process
+  stage: deploy-backend
+  script:    
+    - ssh root@personal-organizer.petarvico.com "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &"
+
+
+

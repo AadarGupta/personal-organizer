@@ -1,21 +1,17 @@
 package sidebar.pomodoro
 
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,147 +22,187 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import androidx.compose.runtime.MutableState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.TextFieldValue
+import sidebar.reminders.ReminderViewModel
 
 
 @Composable
-fun PomodoroContainer() {
-
+fun PomodoroContainer(currUser: MutableState<String>) {
     var pomodoroVM = PomodoroViewModel()
     var working = remember { mutableStateOf(true) }
     var breaking = remember { mutableStateOf(false) }
     var selectedItemIdx = remember { mutableStateOf(1) }
-    val dialogMode = remember { mutableStateOf("closed") }
     val workingDialogMode = remember { mutableStateOf("closed") }
     val breakingDialogMode = remember { mutableStateOf("closed") }
-    var refreshDailyReminders = remember { mutableStateOf(false) }
+    var timeLeft by remember { mutableStateOf(pomodoroVM.getPomodoro().worktime) }
 
 
-    if (pomodoroVM.isPomodoroEmpty()){
-        pomodoroVM.addPomodoro(5,30)
-        pomodoroVM.addPomodoro(15,30)
-        pomodoroVM.addPomodoro(15,45)
+    var timeLeftString by remember { mutableStateOf("25:00") }
+    var isPaused by remember { mutableStateOf(true) }
+    var isStart by remember { mutableStateOf(true) }
+    var breakTime by remember { mutableStateOf(TextFieldValue("")) }
+    var workTime by remember { mutableStateOf(TextFieldValue("")) }
+    var breakTimeExpanded = remember { mutableStateOf(false) }
+    var workTimeExpanded = remember { mutableStateOf(false) }
+
+
+    if (breaking.value && breakingDialogMode.value == "bopen") {
+        Alert(breakingDialogMode,pomodoroVM)
     }
 
-    LaunchedEffect(Unit) {
-        val refresh = withContext(Dispatchers.IO) {
-            while (true) {
-                if (working.value) {
-                    workingDialogMode.value = "wopen"
-                    delay(100000)
-                    workingDialogMode.value = "closed"
-                    breakingDialogMode.value = "bopen"
+    if (working.value && workingDialogMode.value == "wopen") {
+        Alert(workingDialogMode,pomodoroVM)
+    }
 
-                    println("t1")
-                    println("w" + working.value)
+
+    LaunchedEffect(key1 = timeLeft, key2 = isPaused) {
+        while (timeLeft > 0 && !isPaused) {
+            delay(1000L)
+            timeLeft--
+            var minutes = (timeLeft % 3600) / 60;
+            var seconds = timeLeft % 60;
+
+            var timeString = String.format("%02d:%02d", minutes, seconds);
+            timeLeftString = timeString;
+            var curr = pomodoroVM.getPomodoro();
+            if(timeLeft == 0){
+                if (working.value) {
                     working.value = false
                     breaking.value = true
-                    println("w" + working.value)
-                    println("b" + breaking.value)
-
-                }
-                if (breaking.value) {
-                    println("t2")
-                    println("b" + breaking.value)
+                    workingDialogMode.value = "closed"
                     breakingDialogMode.value = "bopen"
-                    delay(100000)
-                    breakingDialogMode.value = "closed"
-                    workingDialogMode.value = "wopen"
+                    timeLeft = curr.breaktime
+                    isPaused = false
+                    isStart = false
+                }else{
                     working.value = true
                     breaking.value = false
-                    println("w" + working.value)
-                    println("b" + breaking.value)
+                    breakingDialogMode.value = "closed"
+                    workingDialogMode.value = "wopen"
+                    timeLeft = curr.worktime
+                    isPaused = false
+                    isStart = false
                 }
-
             }
         }
     }
-    // pop up dialog for adding or editing a pomodoro item
-    if (dialogMode.value == "edit") {
-        PomodoroDialog(dialogMode, selectedItemIdx.value, pomodoroVM)
+    var curr = pomodoroVM.getPomodoro();
+    fun resetTimer() {
+        if(working.value) {
+            timeLeft = curr.worktime
+        }else{
+            timeLeft = curr.breaktime
+        }
+        if(breaking.value){
+            timeLeft = curr.breaktime
+        }else{
+            timeLeft = curr.worktime
+        }
+        isPaused = true
+        isStart = true
+        workingDialogMode.value = "closed"
+        breakingDialogMode.value = "closed"
+
+        var minutes = (timeLeft % 3600) / 60;
+        var seconds = timeLeft % 60;
+
+        var timeString = String.format("%02d:%02d", minutes, seconds);
+        timeLeftString = timeString;
     }
-    if (working.value && workingDialogMode.value == "wopen") {
-        println("hello?1")
-        println(selectedItemIdx.value)
-        Alert(workingDialogMode, selectedItemIdx.value , pomodoroVM)
-    }
-    if (breaking.value && breakingDialogMode.value == "bopen") {
-        println("hello?2")
-        Alert(breakingDialogMode, selectedItemIdx.value, pomodoroVM)
-    }
-    Column (
+
+    Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(5.dp)
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row() {
-            Button(onClick = ({dialogMode.value = "add"}),
-                shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                modifier = Modifier.padding(start = 12.dp)) {
-                Icon(
-                    imageVector = Icons.Filled.Add, contentDescription = "Add",
-                    tint = Color.White
-                )
-            }
-        }
-
-        if (pomodoroVM.isPomodoroEmpty()) {
-            Text(
-                text = "No to do items.", textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxHeight().align(Alignment.CenterHorizontally),
-                color = Color.White
+        Text(
+            text = "TIME TO " + if(working.value) "STUDY!" else "TAKE A BREAK!",
+            color = Color.White,
+            fontWeight = FontWeight.W500,
+            fontSize = 25.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 2.5.dp),
             )
-        } else {
-            val state = rememberLazyListState()
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn(Modifier.padding(end = 12.dp), state) {
-                    items(pomodoroVM.getPomodoroList()) {
-                        Card(
-                            backgroundColor = Color(0xFFDBE9CF),
-                            modifier = Modifier
-                                .clickable {
-                                    selectedItemIdx.value = pomodoroVM.getIdxById(it)
-                                    dialogMode.value = "edit"
-                                }
-                                .padding(start = 12.dp, top = 2.dp, bottom = 2.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 10.dp)
-                            ) {
-                                Checkbox(
-                                    checked = it.isChecked,
-                                    onCheckedChange = { value ->
-                                        pomodoroVM.changePomodoroCheckStatus(it)
-                                        workingDialogMode.value = "closed"
-                                        breakingDialogMode.value = "bopen"
-                                    }
-                                )
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = "Option 1: "+it.worktime+ " Min Work! " +it.breaktime+ " Min Break!",
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
-                                        color = Color.DarkGray,
-                                    )
-                                }
-                            }
-                        }
+        Box(
+            modifier = Modifier.background(Color.Black,  shape = RoundedCornerShape(8.dp))
+                .height(80.dp)
+                .width(210.dp)
+                .border(4.dp, Color.Green, shape = RoundedCornerShape(8.dp))
+                .padding(vertical = 5.dp, horizontal = 14.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text= timeLeftString ,
+                color = Color.Green,
+                fontWeight = FontWeight.W800,
+                fontSize = 45.sp,
+                )
+        }
+//        Column() {
+//            Text(
+//                text = "Worktime" ,
+//                textAlign = TextAlign.Center,
+//                fontSize = 12.sp,
+//                modifier = Modifier.width(150.dp).padding(horizontal = 4.dp, vertical = 0.dp),
+//                color = Color.DarkGray,
+//            )
+//            Box {
+//                TextButton(
+//                    onClick = { workTimeExpanded.value = !workTimeExpanded.value },
+//                    modifier = Modifier.width(150.dp)
+//                ) {
+//                    Text(text = workTime.text, textAlign = TextAlign.Center)
+//                }
+//
+//                DropdownMenu(
+//                    expanded = workTimeExpanded.value,
+//                    onDismissRequest = { workTimeExpanded.value = !workTimeExpanded.value },
+//                ) {
+//                    for (i in 0..59) {
+//                        DropdownMenuItem(
+//                            onClick = {
+//                                workTime = TextFieldValue(i.toString())
+//                                workTimeExpanded.value = false
+//                                pomodoroVM.editWorkTime(i)
+//                            },
+//                            modifier = Modifier.width(150.dp)
+//                        ) {
+//                            Text(i.toString())
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        Row (
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.5.dp),
+        ){
+            Button(onClick = {
+                isPaused = !isPaused
+                if(isStart){
+                    if(working.value){
+                        breakingDialogMode.value = "closed"
+                        workingDialogMode.value = "wopen"
+                    }else{
+                        breakingDialogMode.value = "bopen"
+                        workingDialogMode.value = "closed"
                     }
                 }
-                VerticalScrollbar(
-                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(
-                        scrollState = state
-                    )
-                )
+                isStart = false
+
+            },
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp).width(100.dp),
+            ) {
+                Text(text = if (isPaused) (if(isStart)"Start" else "Resume")else "Pause")
+            }
+            Button(
+                onClick = { resetTimer() },
+                modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp).width(100.dp),
+            ) {
+                Text(text = "Reset")
             }
         }
     }

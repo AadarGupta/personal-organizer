@@ -1,6 +1,7 @@
 package files
 
 import MyHttp
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -11,13 +12,13 @@ import kotlinx.serialization.json.JsonPrimitive
 @Serializable
 data class FileList(val items: List<FileModel>)
 
-class FileViewModel {
+class FileViewModel(currUser: MutableState<String>) {
+    var currUser = currUser
     private var fileList = mutableStateListOf<FileModel>()
 
     init {
         val http = MyHttp()
-        val getAllFilesResponse : String = http.get("files")
-        println(getAllFilesResponse)
+        val getAllFilesResponse : String = http.get("files?user=${currUser.value}")
         val obj = Json.decodeFromString<FileList>(getAllFilesResponse)
 
         for (file in obj.items) {
@@ -50,8 +51,8 @@ class FileViewModel {
             )
         )
 
-        val createFileResponse = http.post("file", body)
-        val newItem = Json.decodeFromString<FileModel>(createFileResponse)
+        val createFileResponse = http.post("file?user=${currUser.value}", body)
+        val newItem = Json.decodeFromString<FileModel>(createFileResponse.body())
         fileList.add(newItem)
 
         return fileList.size - 1
@@ -65,6 +66,7 @@ class FileViewModel {
         fileList[idx] =
             FileModel(
                 fileList[idx].id,
+                currUser.value,
                 fileList[idx].isFolder,
                 fileList[idx].parent,
                 newName,
@@ -81,7 +83,7 @@ class FileViewModel {
                 "fileContent" to JsonPrimitive(targetItem.fileContent)
             )
         )
-        http.put("file", body)
+        http.put("file?user=${currUser.value}", body)
     }
 
     fun editFileContent(
@@ -92,6 +94,7 @@ class FileViewModel {
         fileList[idx] =
             FileModel(
                 fileList[idx].id,
+                currUser.value,
                 fileList[idx].isFolder,
                 fileList[idx].parent,
                 fileList[idx].fileName,
@@ -108,12 +111,18 @@ class FileViewModel {
                 "fileContent" to JsonPrimitive(newContent)
             )
         )
-        http.put("file", body)
+        http.put("file?user=${currUser.value}", body)
     }
 
     fun removeFileItem(targetItem: FileModel) {
         val http = MyHttp()
-        http.delete("file", mapOf("id" to targetItem.id.toString()))
+        http.delete(
+            "file",
+            mapOf(
+                "id" to targetItem.id.toString(),
+                "user" to currUser.value
+            )
+        )
         fileList.remove(targetItem)
     }
 
@@ -125,6 +134,7 @@ class FileViewModel {
         fileList[idx] =
             FileModel(
                 fileList[idx].id,
+                currUser.value,
                 fileList[idx].isFolder,
                 newParent,
                 fileList[idx].fileName,
@@ -141,7 +151,7 @@ class FileViewModel {
                 "fileContent" to JsonPrimitive(targetItem.fileContent)
             )
         )
-        http.put("file", body)
+        http.put("file?user=${currUser.value}", body)
     }
 
     fun getFileByIdx(idx: Int): FileModel {
