@@ -252,14 +252,16 @@ fun PomodoroContainer(currUser: MutableState<String>) {
 
                     },
                     modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp).width(100.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
                 ) {
-                    Text(text = if (isPaused) (if (isStart) "Start" else "Resume") else "Pause")
+                    Text(text = if (isPaused) (if (isStart) "Start" else "Resume") else "Pause", color = Color.White)
                 }
                 Button(
                     onClick = { resetTimer() },
                     modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp).width(100.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
                 ) {
-                    Text(text = "Reset")
+                    Text(text = "Reset", color = Color.White)
                 }
             }
         }
