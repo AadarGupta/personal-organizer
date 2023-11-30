@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
@@ -43,9 +44,10 @@ fun WelcomePage(
             onClick = {
                 // check if credentials are valid
                 currUser.value = ""
-            }
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
         ) {
-            Text("Logout")
+            Text(text = "Logout", color = Color.White)
         }
 
         Box(
@@ -115,6 +117,7 @@ fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title="Personal Organizer",
+        icon = painterResource("mypoLogo.png"),
         state = WindowState(
             width = 1200.dp, height = 800.dp,
             position = WindowPosition(50.dp, 50.dp)

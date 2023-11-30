@@ -20,18 +20,17 @@ fun LogoHeader() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(end = 30.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
             painter = painterResource("mypoLogo.png"),
             contentDescription = "app logo",
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier.padding(10.dp, 4.dp)
         )
         Text(
             text = "My Personal Organizer",
             fontSize = 30.sp,
             fontWeight = FontWeight.Black,
-            modifier = Modifier.padding(start = 100.dp, top = 30.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 30.dp),
             color = Color.DarkGray,
         )
 

@@ -2,12 +2,14 @@ package authentication
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import components.LogoHeader
 
 @Composable
@@ -26,10 +28,12 @@ fun AuthenticationPage(
         SignupDialog(mode = signupPopup)
     }
 
+    LogoHeader()
+
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center
     ) {
-        LogoHeader()
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -39,9 +43,10 @@ fun AuthenticationPage(
                 onClick = {
                     // check if credentials are valid
                     loginPopup.value = "open"
-                }
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
             ) {
-                Text("Login")
+                Text(text = "Login", color = Color.White)
             }
         }
 
@@ -53,9 +58,10 @@ fun AuthenticationPage(
                 onClick = {
                     // check if credentials are valid
                     signupPopup.value = "open"
-                }
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
             ) {
-                Text("Register")
+                Text(text = "Register", color = Color.White)
             }
         }
 
@@ -67,9 +73,10 @@ fun AuthenticationPage(
                 onClick = {
                     // check if credentials are valid
                     currUser.value = "demo-user"
-                }
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
             ) {
-                Text("Login as Demo User")
+                Text(text = "Login as Demo User", color = Color.White)
             }
         }
     }

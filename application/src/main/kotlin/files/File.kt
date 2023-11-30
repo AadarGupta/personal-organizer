@@ -1,10 +1,10 @@
 package files
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FileListContainer(currUser: MutableState<String>) {
     var fileVM = FileViewModel(currUser)
@@ -50,12 +51,40 @@ fun FileListContainer(currUser: MutableState<String>) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Files & Folders",
-                fontWeight = FontWeight.Light,
-                color = Color.DarkGray,
-                fontSize = 20.sp
-            )
+            Row()
+            {
+                Text(
+                    text = "Files & Folders",
+                    fontWeight = FontWeight.Light,
+                    color = Color.DarkGray,
+                    fontSize = 20.sp
+                )
+                TooltipArea(
+                    tooltip = {
+                        // composable tooltip content
+                        Surface(
+
+                            color = Color.Gray.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = "Create, edit, delete and move markdown files and folders.",
+                                modifier = Modifier.padding(10.dp), color = Color.Black
+                            )
+                        }
+                    },
+                    modifier = Modifier.padding(start = 10.dp),
+                    delayMillis = 600, // in milliseconds
+                    tooltipPlacement = TooltipPlacement.CursorPoint(
+                        alignment = Alignment.BottomEnd
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info, contentDescription = "Todo Tooltip",
+                        tint = Color.Black.copy(alpha = 0.5f)
+                    )
+                }
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                 Button(
                     onClick = {
