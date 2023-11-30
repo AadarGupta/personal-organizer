@@ -4,16 +4,24 @@ workflow:
 
 
 stages:
+  - test
   - deploy-backend
 
+
 pull-latest:
-  stage: deploy-backend
+  stage: test
   script:
     - ssh root@personal-organizer.petarvico.com "pwd && ls && cd personal-organizer && git checkout main && git pull"
 
-build-jar:
+run-tests:
   needs:
     - pull-latest
+  stage: test
+  script: ssh root@personal-organizer.petarvico.com "cd personal-organizer && gradle test"
+
+build-jar:
+  needs:
+    - run-tests
   stage: deploy-backend
   script:
     - ssh root@personal-organizer.petarvico.com "cd personal-organizer/personal-organizer-ktor/ && gradle buildFatJar"
@@ -38,6 +46,3 @@ run-new-backend-deployment:
   stage: deploy-backend
   script:    
     - ssh root@personal-organizer.petarvico.com "nohup java -jar personal-organizer-ktor-all.jar > ktor-backend.log 2>&1 &"
-
-
-
