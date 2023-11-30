@@ -32,15 +32,14 @@ fun SidebarContainer(currUser: MutableState<String>) {
     var pomodoroVisible by remember { mutableStateOf(true) }
 
     Column (
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
     ) {
 
         Column (
             modifier = Modifier
                 .background(Color.Transparent)
                 .fillMaxWidth(1f)
-                .height(70.dp)
+                .height(90.dp)
         ) {
             Text(
                 text = "Widget Bar",
@@ -56,15 +55,42 @@ fun SidebarContainer(currUser: MutableState<String>) {
                     .align(Alignment.CenterHorizontally)
             )
         }
-        TextButton(onClick = ({ pomodoroVisible = !pomodoroVisible })) {
-            Text(
-                text = "> Pomodoro",
-                fontSize = 15.sp,
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .padding(start = 5.dp)
-            )
+        Row {
+            TextButton(onClick = ({ pomodoroVisible = !pomodoroVisible })) {
+                Text(
+                    text = "> Pomodoro",
+                    fontSize = 15.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                )
+                TooltipArea(
+                    tooltip = {
+                        // composable tooltip content
+                        Surface(
+
+                            color = Color.Gray.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                text = "Widget for pomodoro timer. Edit work and rest times. Once timer hits 0, an in-app notification will pop up. Click to collapse the widget.",
+                                modifier = Modifier.padding(10.dp), color = Color.Black
+                            )
+                        }
+                    },
+                    modifier = Modifier.padding(start = 10.dp),
+                    delayMillis = 600, // in milliseconds
+                    tooltipPlacement = TooltipPlacement.CursorPoint(
+                        alignment = Alignment.BottomEnd
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info, contentDescription = "Pomodoro Tooltip",
+                        tint = Color.White.copy(alpha = 0.5f)
+                    )
+                }
+            }
         }
         AnimatedVisibility(pomodoroVisible) {
             Box(

@@ -116,7 +116,7 @@ fun main() = application {
 
     Window(
         onCloseRequest = ::exitApplication,
-        title="Personal Organizer",
+        title="MyPO",
         icon = painterResource("mypoLogo.png"),
         state = WindowState(
             width = 1200.dp, height = 800.dp,
