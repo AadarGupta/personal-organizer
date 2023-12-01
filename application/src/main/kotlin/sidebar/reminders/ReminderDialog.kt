@@ -91,7 +91,7 @@ fun ReminderDialog(
             TextButton(
                 onClick = {
                     if (mode.value == "edit") {
-                        time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                        time = TextFieldValue(String.format("%02d:%02d %s", hour.text.toInt(), minute.text.toInt(), amPM.text))
                         reminderVM.editReminderList(
                             reminderItem,
                             name.text,
@@ -295,18 +295,18 @@ fun ReminderDialog(
                                 modifier = Modifier.width(150.dp)
                             ) {
                                 Text(text = hour.text, textAlign = TextAlign.Center)
-                                time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                time = TextFieldValue(String.format("%d%02d %s", hour.text.toInt(), minute.text.toInt(), amPM.text))
                             }
 
                             DropdownMenu(
                                 expanded = hourExpanded.value,
                                 onDismissRequest = { hourExpanded.value = !hourExpanded.value },
                             ) {
-                                for (i in 0..23) {
+                                for (i in 1..12) {
                                     DropdownMenuItem(
                                         onClick = {
                                             hour = TextFieldValue(i.toString());
-                                            time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                            time = TextFieldValue(String.format("%d:%02d %s", hour.text.toInt(), minute.text.toInt(), amPM.text))
                                             hourExpanded.value = false
                                         },
                                         modifier = Modifier.width(150.dp)
@@ -343,7 +343,7 @@ fun ReminderDialog(
                                     DropdownMenuItem(
                                         onClick = {
                                             minute = TextFieldValue(i.toString())
-                                            time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                            time = TextFieldValue(String.format("%d:%02d %s", hour.text.toInt(), minute.text.toInt(), amPM.text))
                                             minuteExpanded.value = false
                                         },
                                         modifier = Modifier.width(150.dp)
@@ -369,7 +369,7 @@ fun ReminderDialog(
                                 modifier = Modifier.width(150.dp)
                             ) {
                                 Text(text = amPM.text, textAlign = TextAlign.Center)
-                                time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                time = TextFieldValue(String.format("%d:%02d %s", hour.text.toInt(), minute.text.toInt(), amPM.text))
                             }
 
                             DropdownMenu(
@@ -379,7 +379,7 @@ fun ReminderDialog(
                                 DropdownMenuItem(
                                     onClick = {
                                         amPM = TextFieldValue("a.m.")
-                                        time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                        time = TextFieldValue(String.format("%d:%02d %s", hour.text.toInt(), minute.text.toInt(), amPM.text))
                                         amPMexpanded.value = false
                                     },
                                     modifier = Modifier.width(150.dp)
@@ -389,7 +389,7 @@ fun ReminderDialog(
                                 DropdownMenuItem(
                                     onClick = {
                                         amPM = TextFieldValue("p.m.")
-                                        time = TextFieldValue(hour.text + ":" + minute.text + " " + amPM.text)
+                                        time = TextFieldValue(String.format("%d:%02d %s", hour.text.toInt(), minute.text.toInt(), amPM.text))
                                         amPMexpanded.value = false
                                     },
                                     modifier = Modifier.width(150.dp)

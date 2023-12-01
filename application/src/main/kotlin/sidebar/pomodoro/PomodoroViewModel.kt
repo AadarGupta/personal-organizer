@@ -3,10 +3,10 @@ package sidebar.pomodoro;
 import androidx.compose.runtime.mutableStateOf
 
 class PomodoroViewModel() {
-    private var curPomodoro = mutableStateOf<PomodoroModel>(PomodoroModel(5*60, 25*60))
+    private var curPomodoro = mutableStateOf<PomodoroModel>(PomodoroModel(5, 25))
     init {
-        curPomodoro.value.worktime = 25*60;
-        curPomodoro.value.breaktime = 5*60;
+        curPomodoro.value.worktime = 25;
+        curPomodoro.value.breaktime = 5;
 
     }
     fun getPomodoro(): PomodoroModel {

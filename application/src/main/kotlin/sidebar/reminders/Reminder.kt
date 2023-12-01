@@ -45,16 +45,20 @@ fun ReminderContainer(currUser: MutableState<String>) {
 
     // check for reminders that are due today
     LaunchedEffect(Unit) {
-        val refresh = withContext(Dispatchers.IO) {
+        val refresh = withContext(Dispatchers.Default) {
             while (true) {
-                delay( 5000)
-                refreshDailyReminders.value = true
+                delay( 15000)
+                refreshDailyReminders.value = !refreshDailyReminders.value
             }
         }
     }
+    if (refreshDailyReminders.value) {
+        // force refresh recomposition
+    }
     for ((index, it) in ReminderVM.getReminderList().withIndex()) {
         currTime = LocalDateTime.now().format(formatter)
-        val dTime = it.year + "-" + it.month + "-" + it.day + " " + it.time
+        val dTime = String.format("%d-%02d-%02d %s", it.year.toInt(), it.month.toInt(), it.day.toInt(), it.time)
+        print("currTime: $currTime, dTime: $dTime")
         if (currTime == dTime) {
             if(alertMode.value == "closed"){
                 alertMode.value = index.toString()
@@ -107,10 +111,6 @@ fun ReminderContainer(currUser: MutableState<String>) {
                     )
                 }
                 else {
-                    if (refreshDailyReminders.value) {
-                        // used to refresh the reminders every 10s
-                        refreshDailyReminders.value = false
-                    }
                     LazyColumn {
                         items(ReminderVM.getTodayReminderList()) {
                             Card(
@@ -135,7 +135,7 @@ fun ReminderContainer(currUser: MutableState<String>) {
                                         )
                                         Row() {
                                             Text(
-                                                text = it.year + "." + it.month + "."+ it.day + ":"+ it.time ,
+                                                text = String.format("%d-%02d-%02d %s", it.year.toInt(), it.month.toInt(), it.day.toInt(), it.time),
                                                 fontSize = 10.sp,
                                                 modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp),
                                                 color = Color.LightGray,
@@ -189,7 +189,7 @@ fun ReminderContainer(currUser: MutableState<String>) {
                                     )
                                     Row(modifier = Modifier.padding(end = 10.dp)) {
                                         Text(
-                                            text = it.year + "." + it.month + "." + it.day + ":" + it.time,
+                                            text = String.format("%d-%02d-%02d %s", it.year.toInt(), it.month.toInt(), it.day.toInt(), it.time),
                                             fontSize = 10.sp,
                                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
                                             color = Color.Gray,

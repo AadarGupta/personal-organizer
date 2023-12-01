@@ -24,10 +24,6 @@ class MyHttp {
 
     suspend fun get(endpoint: String) : HttpResponse {
         val client = HttpClient(CIO)
-//        val request = HttpRequest.newBuilder()
-//            .uri(URI.create())
-//            .GET()
-//            .build()
         val response = client.get(BACKEND_URL + endpoint)
         printRequestAndResponse("GET ==> ${BACKEND_URL + endpoint}", response)
         return response
@@ -35,12 +31,6 @@ class MyHttp {
 
     suspend fun post(endpoint: String, jsonMap: JsonObject) : HttpResponse {
         val client = HttpClient(CIO);
-//        val request = HttpRequest.newBuilder()
-//            .uri(URI.create(BACKEND_URL + endpoint))
-//            .header("Content-Type", "application/json")
-//            .POST(HttpRequest.BodyPublishers.ofString(jsonMap.toString()))
-//            .build()
-//        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
         val response : HttpResponse = client.post(BACKEND_URL + endpoint) {
             contentType(ContentType.Application.Json)
             setBody(jsonMap.toString())
@@ -51,15 +41,6 @@ class MyHttp {
 
     suspend fun put(endpoint: String, jsonMap: JsonObject) : HttpResponse {
         val client = HttpClient(CIO);
-//        val request = HttpRequest.newBuilder()
-//            .uri(URI.create(BACKEND_URL + endpoint))
-//            .header("Content-Type", "application/json")
-//            .PUT(HttpRequest.BodyPublishers.ofString(jsonMap.toString()))
-//            .build()
-//        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        printRequestAndResponse(request, response, jsonMap.toString())
-//        return response.body()
-
         val response : HttpResponse = client.put(BACKEND_URL + endpoint) {
             contentType(ContentType.Application.Json)
             setBody(jsonMap.toString())
@@ -74,14 +55,6 @@ class MyHttp {
             deleteUrl += key + "=" + value + "&"
         }
         val client = HttpClient(CIO);
-//        val client = HttpClient.newBuilder().build()
-//        val request = HttpRequest.newBuilder()
-//            .uri(URI.create(deleteUrl))
-//            .DELETE()
-//            .build()
-//        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-//        printRequestAndResponse(request, response)
-
         val response : HttpResponse = client.delete(deleteUrl)
         printRequestAndResponse("DELETE ==> ${BACKEND_URL + endpoint}", response)
         return response

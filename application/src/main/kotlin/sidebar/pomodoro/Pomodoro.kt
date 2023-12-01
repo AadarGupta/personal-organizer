@@ -1,8 +1,9 @@
 package sidebar.pomodoro
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,11 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
-import androidx.compose.runtime.MutableState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.text.input.TextFieldValue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 @Composable
@@ -28,20 +26,27 @@ fun PomodoroContainer(currUser: MutableState<String>) {
     val breakingDialogMode = remember { mutableStateOf("closed") }
     var timeLeft by remember { mutableStateOf(pomodoroVM.getPomodoro().worktime) }
 
-    var minutes2 = (timeLeft % 3600) / 60;
-    var seconds2 = timeLeft % 60;
+    var minutes2 = timeLeft;
 
-    var timeString2 = String.format("%02d:%02d", minutes2, seconds2);
+    var timeString2 = "";
+    if (minutes2 > 1) {
+        timeString2 = String.format("%02d", minutes2);
+    } else {
+        timeString2 = String.format("%02d", minutes2);
+    }
 
     var timeLeftString by remember {(mutableStateOf(timeString2))}
     var isPaused by remember { mutableStateOf(true) }
     var isStart by remember { mutableStateOf(true) }
     var workTime by remember { mutableStateOf(timeString2) }
 
-    minutes2 = (pomodoroVM.getPomodoro().breaktime % 3600) / 60;
-    seconds2 = pomodoroVM.getPomodoro().breaktime % 60;
+    minutes2 = pomodoroVM.getPomodoro().breaktime;
 
-    timeString2 = String.format("%02d:%02d", minutes2, seconds2);
+    if (minutes2 > 1) {
+        timeString2 = String.format("%02d", minutes2);
+    } else {
+        timeString2 = String.format("%02d", minutes2);
+    }
 
     var breakTime by remember { mutableStateOf(timeString2) }
     var workTimeInt by remember { mutableStateOf(pomodoroVM.getPomodoro().worktime) }
@@ -60,16 +65,14 @@ fun PomodoroContainer(currUser: MutableState<String>) {
 
 
     LaunchedEffect(key1 = timeLeft, key2 = isPaused) {
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             while (timeLeft > 0 && !isPaused) {
-                delay(1000L)
+                delay(60000L)
                 timeLeft--
-                var minutes = (timeLeft % 3600) / 60;
-                var seconds = timeLeft % 60;
+                var minutes = timeLeft;
 
-                var timeString = String.format("%02d:%02d", minutes, seconds);
+                var timeString = String.format("%02d", minutes);
                 timeLeftString = timeString;
-                var curr = pomodoroVM.getPomodoro();
                 if (timeLeft == 0) {
                     if (working.value) {
                         working.value = false
@@ -88,6 +91,7 @@ fun PomodoroContainer(currUser: MutableState<String>) {
                         isPaused = false
                         isStart = false
                     }
+                    timeLeftString = String.format("%02d", timeLeft)
                 }
             }
         }
@@ -108,18 +112,16 @@ fun PomodoroContainer(currUser: MutableState<String>) {
         workingDialogMode.value = "closed"
         breakingDialogMode.value = "closed"
 
-        val minutes = (timeLeft % 3600) / 60;
-        val seconds = timeLeft % 60;
+        val minutes = timeLeft;
 
-        val timeString = String.format("%02d:%02d", minutes, seconds);
+        val timeString = String.format("%02d", minutes);
         timeLeftString = timeString;
     }
 
     fun editTimer(timeLeft:Int): String {
-        val minutes = (timeLeft % 3600) / 60;
-        val seconds = timeLeft % 60;
+        val minutes = timeLeft;
 
-        val timeString = String.format("%02d:%02d", minutes, seconds);
+        val timeString = String.format("%02d", minutes);
         return timeString;
     }
 
@@ -158,16 +160,16 @@ fun PomodoroContainer(currUser: MutableState<String>) {
                         expanded = workTimeExpanded.value,
                         onDismissRequest = { workTimeExpanded.value = !workTimeExpanded.value },
                     ) {
-                        for (i in 0..59) {
+                        for (i in 1..59) {
                             DropdownMenuItem(
                                 onClick = {
-                                    pomodoroVM.editWorkTime(i*60)
+                                    pomodoroVM.editWorkTime(i)
                                     workTimeExpanded.value = false
                                     if(!breaking.value){
-                                        timeLeftString = editTimer(i*60)
+                                        timeLeftString = editTimer(i)
                                     }
-                                    workTime = editTimer(i*60)
-                                    workTimeInt = i*60
+                                    workTime = editTimer(i)
+                                    workTimeInt = i
                                     resetTimer()
 
                                 },
@@ -199,16 +201,16 @@ fun PomodoroContainer(currUser: MutableState<String>) {
                         expanded = breakTimeExpanded.value,
                         onDismissRequest = { breakTimeExpanded.value = !breakTimeExpanded.value },
                     ) {
-                        for (i in 0..59) {
+                        for (i in 1..59) {
                             DropdownMenuItem(
                                 onClick = {
-                                    pomodoroVM.editBreakTime(i*60)
+                                    pomodoroVM.editBreakTime(i)
                                     breakTimeExpanded.value = false
                                     if(breaking.value){
-                                        timeLeftString = editTimer(i*60)
+                                        timeLeftString = editTimer(i)
                                     }
-                                    breakTime = editTimer(i*60)
-                                    breakTimeInt = i*60
+                                    breakTime = editTimer(i)
+                                    breakTimeInt = i
                                     resetTimer()
 
                                 },
@@ -233,10 +235,10 @@ fun PomodoroContainer(currUser: MutableState<String>) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text= timeLeftString ,
+                    text= timeLeftString + " min(s) left",
                     color = Color.Green,
                     fontWeight = FontWeight.W800,
-                    fontSize = 45.sp,
+                    fontSize = 24.sp,
                     )
             }
             Column{
