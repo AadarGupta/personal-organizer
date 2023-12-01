@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -24,17 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
-
-fun checkColour(stack: ArrayDeque<TextFieldValue>): Long {
-    return if (stack.isNotEmpty()) {
-        0xFF67c2b3
-    } else {
-        0x80D3D3D3
-    }
-}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -49,6 +43,20 @@ fun EditPage(
     val undoStack = remember { ArrayDeque<TextFieldValue>() }
     val redoStack = remember { ArrayDeque<TextFieldValue>() }
     val focusRequester = remember { FocusRequester() }
+
+    val openHelp = remember { mutableStateOf("closed") }
+
+    if (openHelp.value == "open") {
+        HelpMenu(openHelp)
+    }
+
+    fun checkColour(stack: ArrayDeque<TextFieldValue>): Long {
+        return if (stack.isNotEmpty()) {
+            0xFF67c2b3
+        } else {
+            0x80D3D3D3
+        }
+    }
 
     fun updateStacks(newText: String, oldText: TextFieldValue) {
         // Check if a word boundary (space or punctuation) was added
@@ -109,6 +117,24 @@ fun EditPage(
                 )
 
                 Row {
+
+                    Column(modifier = Modifier
+                        .clickable {
+                            openHelp.value = "open"
+                        }
+                        .padding(horizontal = 20.dp)) {
+                        Icon(
+                            imageVector = Icons.Filled.Info, contentDescription = "Markdown Commands",
+                            tint = Color(0xFF67c2b3),
+                            modifier = Modifier.height(40.dp)
+                        )
+                        Text(
+                            text = "Help",
+                            fontSize = 10.sp,
+                            color = Color(0xFF67c2b3),
+                        )
+                    }
+
                     Column(modifier = Modifier
                         .clickable(enabled = undoStack.isNotEmpty()) {
                             undo()

@@ -16,7 +16,6 @@ fun FilePreview(
     fileVM: FileViewModel
 ) {
     var fileItem = fileVM.getFileByIdx(fileItemIdx)
-    var query = remember { mutableStateOf(fileItem.fileContent) }
     val dialogMode = remember { mutableStateOf("preview") }
 
     Window(onCloseRequest = { editState.value = "closed" })
