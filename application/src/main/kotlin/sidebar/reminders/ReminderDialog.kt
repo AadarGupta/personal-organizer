@@ -254,7 +254,17 @@ fun ReminderDialog(
                                 expanded = dayExpanded.value,
                                 onDismissRequest = { dayExpanded.value = !dayExpanded.value },
                             ) {
-                                for (i in 1..31) {
+                                var maxday : Int;
+                                if (month.text == "2") {
+                                    maxday = 28
+                                    day = TextFieldValue("28")
+                                } else if (month.text == "4" || month.text == "6" || month.text == "9" || month.text == "11") {
+                                    maxday = 30
+                                    day = TextFieldValue("30")
+                                } else {
+                                    maxday = 31
+                                }
+                                for (i in 1..maxday) {
                                     DropdownMenuItem(
                                         onClick = {
                                             day = TextFieldValue(i.toString());
