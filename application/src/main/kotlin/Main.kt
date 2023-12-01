@@ -67,7 +67,7 @@ fun App(
     currUser: MutableState<String>
 ) {
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(Color.White),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
 

@@ -107,7 +107,6 @@ fun PreviewPage(
                         } else if (string.length > 1 && string[0] == '<' && string[string.length - 1] == '>') {
                             ClickableURL(string.substring(1,string.length - 1))
                         } else if (string.length > 2 && string.substring(0, 2) == "!(" && string[string.length - 1] == ')') {
-                            println(string.substring(2, string.length - 1))
                             ShowImage(string.substring(2,string.length - 1))
                         } else {
                             TextInline(string)
