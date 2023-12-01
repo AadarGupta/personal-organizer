@@ -3,6 +3,9 @@ package sidebar.reminders;
 import MyHttp
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import io.ktor.client.call.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -16,12 +19,16 @@ class ReminderViewModel(currUser: MutableState<String>) {
     private var reminderList = mutableStateListOf<ReminderModel>()
 
     init {
-        val http = MyHttp()
-        val getAllReminderResponse : String = http.get("reminders?user=${currUser.value}")
-        val obj = Json.decodeFromString<ReminderList>(getAllReminderResponse)
+        runBlocking {
+            launch {
+                val http = MyHttp()
+                val getAllReminderResponse = http.get("reminders?user=${currUser.value}")
+                val obj = Json.decodeFromString<ReminderList>(getAllReminderResponse.body())
 
-        for (reminder in obj.items) {
-            reminderList.add(reminder)
+                for (reminder in obj.items) {
+                    reminderList.add(reminder)
+                }
+            }
         }
     }
 
@@ -68,9 +75,13 @@ class ReminderViewModel(currUser: MutableState<String>) {
             )
         )
 
-        val createReminderResponse = http.post("reminder?user=${currUser.value}", body)
-        val newItem = Json.decodeFromString<ReminderModel>(createReminderResponse.body())
-        reminderList.add(newItem)
+        runBlocking {
+            launch {
+                val createReminderResponse = http.post("reminder?user=${currUser.value}", body)
+                val newItem = Json.decodeFromString<ReminderModel>(createReminderResponse.body())
+                reminderList.add(newItem)
+            }
+        }
 
         return reminderList.size - 1
     }
@@ -96,30 +107,38 @@ class ReminderViewModel(currUser: MutableState<String>) {
                 reminderList[idx].isChecked
             )
 
-        val http = MyHttp()
-        val body = JsonObject(
-            mapOf(
-                "id" to JsonPrimitive(targetItem.id),
-                "name" to JsonPrimitive(inputName),
-                "year" to JsonPrimitive(inputYear),
-                "month" to JsonPrimitive(inputMonth),
-                "day" to JsonPrimitive(inputDay),
-                "time" to JsonPrimitive(inputTime)
-            )
-        )
-        http.put("reminder?user=${currUser.value}", body)
+        runBlocking {
+            launch {
+                val http = MyHttp()
+                val body = JsonObject(
+                    mapOf(
+                        "id" to JsonPrimitive(targetItem.id),
+                        "name" to JsonPrimitive(inputName),
+                        "year" to JsonPrimitive(inputYear),
+                        "month" to JsonPrimitive(inputMonth),
+                        "day" to JsonPrimitive(inputDay),
+                        "time" to JsonPrimitive(inputTime)
+                    )
+                )
+                http.put("reminder?user=${currUser.value}", body)
+            }
+        }
     }
 
     fun removeReminderItem(targetItem: ReminderModel) {
-        val http = MyHttp()
-        http.delete(
-            "reminder",
-            mapOf(
-                "id" to targetItem.id.toString(),
-                "user" to currUser.value
-            )
-        )
-        reminderList.remove(targetItem)
+        runBlocking {
+            launch {
+                val http = MyHttp()
+                http.delete(
+                    "reminder",
+                    mapOf(
+                        "id" to targetItem.id.toString(),
+                        "user" to currUser.value
+                    )
+                )
+                reminderList.remove(targetItem)
+            }
+        }
     }
 
     fun getItemByIdx(idx: Int): ReminderModel {

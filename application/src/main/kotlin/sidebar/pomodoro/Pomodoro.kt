@@ -16,6 +16,8 @@ import kotlinx.coroutines.delay
 import androidx.compose.runtime.MutableState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.input.TextFieldValue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun PomodoroContainer(currUser: MutableState<String>) {
@@ -58,32 +60,34 @@ fun PomodoroContainer(currUser: MutableState<String>) {
 
 
     LaunchedEffect(key1 = timeLeft, key2 = isPaused) {
-        while (timeLeft > 0 && !isPaused) {
-            delay(1000L)
-            timeLeft--
-            var minutes = (timeLeft % 3600) / 60;
-            var seconds = timeLeft % 60;
+        withContext(Dispatchers.IO) {
+            while (timeLeft > 0 && !isPaused) {
+                delay(1000L)
+                timeLeft--
+                var minutes = (timeLeft % 3600) / 60;
+                var seconds = timeLeft % 60;
 
-            var timeString = String.format("%02d:%02d", minutes, seconds);
-            timeLeftString = timeString;
-            var curr = pomodoroVM.getPomodoro();
-            if(timeLeft == 0){
-                if (working.value) {
-                    working.value = false
-                    breaking.value = true
-                    workingDialogMode.value = "closed"
-                    breakingDialogMode.value = "bopen"
-                    timeLeft = breakTimeInt
-                    isPaused = false
-                    isStart = false
-                }else{
-                    working.value = true
-                    breaking.value = false
-                    breakingDialogMode.value = "closed"
-                    workingDialogMode.value = "wopen"
-                    timeLeft = workTimeInt
-                    isPaused = false
-                    isStart = false
+                var timeString = String.format("%02d:%02d", minutes, seconds);
+                timeLeftString = timeString;
+                var curr = pomodoroVM.getPomodoro();
+                if (timeLeft == 0) {
+                    if (working.value) {
+                        working.value = false
+                        breaking.value = true
+                        workingDialogMode.value = "closed"
+                        breakingDialogMode.value = "bopen"
+                        timeLeft = breakTimeInt
+                        isPaused = false
+                        isStart = false
+                    } else {
+                        working.value = true
+                        breaking.value = false
+                        breakingDialogMode.value = "closed"
+                        workingDialogMode.value = "wopen"
+                        timeLeft = workTimeInt
+                        isPaused = false
+                        isStart = false
+                    }
                 }
             }
         }

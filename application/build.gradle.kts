@@ -43,7 +43,8 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "personal-organizer"
-            packageVersion = "1.0.0"
+            packageVersion = "4.0.0"
+            modules("java.net.http")
         }
     }
 }

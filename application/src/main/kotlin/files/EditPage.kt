@@ -24,6 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 
 fun checkColour(stack: ArrayDeque<TextFieldValue>): Long {
@@ -191,9 +193,11 @@ fun EditPage(
 
         }
         LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
-            query.value = query.value.copy(
-                selection = TextRange(query.value.text.length)
-            )
+            withContext(Dispatchers.IO) {
+                focusRequester.requestFocus()
+                query.value = query.value.copy(
+                    selection = TextRange(query.value.text.length)
+                )
+            }
         }
     }

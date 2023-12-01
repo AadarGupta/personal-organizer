@@ -3,6 +3,9 @@ package sidebar.todos;
 import MyHttp
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import io.ktor.client.call.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -16,12 +19,16 @@ class ToDoViewModel(currUser: MutableState<String>) {
     private var toDoList = mutableStateListOf<ToDoModel>()
 
     init {
-        val http = MyHttp()
-        val getAllToDoResponse : String = http.get("todos?user=${currUser.value}")
-        val obj = Json.decodeFromString<ToDoList>(getAllToDoResponse)
+        runBlocking {
+            launch {
+                val http = MyHttp()
+                val getAllToDoResponse = http.get("todos?user=${currUser.value}")
+                val obj = Json.decodeFromString<ToDoList>(getAllToDoResponse.body())
 
-        for (todo in obj.items) {
-            toDoList.add(todo)
+                for (todo in obj.items) {
+                    toDoList.add(todo)
+                }
+            }
         }
     }
 
@@ -41,9 +48,14 @@ class ToDoViewModel(currUser: MutableState<String>) {
                 "isChecked" to JsonPrimitive(false)
             )
         )
-        val createToDoResponse = http.post("todo?user=${currUser.value}", body)
-        val newItem = Json.decodeFromString<ToDoModel>(createToDoResponse.body())
-        toDoList.add(newItem)
+
+        runBlocking {
+            launch {
+                val createToDoResponse = http.post("todo?user=${currUser.value}", body)
+                val newItem = Json.decodeFromString<ToDoModel>(createToDoResponse.body())
+                toDoList.add(newItem)
+            }
+        }
 
         return toDoList.size - 1
     }
@@ -58,40 +70,52 @@ class ToDoViewModel(currUser: MutableState<String>) {
                 toDoList[idx].isChecked
             )
 
-        val http = MyHttp()
-        val body = JsonObject(
-            mapOf(
-                "id" to JsonPrimitive(targetItem.id),
-                "name" to JsonPrimitive(newName)
-            )
-        )
-        http.put("todo/name?user=${currUser.value}", body)
+        runBlocking {
+            launch {
+                val http = MyHttp()
+                val body = JsonObject(
+                    mapOf(
+                        "id" to JsonPrimitive(targetItem.id),
+                        "name" to JsonPrimitive(newName)
+                    )
+                )
+                http.put("todo/name?user=${currUser.value}", body)
+            }
+        }
     }
 
     fun changeToDoCheckStatus(targetItem: ToDoModel) {
         val idx = toDoList.indexOf(targetItem)
         toDoList[idx] = ToDoModel(toDoList[idx].id, toDoList[idx].owner, toDoList[idx].itemName, !toDoList[idx].isChecked)
 
-        val http = MyHttp()
-        val body = JsonObject(
-            mapOf(
-                "id" to JsonPrimitive(targetItem.id),
-                "isChecked" to JsonPrimitive((!targetItem.isChecked).toString())
-            )
-        )
-        http.put("todo/checked?user=${currUser.value}", body)
+        runBlocking {
+            launch {
+                val http = MyHttp()
+                val body = JsonObject(
+                    mapOf(
+                        "id" to JsonPrimitive(targetItem.id),
+                        "isChecked" to JsonPrimitive((!targetItem.isChecked).toString())
+                    )
+                )
+                http.put("todo/checked?user=${currUser.value}", body)
+            }
+        }
     }
 
     fun removeToDoItem(targetItem: ToDoModel) {
-        val http = MyHttp()
-        http.delete(
-            "todo",
-            mapOf(
-                "id" to targetItem.id.toString(),
-                "user" to currUser.value
-            )
-        )
-        toDoList.remove(targetItem)
+        runBlocking {
+            launch {
+                val http = MyHttp()
+                http.delete(
+                    "todo",
+                    mapOf(
+                        "id" to targetItem.id.toString(),
+                        "user" to currUser.value
+                    )
+                )
+                toDoList.remove(targetItem)
+            }
+        }
     }
 
     fun getIdxById(toDoItem: ToDoModel): Int {

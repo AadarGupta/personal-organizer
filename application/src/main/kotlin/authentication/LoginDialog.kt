@@ -18,6 +18,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.ktor.http.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
@@ -56,12 +59,16 @@ fun LoginDialog(
                         )
                     )
 
-                    val createUserResponse = http.post("user/login", body)
-                    if (createUserResponse.statusCode() == 200) {
-                        currUser.value = username
-                        mode.value = "closed"
-                    } else {
-                        invalidCredentials = true
+                    runBlocking {
+                        launch {
+                            val createUserResponse = http.post("user/login", body)
+                            if (createUserResponse.status == HttpStatusCode.OK) {
+                                currUser.value = username
+                                mode.value = "closed"
+                            } else {
+                                invalidCredentials = true
+                            }
+                        }
                     }
                 }
             ) {
