@@ -40,8 +40,8 @@ fun EditPage(
     var fileItem = fileVM.getFileByIdx(fileItemIdx)
     val query = remember { mutableStateOf(TextFieldValue(fileItem.fileContent)) }
 
-    val undoStack = remember { ArrayDeque<TextFieldValue>() }
-    val redoStack = remember { ArrayDeque<TextFieldValue>() }
+    val undoStack = remember { ArrayDeque<TimedTextField>() }
+    val redoStack = remember { ArrayDeque<TimedTextField>() }
     val focusRequester = remember { FocusRequester() }
 
     val openHelp = remember { mutableStateOf("closed") }
@@ -50,7 +50,7 @@ fun EditPage(
         HelpMenu(openHelp)
     }
 
-    fun checkColour(stack: ArrayDeque<TextFieldValue>): Long {
+    fun checkColour(stack: ArrayDeque<TimedTextField>): Long {
         return if (stack.isNotEmpty()) {
             0xFF67c2b3
         } else {
@@ -59,30 +59,46 @@ fun EditPage(
     }
 
     fun updateStacks(newText: String, oldText: TextFieldValue) {
-        // Check if a word boundary (space or punctuation) was added
-        if (newText.last().isWhitespace() || newText.last() in listOf('.', ',', '?', '!')) {
-            if (undoStack.isEmpty() || undoStack.first().text != oldText.text) {
-                undoStack.addFirst(oldText)
+        val currentTime = System.currentTimeMillis()
+        val newTimedText = TimedTextField(oldText, currentTime)
+        // Check if the text has been changed
+        if (newText != oldText.text) {
+            val lastChangeTime = if (undoStack.isNotEmpty()) undoStack.first().timestamp else 0
+            // Group changes based on time threshold (e.g., 2000 milliseconds = 2 seconds)
+            if (currentTime - lastChangeTime > 2000) {
+                // Add the old text to the undo stack if significant time has passed
+                undoStack.addFirst(newTimedText)
             }
         }
     }
 
     fun undo() {
         if (undoStack.isNotEmpty()) {
-            redoStack.addFirst(query.value)
-            query.value = undoStack.removeFirst()
+            // Take the current value to redo stack
+            val currentTimedText = TimedTextField(query.value, System.currentTimeMillis())
+            redoStack.addFirst(currentTimedText)
+
+            // Get the previous value from undo stack and apply it
+            val previousTimedText = undoStack.removeFirst()
+            query.value = previousTimedText.textFieldValue
         }
     }
+
 
     fun redo() {
         if (redoStack.isNotEmpty()) {
-            undoStack.addFirst(query.value)
-            query.value = redoStack.removeFirst()
+            // Take the current value to undo stack
+            val currentTimedText = TimedTextField(query.value, System.currentTimeMillis())
+            undoStack.addFirst(currentTimedText)
+
+            // Get the next value from redo stack and apply it
+            val nextTimedText = redoStack.removeFirst()
+            query.value = nextTimedText.textFieldValue
         }
     }
 
 
-        Column(
+    Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
