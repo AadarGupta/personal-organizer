@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 fun Alert(mode: MutableState<String> , pomodoroVM: PomodoroViewModel) {
     AlertDialog(
         title = {
+            // wopen and bopen states are used to differentiate when it is workTime and breakTime
             if (mode.value == "wopen") {
                 Text(
                     text = "Time to Start Work!", modifier = Modifier.padding(20.dp),
