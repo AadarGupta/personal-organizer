@@ -54,16 +54,15 @@ fun PomodoroContainer(currUser: MutableState<String>) {
     var breakTimeExpanded = remember { mutableStateOf(false) }
     var workTimeExpanded = remember { mutableStateOf(false) }
 
-
+    // pop up dialog for adding or editing a reminder item
     if (breaking.value && breakingDialogMode.value == "bopen") {
         Alert(breakingDialogMode,pomodoroVM)
     }
-
     if (working.value && workingDialogMode.value == "wopen") {
         Alert(workingDialogMode,pomodoroVM)
     }
 
-
+    //coroutine countdown timer
     LaunchedEffect(key1 = timeLeft, key2 = isPaused) {
         withContext(Dispatchers.Default) {
             while (timeLeft > 0 && !isPaused) {
@@ -73,6 +72,8 @@ fun PomodoroContainer(currUser: MutableState<String>) {
 
                 var timeString = String.format("%02d", minutes);
                 timeLeftString = timeString;
+                timeLeftString = timeString;
+                // when the countdown ends, reset all variables and switch to the next pomodoro state
                 if (timeLeft == 0) {
                     if (working.value) {
                         working.value = false
@@ -170,6 +171,7 @@ fun PomodoroContainer(currUser: MutableState<String>) {
                                     }
                                     workTime = editTimer(i)
                                     workTimeInt = i
+                                    //selected a new time resets the timer and all related states with the new time
                                     resetTimer()
 
                                 },
