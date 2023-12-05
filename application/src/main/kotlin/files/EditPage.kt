@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
 
+// Editable Page (when user opens page and clicks edit)
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditPage(
@@ -37,72 +38,89 @@ fun EditPage(
     fileVM: FileViewModel,
     dialogMode: MutableState<String>,
 ) {
+    // Gets the file based on the passed in index and loads its contents
     var fileItem = fileVM.getFileByIdx(fileItemIdx)
     val query = remember { mutableStateOf(TextFieldValue(fileItem.fileContent)) }
 
+    // Generates an undo and redo stack
     val undoStack = remember { ArrayDeque<TimedTextField>() }
     val redoStack = remember { ArrayDeque<TimedTextField>() }
+    // Requests focus to autofocus the TextField
     val focusRequester = remember { FocusRequester() }
-
+    // Sets the help menu to a default of closed
     val openHelp = remember { mutableStateOf("closed") }
 
+    // Opens help menu if openHelp is open
     if (openHelp.value == "open") {
         HelpMenu(openHelp)
     }
 
+    // Checks if the colour should be enabled
     fun checkColour(stack: ArrayDeque<TimedTextField>): Long {
+        // If the stack is not empty, make the button green
         return if (stack.isNotEmpty()) {
             0xFF67c2b3
         } else {
+            // Greyed out if the stack is empty
             0x80D3D3D3
         }
     }
 
+    // Updated the undo stack based on the newText and the oldText
     fun updateStacks(newText: String, oldText: TextFieldValue) {
+        // Calculates current time in milliseconds
         val currentTime = System.currentTimeMillis()
+        // Creates a timed text field value based on the value with the current time
         val newTimedText = TimedTextField(oldText, currentTime)
-        // Check if the text has been changed
+        // Checks if the text has been changed
         if (newText != oldText.text) {
+            // If the undoStack is not empty, get the timestamp of the last change
             val lastChangeTime = if (undoStack.isNotEmpty()) undoStack.first().timestamp else 0
-            // Group changes based on time threshold (e.g., 2000 milliseconds = 2 seconds)
+            // Group changes based on time threshold (2 seconds)
             if (currentTime - lastChangeTime > 2000) {
-                // Add the old text to the undo stack if significant time has passed
+                // Add the old text to the undo stack if significant time has passed (2000 milliseconds)
                 undoStack.addFirst(newTimedText)
             }
         }
     }
 
+    // Undo function when button is pressed
     fun undo() {
+        // Check if undo is possible
         if (undoStack.isNotEmpty()) {
-            // Take the current value to redo stack
+            // Take the current value and add to redo stack
             val currentTimedText = TimedTextField(query.value, System.currentTimeMillis())
             redoStack.addFirst(currentTimedText)
 
-            // Get the previous value from undo stack and apply it
+            // Get the previous value and apply it
             val previousTimedText = undoStack.removeFirst()
             query.value = previousTimedText.textFieldValue
         }
     }
 
-
+    // Redo function when button is pressed
     fun redo() {
+        // Check if redo is possible
         if (redoStack.isNotEmpty()) {
-            // Take the current value to undo stack
+            // Take the current value and add to undo stack
             val currentTimedText = TimedTextField(query.value, System.currentTimeMillis())
             undoStack.addFirst(currentTimedText)
 
-            // Get the next value from redo stack and apply it
+            // Get the previous value and apply it
             val nextTimedText = redoStack.removeFirst()
             query.value = nextTimedText.textFieldValue
         }
     }
 
 
+    // Generates UI for the edit page
     Column(
+            // Column of a max size, with vertical scrolling and spaced by 15 dp
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .onPreviewKeyEvent { keyEvent ->
+                    // Handles the hotkey commands (save, undo, redo)
                     if(keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.S && (keyEvent.isCtrlPressed || keyEvent.isMetaPressed)) {
                         fileVM.editFileContent(fileItem, query.value.text)
                         dialogMode.value = "preview"
@@ -119,6 +137,7 @@ fun EditPage(
                 },
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
+            // Heading row with title and commands
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -134,6 +153,7 @@ fun EditPage(
 
                 Row {
 
+                    // Button for modified markdown commands
                     Column(modifier = Modifier
                         .clickable {
                             openHelp.value = "open"
@@ -151,6 +171,7 @@ fun EditPage(
                         )
                     }
 
+                    // Button for undo command
                     Column(modifier = Modifier
                         .clickable(enabled = undoStack.isNotEmpty()) {
                             undo()
@@ -168,6 +189,7 @@ fun EditPage(
                         )
                     }
 
+                    // Button for redo command
                     Column(modifier = Modifier
                         .clickable(enabled = redoStack.isNotEmpty()) {
                             redo()
@@ -185,8 +207,10 @@ fun EditPage(
                         )
                     }
 
+                    // Button to preview rendered markdown
                     Column(modifier = Modifier
                         .clickable {
+                            // Edits content and saves it + opens preview
                             fileVM.editFileContent(fileItem, query.value.text)
                             dialogMode.value = "preview"
                         }
@@ -207,18 +231,22 @@ fun EditPage(
 
 
 
+            // Divider row (separation between header and editable area)
             Row(
                 horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 100.dp)
             ) {
                 Divider(modifier = Modifier.fillMaxWidth().height(1.dp), color = Color.Black)
             }
 
+            // Editable row with textfield
             Row(
                 modifier = Modifier
                     .fillMaxWidth(1f)
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
+                    // TextField where user enters markdown
                     BasicTextField(
+                        // Value changes and updates the undo stack
                         value = query.value,
                         onValueChange = {
                             val oldValue = query.value
@@ -234,9 +262,14 @@ fun EditPage(
 
 
         }
+
+        // Performs this on load
         LaunchedEffect(Unit) {
+            // Runs this in the background thread
             withContext(Dispatchers.IO) {
+                // Immediately focus on TextField
                 focusRequester.requestFocus()
+                // Set the cursor to the end of the text
                 query.value = query.value.copy(
                     selection = TextRange(query.value.text.length)
                 )

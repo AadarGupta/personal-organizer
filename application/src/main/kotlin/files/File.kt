@@ -22,26 +22,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
+// List of Files (on homepage)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FileListContainer(currUser: MutableState<String>) {
+    // Initializes the FileViewModel for the current user and initializes default values (start menu)
     var fileVM = FileViewModel(currUser)
     var selectedItemIdx = remember { mutableStateOf(-1) }
     val dialogMode = remember { mutableStateOf("closed") }
     val dialogType = remember { mutableStateOf("none") }
     val parentLevel = remember { mutableStateOf(-1) }
 
+    // If a new folder/file is being created or its name is edited, open the name dialog
     if (dialogMode.value == "add" || dialogMode.value == "edit") {
         FileDialog(dialogMode, dialogType, parentLevel, selectedItemIdx.value, fileVM)
     }
+
+    // If a new folder/file is being previewed, open the preview window
     if(dialogMode.value == "preview") {
         FilePreview(dialogMode, selectedItemIdx.value, fileVM)
     }
 
+    // If a file is being moved, open the move dialog
     if(dialogMode.value == "move") {
         MoveDialog(dialogMode, parentLevel, selectedItemIdx.value, fileVM)
     }
 
+    // UI for the list of files
     Column (
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -53,6 +60,7 @@ fun FileListContainer(currUser: MutableState<String>) {
         ) {
             Row()
             {
+                // Heading for the files and folders with a tooltip explaining what to do
                 Text(
                     text = "Files & Folders",
                     fontWeight = FontWeight.Light,
@@ -74,7 +82,7 @@ fun FileListContainer(currUser: MutableState<String>) {
                         }
                     },
                     modifier = Modifier.padding(start = 10.dp),
-                    delayMillis = 600, // in milliseconds
+                    delayMillis = 600, // delay in milliseconds
                     tooltipPlacement = TooltipPlacement.CursorPoint(
                         alignment = Alignment.BottomEnd
                     )
@@ -86,8 +94,10 @@ fun FileListContainer(currUser: MutableState<String>) {
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                // Buttons for new file and new folder options
                 Button(
                     onClick = {
+                        // If a new file needs to be updated, updated mode and type of dialog
                         dialogMode.value = "add"
                         dialogType.value = "file"
                     },
@@ -107,6 +117,7 @@ fun FileListContainer(currUser: MutableState<String>) {
 
                 Button(
                     onClick = {
+                        // If a new folder needs to be updated, updated mode and type of dialog
                         dialogMode.value = "add"
                         dialogType.value = "folder"
                     },
@@ -114,7 +125,7 @@ fun FileListContainer(currUser: MutableState<String>) {
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3)))
                 {
                     Icon(
-                        imageVector = Icons.Filled.Add, contentDescription = "Create New File Icon",
+                        imageVector = Icons.Filled.Add, contentDescription = "Create New Folder Icon",
                         tint = Color.White
                     )
                     Text(
@@ -127,19 +138,23 @@ fun FileListContainer(currUser: MutableState<String>) {
 
         }
 
+        // If the view model is empty (no files), prompt user to create one
         if (fileVM.isEmpty()) {
             Text(
                 text = "No files found. Create one with the button above!", textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxHeight()
             )
         } else {
+            // Check if the user is not at the root
             if (parentLevel.value != -1) {
+                // Show a button to go back to the previous level
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp, vertical = 2.dp)
                         .clickable {
+                            // Switch the parent level to the current parent's parent
                             parentLevel.value = fileVM.getFileById(parentLevel.value).parent
                         }
                 ) {
@@ -153,6 +168,7 @@ fun FileListContainer(currUser: MutableState<String>) {
                     )
                 }
             }
+            // Row to show paramters for each file
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
@@ -161,12 +177,14 @@ fun FileListContainer(currUser: MutableState<String>) {
                     modifier = Modifier.padding(start = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
+                    // Type header (file or folder)
                     Text(
                         text = "Type",
                         fontSize = 10.sp,
                         modifier = Modifier.padding(vertical = 2.dp),
                         color = Color.Gray,
                     )
+                    // Filename header
                     Text(
                         text = "Name",
                         fontSize = 10.sp,
@@ -175,6 +193,7 @@ fun FileListContainer(currUser: MutableState<String>) {
                     )
                 }
 
+                // Header for actions
                 Text(
                     text = "Actions",
                     fontSize = 10.sp,
@@ -183,20 +202,26 @@ fun FileListContainer(currUser: MutableState<String>) {
                 )
             }
 
+            // LazyColumn to load each file, dependent on parent level
             LazyColumn {
                 items(fileVM.getFileList(parentLevel.value)) {
+                    // Creates a card for each file/folder
                     Card(
                         modifier = Modifier
                             .clickable {
+                                // If the clicked file is a folder, open it as a parent folder
                                 selectedItemIdx.value = fileVM.getFileIdx(it)
                                 if (it.isFolder) {
                                     parentLevel.value = it.id
-                                } else {
+                                }
+                                // If it is a file, open it as a preview
+                                else {
                                     dialogMode.value = "preview"
                                 }
                             }
                             .padding(vertical = 5.dp)
                     ) {
+                        // Shows the UI for the file/folder card
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -207,6 +232,7 @@ fun FileListContainer(currUser: MutableState<String>) {
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth().height(30.dp)
                             ) {
+                                // Choose an appropriate icon => file or folder
                                 if (it.isFolder) {
                                     Image(
                                         painter = painterResource("folderIcon.png"),
@@ -222,12 +248,14 @@ fun FileListContainer(currUser: MutableState<String>) {
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
+                                    // Show the name of the file
                                     Text(
                                         text = it.fileName,
                                         fontSize = 12.sp,
                                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
                                     )
                                     Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                                        // Button to edit the name of the title
                                         Icon(
                                             imageVector = Icons.Filled.Edit, contentDescription = "Edit",
 
@@ -238,11 +266,11 @@ fun FileListContainer(currUser: MutableState<String>) {
                                             tint = Color.DarkGray
                                         )
 
+                                        // Button to move the file into a folder
                                         Icon(
                                             imageVector = Icons.Filled.Send, contentDescription = "Move",
 
                                             modifier = Modifier.clickable {
-                                                // fileVM.moveItem(it);
                                                 // Open move dialog and move item to selected folder
                                                 selectedItemIdx.value = fileVM.getFileIdx(it)
                                                 dialogMode.value = "move"
@@ -250,6 +278,7 @@ fun FileListContainer(currUser: MutableState<String>) {
                                             tint = Color(0xFF7fe26d)
                                         )
 
+                                        // Button to delete the file
                                         Icon(
                                             imageVector = Icons.Filled.Delete, contentDescription = "Delete",
 

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Window
 
+// Move Dialog to move file (If the move button is clicked on the file's card)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MoveDialog(
@@ -32,10 +33,13 @@ fun MoveDialog(
     fileItemIdx: Int,
     fileVM: FileViewModel
 ) {
+    // Get the file based on the index
     var fileItem = fileVM.getFileByIdx(fileItemIdx)
 
+    // Created a dialog with Move "filename"
     Dialog(onCloseRequest = { mode.value = "closed" }, title = "Move ${fileItem.fileName}")
     {
+        // Creates a button to move to the root folder and closes the dialog
         TextButton(
             onClick = {
                 fileVM.moveFile(fileItem, -1)
@@ -54,6 +58,7 @@ fun MoveDialog(
             )
         }
         LazyColumn(modifier = Modifier.padding(vertical = 40.dp)) {
+            // Creates a button for each available (folder) parent
             items(fileVM.getFileList(parentLevel.value)) {
                 if(it.isFolder && it != fileItem) {
                     TextButton(
