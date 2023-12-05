@@ -38,8 +38,10 @@ fun WelcomePage(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
+        // header component
         LogoHeader()
 
+        // logout button
         Button(
             onClick = {
                 // check if credentials are valid
@@ -50,6 +52,7 @@ fun WelcomePage(
             Text(text = "Logout", color = Color.White)
         }
 
+        // file list component
         Box(
             modifier = Modifier
                 .fillMaxWidth(1f)
@@ -70,7 +73,7 @@ fun App(
         modifier = Modifier.fillMaxSize().background(Color.White),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-
+        // welcome page with folder structure
         Box(
             modifier = Modifier
                 .background(Color.White)
@@ -81,6 +84,8 @@ fun App(
         ) {
             WelcomePage(currUser)
         }
+
+        // sidebar show/hide button
         var sidebarVisible by remember { mutableStateOf(true) }
         Button(onClick = {sidebarVisible = !sidebarVisible},
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3)),
@@ -98,6 +103,7 @@ fun App(
                 )
             }
         }
+        // show sidebar if sidebarVisible is true with animation
         AnimatedVisibility(sidebarVisible) {
             val backgroundBrush = Brush.verticalGradient(listOf(Color(0xFF67c2b3), Color(0xFF7fe26d)))
             Box(
@@ -114,6 +120,7 @@ fun App(
 
 fun main() = application {
 
+    // main application window
     Window(
         onCloseRequest = ::exitApplication,
         title="MyPO",
@@ -123,11 +130,14 @@ fun main() = application {
             position = WindowPosition(50.dp, 50.dp)
         )
     ) {
+        // create global current user state
         var currUser = remember { mutableStateOf("") }
 
         if (currUser.value != "") {
+            // show app if user is logged in
             App(currUser)
         } else {
+            // show autentication page if no user is logged in
             AuthenticationPage(currUser)
         }
     }

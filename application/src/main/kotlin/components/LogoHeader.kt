@@ -1,7 +1,6 @@
 package components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,11 +20,14 @@ fun LogoHeader() {
             .fillMaxWidth()
             .padding(end = 30.dp),
     ) {
+        // logo
         Image(
             painter = painterResource("mypoLogo.png"),
             contentDescription = "app logo",
             modifier = Modifier.padding(10.dp, 4.dp)
         )
+
+        // title
         Text(
             text = "My Personal Organizer",
             fontSize = 30.sp,

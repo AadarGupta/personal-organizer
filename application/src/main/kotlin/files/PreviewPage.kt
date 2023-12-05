@@ -19,22 +19,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// Editable Page (when user opens page or presses preview after making edits)
 @Composable
 fun PreviewPage(
     fileItemIdx: Int,
     fileVM: FileViewModel,
     dialogMode: MutableState<String>,
 ) {
+    // Gets the file and reads it contents as the default query
     var fileItem = fileVM.getFileByIdx(fileItemIdx)
     var query = remember { mutableStateOf(fileItem.fileContent) }
 
 
+        // Renders UI for the preview page
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(15.dp)
         ) {
+            // Row with the file name and command button for edit
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
@@ -50,6 +54,7 @@ fun PreviewPage(
 
                 Column( modifier = Modifier
                     .clickable {
+                        // If clicked, open the editable menu
                         dialogMode.value = "edit"
                     }
                     .padding(horizontal = 20.dp)) {
@@ -69,24 +74,28 @@ fun PreviewPage(
 
             }
 
+            // Creates a divider between rows
             Row(
                 horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth().padding(start = 15.dp, end = 100.dp)
             ) {
                 Divider(modifier = Modifier.fillMaxWidth().height(1.dp), color = Color.Black)
             }
 
+            // Displays the rendered markdown
             Row(
                 modifier = Modifier
                     .fillMaxWidth(1f)
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
-                    // Need to see how to comprehend query as Markdown
+                    // Reads all lines in query
                     var lines = query.value.lines()
 
+                    // Loops through all the lines, one at a time
                     lines.forEach {
+                        // Removes any trailing whitespaces
                         var string = it.trim()
 
-                        // Create headings
+                        // Create headings H1-H6
                         if(string.length > 6 && string.substring(0,6) == "######"){
                             H6(string.substring(6).trim())
                         } else if(string.length > 5 && string.substring(0,5) == "#####") {
@@ -102,13 +111,17 @@ fun PreviewPage(
                         } // Create bullet points
                         else if(string.length > 1 && string[0] == '-') {
                             PointForm(string.substring(1).trim())
-                        } else if(string.length > 1 && string[0] == '`' && string[string.length - 1] == '`') {
+                        } // Creates a line of code
+                        else if(string.length > 1 && string[0] == '`' && string[string.length - 1] == '`') {
                             CodeLine(string.substring(1,string.length - 1))
-                        } else if (string.length > 1 && string[0] == '<' && string[string.length - 1] == '>') {
+                        } // Creates a clickable URL
+                        else if (string.length > 1 && string[0] == '<' && string[string.length - 1] == '>') {
                             ClickableURL(string.substring(1,string.length - 1))
-                        } else if (string.length > 2 && string.substring(0, 2) == "!(" && string[string.length - 1] == ')') {
+                        } // Shows image from a URL
+                        else if (string.length > 2 && string.substring(0, 2) == "!(" && string[string.length - 1] == ')') {
                             ShowImage(string.substring(2,string.length - 1))
-                        } else {
+                        } // Displays normal text (no additional rendering)
+                        else {
                             TextInline(string)
                         }
                     }

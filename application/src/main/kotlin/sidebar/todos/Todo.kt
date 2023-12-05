@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// Container for the to do sidebar widget.
 @Composable
 fun ToDoContainer(currUser: MutableState<String>) {
 
@@ -31,7 +32,7 @@ fun ToDoContainer(currUser: MutableState<String>) {
     var selectedItemIdx = remember { mutableStateOf(-1) }
     val dialogMode = remember { mutableStateOf("closed") }
 
-    // pop up dialog for adding or editing a todo item
+    // pop up dialog for adding or editing a to do item.
     if (dialogMode.value == "add" || dialogMode.value == "edit") {
         ToDoDialog(dialogMode, selectedItemIdx.value, toDoVM)
     }

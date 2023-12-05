@@ -17,6 +17,8 @@ fun Application.configureToDoRoutes() {
             val toCreateOwner = call.request.queryParameters["user"] ?: ""
             if (toCreateOwner != "") {
                 val toDoToBeCreated = call.receive<ToDoCreationRequest>()
+
+                // call createToDo service
                 val createdToDo =
                     createToDo(
                         toCreateOwner,
@@ -34,6 +36,8 @@ fun Application.configureToDoRoutes() {
             val toEditOwner = call.request.queryParameters["user"] ?: ""
             if (toEditOwner != "") {
                 val toDoToEdit = call.receive<ToDoEditNameRequest>()
+
+                // call editToDoName service
                 editToDoName(
                     toEditOwner,
                     toDoToEdit.id,
@@ -50,6 +54,8 @@ fun Application.configureToDoRoutes() {
             val toEditOwner = call.request.queryParameters["user"] ?: ""
             if (toEditOwner != "") {
                 val toDoToEdit = call.receive<ToDoEditCheckedRequest>()
+
+                // call editToDoChecked service
                 editToDoChecked(
                     toEditOwner,
                     toDoToEdit.id,
@@ -66,6 +72,8 @@ fun Application.configureToDoRoutes() {
             val toDeleteOwner = call.request.queryParameters["user"] ?: ""
             if (toDeleteOwner != "") {
                 val toDeleteId = call.request.queryParameters["id"]?.toInt() ?: -1
+
+                // call deleteToDo service
                 deleteToDo(
                     toDeleteOwner,
                     toDeleteId
@@ -80,6 +88,7 @@ fun Application.configureToDoRoutes() {
         get("/todos") {
             val targetOwner = call.request.queryParameters["user"] ?: ""
             if (targetOwner != "") {
+                // call getAllToDos service
                 val toDoList : ToDoListResponse = getAllToDos(targetOwner);
                 call.respond(toDoList)
                 call.application.environment.log.info("User: ${targetOwner}, All todos requested.")

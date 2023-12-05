@@ -19,6 +19,8 @@ fun Application.configureFileRoutes() {
             val toCreateOwner = call.request.queryParameters["user"] ?: ""
             if (toCreateOwner != "") {
                 val fileToBeCreated = call.receive<FileCreationRequest>()
+
+                // call createFile service
                 val createdFile =
                     createFile(
                         fileToBeCreated.isFolder,
@@ -27,6 +29,7 @@ fun Application.configureFileRoutes() {
                         fileToBeCreated.fileName,
                         fileToBeCreated.fileContent
                     )
+
                 call.respond(createdFile)
                 call.application.environment.log.info("ID: ${createdFile.id}, User: ${createdFile.owner} - File created.")
             } else {
@@ -38,6 +41,7 @@ fun Application.configureFileRoutes() {
         put("/file") {
             val toEditOwner = call.request.queryParameters["user"] ?: ""
             if (toEditOwner != "") {
+                // call editFile service
                 val fileToEdit = call.receive<FileEditRequest>()
                 editFile(
                     fileToEdit.id,
@@ -58,6 +62,8 @@ fun Application.configureFileRoutes() {
             val toDeleteOwner = call.request.queryParameters["user"] ?: ""
             if (toDeleteOwner != "") {
                 val toDeleteId = call.request.queryParameters["id"]?.toInt() ?: -1
+
+                // call deleteFile service
                 deleteFile(toDeleteOwner, toDeleteId)
                 call.respond(HttpStatusCode.OK, "File deleted successfully.")
                 call.application.environment.log.info("ID: ${toDeleteId}, User: ${toDeleteOwner} - File Deleted.")
@@ -69,6 +75,7 @@ fun Application.configureFileRoutes() {
         get("/files") {
             val targetOwner = call.request.queryParameters["user"] ?: ""
             if (targetOwner != "") {
+                // call getFiles service
                 val fileList : FileListResponse = getFiles(targetOwner);
                 call.respond(fileList)
                 call.application.environment.log.info("User: ${targetOwner}, All files requested.")
