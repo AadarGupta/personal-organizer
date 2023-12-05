@@ -10,10 +10,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-
+// Internal list management of to do data objects
 @Serializable
 data class ReminderList(val items: List<ReminderModel>)
-
+// Reminder viewmodel object
 class ReminderViewModel(currUser: MutableState<String>) {
     var currUser = currUser
     private var reminderList = mutableStateListOf<ReminderModel>()
@@ -32,10 +32,11 @@ class ReminderViewModel(currUser: MutableState<String>) {
         }
     }
 
+    //returns whole reminder list
     fun getReminderList() : List<ReminderModel> {
         return reminderList;
     }
-
+    //returns list of reminders filtered by today's date
     fun getTodayReminderList() : List<ReminderModel> {
         var today = java.time.LocalDate.now()
         var currDay = today.dayOfMonth.toString()
@@ -51,11 +52,12 @@ class ReminderViewModel(currUser: MutableState<String>) {
             //it.time == "$currHour:$currMinute $currAMPM"
         };
     }
-
+    //checks if reminder list is empty
     fun isReminderEmpty() : Boolean {
         return reminderList.isEmpty()
     }
 
+    //adds to reminder list
     fun addReminderList(
         itemName: String,
         year: String,
@@ -124,7 +126,7 @@ class ReminderViewModel(currUser: MutableState<String>) {
             }
         }
     }
-
+    //removes given object from list of reminders
     fun removeReminderItem(targetItem: ReminderModel) {
         runBlocking {
             launch {
@@ -141,10 +143,12 @@ class ReminderViewModel(currUser: MutableState<String>) {
         }
     }
 
+    //returns object filtered by index
     fun getItemByIdx(idx: Int): ReminderModel {
         return reminderList[idx]
     }
 
+    // returns item index
     fun getItemIdx(item: ReminderModel): Int {
         return reminderList.indexOf(item)
     }
