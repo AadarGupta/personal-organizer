@@ -28,6 +28,7 @@ fun createToDo(
             it[isChecked] = checkedStatus
         } get ToDoDbObject.id
 
+        // create to do item
         targetToDoItem =
             ToDoDbModel(
                 newToDo.value,
@@ -46,6 +47,7 @@ fun editToDoName(
     name: String
 ) {
     transaction {
+        // update to do name
         ToDoDbObject.update({ToDoDbObject.id.eq(id) and ToDoDbObject.owner.eq(itemOwner)}) {
             it[itemName] = name
         }
@@ -58,6 +60,7 @@ fun editToDoChecked(
     checkedStatus: Boolean
 ) {
     transaction {
+        // update to do checked status
         ToDoDbObject.update({ToDoDbObject.id.eq(id) and ToDoDbObject.owner.eq(itemOwner)}) {
             it[isChecked] = checkedStatus
         }
@@ -67,6 +70,7 @@ fun editToDoChecked(
 
 fun deleteToDo(itemOwner: String, id: Int) {
     transaction {
+        // delete to do
         ToDoDbObject.deleteWhere { ToDoDbObject.id.eq(id) and ToDoDbObject.owner.eq(itemOwner) }
     }
 }
@@ -75,7 +79,9 @@ fun deleteToDo(itemOwner: String, id: Int) {
 fun getAllToDos(itemOwner: String) : ToDoListResponse {
     val toDoList = mutableListOf<ToDoItem>()
     transaction {
+        // get all to dos
         for (todo in ToDoDbObject.selectAll()) {
+            // get to dos for this user
             if (todo[ToDoDbObject.owner] == itemOwner) {
                 val toDoData = ToDoItem(
                     todo[ToDoDbObject.id].value,
@@ -83,10 +89,14 @@ fun getAllToDos(itemOwner: String) : ToDoListResponse {
                     todo[ToDoDbObject.itemName],
                     todo[ToDoDbObject.isChecked]
                 )
+
+                // add to do to list
                 toDoList.add(toDoData)
             }
         }
     }
+
+    // create to do list response
     val toDoListResponse = ToDoListResponse(toDoList)
     return toDoListResponse
 }

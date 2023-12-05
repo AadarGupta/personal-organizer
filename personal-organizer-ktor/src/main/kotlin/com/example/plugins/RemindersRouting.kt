@@ -19,6 +19,8 @@ fun Application.configureReminderRoutes() {
             val toCreateOwner = call.request.queryParameters["user"] ?: ""
             if (toCreateOwner != "") {
                 val reminderToBeCreated = call.receive<ReminderCreationRequest>()
+
+                // call createReminder service
                 val createdReminder =
                     createReminder(
                         toCreateOwner,
@@ -40,6 +42,8 @@ fun Application.configureReminderRoutes() {
             val toEditOwner = call.request.queryParameters["user"] ?: ""
             if (toEditOwner != "") {
                 val reminderToEdit = call.receive<ReminderEditRequest>()
+
+                // call editReminder service
                 editReminder(
                     toEditOwner,
                     reminderToEdit.id,
@@ -60,6 +64,8 @@ fun Application.configureReminderRoutes() {
             val toDeleteOwner = call.request.queryParameters["user"] ?: ""
             if (toDeleteOwner != "") {
                 val toDeleteId = call.request.queryParameters["id"]?.toInt() ?: -1
+
+                // call deleteReminder service
                 deleteReminder(
                     toDeleteOwner,
                     toDeleteId
@@ -74,6 +80,7 @@ fun Application.configureReminderRoutes() {
         get("/reminders") {
             val targetOwner = call.request.queryParameters["user"] ?: ""
             if (targetOwner != "") {
+                // call getAllReminders service
                 val reminderList : ReminderListResponse = getAllReminders(targetOwner);
                 call.respond(HttpStatusCode.OK, reminderList)
                 call.application.environment.log.info("User: ${targetOwner} - All reminders requested.")

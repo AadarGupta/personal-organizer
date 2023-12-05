@@ -27,6 +27,7 @@ fun createFile(
                 it[fileContent] = newFileContent
             } get FileDbObject.id
 
+        // create file item
         targetFileItem =
             FileDbModel(
                 newFile.value,
@@ -49,6 +50,7 @@ fun editFile(
     newFileContent: String
 ) {
     transaction {
+        // update file
         FileDbObject.update({ FileDbObject.id.eq(targetId) and FileDbObject.owner.eq(itemOwner)}) {
             it[isFolder] = isFolderStatus
             it[parent] = newParent
@@ -61,6 +63,7 @@ fun editFile(
 
 fun deleteFile(itemOwner: String, targetId: Int) {
     transaction {
+        // delete file
         FileDbObject.deleteWhere { FileDbObject.id.eq(targetId) and FileDbObject.owner.eq(itemOwner) }
         // delete all that have this id as parent
         FileDbObject.deleteWhere { FileDbObject.parent.eq(targetId) and FileDbObject.owner.eq(itemOwner) }
@@ -71,8 +74,11 @@ fun deleteFile(itemOwner: String, targetId: Int) {
 fun getFiles(itemOwner: String) : FileListResponse {
     val fileList = mutableListOf<FileItem>()
     transaction {
+        // get all files
         for (file in FileDbObject.selectAll()) {
+            // check if file belongs to user
             if (file[FileDbObject.owner] == itemOwner) {
+                // create file item
                 val fileData =
                     FileItem(
                         file[FileDbObject.id].value,
@@ -82,10 +88,13 @@ fun getFiles(itemOwner: String) : FileListResponse {
                         file[FileDbObject.fileName],
                         file[FileDbObject.fileContent]
                     )
+                // add file item to list
                 fileList.add(fileData)
             }
         }
     }
+
+    // create file list response
     val fileListResponse = FileListResponse(fileList)
     return fileListResponse
 }

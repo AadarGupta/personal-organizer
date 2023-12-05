@@ -14,10 +14,13 @@ fun Application.configureAuthRoutes() {
     routing {
         post("/user/signup") {
             val userToBeCreated = call.receive<UserSignupRequest>()
+
+            // call createUser service
             val userCreationSuccess = createUser(
                 userToBeCreated.username,
                 userToBeCreated.password
             )
+
             if (userCreationSuccess) {
                 call.application.environment.log.info("User created. Username: ${userToBeCreated.username}")
                 call.respond(HttpStatusCode.OK, message = "User created.")
@@ -30,10 +33,13 @@ fun Application.configureAuthRoutes() {
 
         post("/user/login") {
             val userToBeLoggedIn = call.receive<UserLoginRequest>()
+
+            // call loginUser service
             val loginSuccess = loginUser(
                 userToBeLoggedIn.username,
                 userToBeLoggedIn.password
             )
+
             if (loginSuccess) {
                 call.application.environment.log.info("User logged in. Username: ${userToBeLoggedIn.username}")
                 call.respond(HttpStatusCode.OK, message = "Login success.")

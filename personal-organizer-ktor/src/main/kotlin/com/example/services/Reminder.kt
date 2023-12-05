@@ -31,6 +31,7 @@ fun createReminder(
         )
 
     transaction {
+        // create reminder
         val newReminder =
             ReminderDbObject.insert {
                 it[owner] = itemOwner
@@ -67,6 +68,7 @@ fun editReminder(
     newTime: String
 ) {
     transaction {
+        // update reminder
         ReminderDbObject.update({ReminderDbObject.id.eq(id) and ReminderDbObject.owner.eq(itemOwner)}) {
             it[itemName] = newName
             it[year] = newYear
@@ -83,6 +85,7 @@ fun deleteReminder(
     id: Int
 ) {
     transaction {
+        // delete reminder
         ReminderDbObject.deleteWhere {ReminderDbObject.id.eq(id) and ReminderDbObject.owner.eq(itemOwner) }
     }
 }
@@ -91,7 +94,9 @@ fun deleteReminder(
 fun getAllReminders(itemOwner: String) : ReminderListResponse {
     val reminderList = mutableListOf<ReminderItem>()
     transaction {
+        // get all reminders
         for (reminder in ReminderDbObject.selectAll()) {
+            // if the reminder belongs to the user
             if (reminder[ReminderDbObject.owner] == itemOwner) {
                 val reminderData =
                     ReminderItem(
@@ -104,10 +109,14 @@ fun getAllReminders(itemOwner: String) : ReminderListResponse {
                         reminder[ReminderDbObject.time],
                         reminder[ReminderDbObject.isChecked]
                     )
+
+                // add reminder to list
                 reminderList.add(reminderData)
             }
         }
     }
+
+    // create file list response
     val reminderListResponse = ReminderListResponse(reminderList)
     return reminderListResponse
 }
