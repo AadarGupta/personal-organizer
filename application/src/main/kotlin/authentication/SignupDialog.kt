@@ -60,10 +60,13 @@ fun SignupDialog(
 
                     runBlocking {
                         launch {
+                            // send signup request to backend
                             val createUserResponse = http.post("user/signup", body)
                             if (createUserResponse.status == HttpStatusCode.OK) {
+                                // close dialog
                                 mode.value = "closed"
                             } else {
+                                // username already in use
                                 usernameInUse = true
                             }
                         }
@@ -85,6 +88,7 @@ fun SignupDialog(
                 modifier = Modifier.padding(10.dp),
             ) {
 
+                // username field
                 Column(modifier = Modifier.padding(5.dp)) {
                     Text("Username")
                     TextField(
@@ -105,6 +109,7 @@ fun SignupDialog(
                     )
                 }
 
+                // password field
                 Column(modifier = Modifier.padding(5.dp)) {
                     Text("Password")
                     TextField(
@@ -144,6 +149,8 @@ fun SignupDialog(
                             }
                         }
                     )
+
+                    // username already in use error message
                     if (usernameInUse) {
                         Text(
                             text = "Username already in use",

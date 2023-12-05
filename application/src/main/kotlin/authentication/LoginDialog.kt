@@ -61,11 +61,14 @@ fun LoginDialog(
 
                     runBlocking {
                         launch {
+                            // send login request to backend
                             val createUserResponse = http.post("user/login", body)
                             if (createUserResponse.status == HttpStatusCode.OK) {
+                                // upon successful login, set current user
                                 currUser.value = username
                                 mode.value = "closed"
                             } else {
+                                // handle invalid credentials
                                 invalidCredentials = true
                             }
                         }
@@ -87,6 +90,7 @@ fun LoginDialog(
                 modifier = Modifier.padding(10.dp),
             ) {
 
+                // username field
                 Column(modifier = Modifier.padding(5.dp)) {
                     Text("Username")
                     TextField(
@@ -107,6 +111,7 @@ fun LoginDialog(
                     )
                 }
 
+                // password field
                 Column(modifier = Modifier.padding(5.dp)) {
                     Text("Password")
                     TextField(
@@ -126,11 +131,11 @@ fun LoginDialog(
                         ),
                         visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = {
+                            // handle password visibility
                             val passwordVisibilityImage = if (passwordVisibility)
                                 "hidePassword.png"
                             else "showPassword.png"
 
-                            // Please provide localized description for accessibility services
                             val description = if (passwordVisibility) "Hide password" else "Show password"
 
                             IconButton(

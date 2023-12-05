@@ -17,10 +17,12 @@ fun AuthenticationPage(
     currUser: MutableState<String>
 ) {
 
+    // autentication type states
     var loginPopup = remember { mutableStateOf("closed") }
     var signupPopup = remember { mutableStateOf("closed") }
 
 
+    // open login/register popup
     if (loginPopup.value == "open") {
         LoginDialog(mode = loginPopup, currUser = currUser)
     }
@@ -30,6 +32,7 @@ fun AuthenticationPage(
 
     LogoHeader()
 
+    // login/register buttons
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
@@ -41,7 +44,6 @@ fun AuthenticationPage(
         ) {
             Button(
                 onClick = {
-                    // check if credentials are valid
                     loginPopup.value = "open"
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
@@ -56,7 +58,6 @@ fun AuthenticationPage(
         ) {
             Button(
                 onClick = {
-                    // check if credentials are valid
                     signupPopup.value = "open"
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
@@ -65,13 +66,13 @@ fun AuthenticationPage(
             }
         }
 
+        // login as demo user button
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
                 onClick = {
-                    // check if credentials are valid
                     currUser.value = "demo-user"
                 },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF67c2b3))
