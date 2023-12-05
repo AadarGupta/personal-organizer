@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// Dialog for to do creation and editing.
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ToDoDialog(

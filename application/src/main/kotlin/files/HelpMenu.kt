@@ -13,11 +13,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// Help Menu for modified markdown (if user clicks the i icon on the edit page)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HelpMenu(
     mode: MutableState<String>) {
 
+    // Mappings of each command
     val mappings = listOf(
         "#" to "Heading 1",
         "##" to "Heading 2",
@@ -31,8 +33,10 @@ fun HelpMenu(
         "!(url)" to "Image from URL"
     )
 
+    // Creates an alert dialog
     AlertDialog(
         title = {
+            // Renders the title for the help menu
             Text(
                     text = "Help Menu for Markdown Commands", modifier = Modifier.padding(20.dp),
                     fontWeight = FontWeight.Bold,
@@ -42,6 +46,7 @@ fun HelpMenu(
         },
         onDismissRequest = { mode.value = "closed" },
         confirmButton = {
+            // Creates a button which closes the dialog if clicked
             TextButton(
                 onClick = {
                     mode.value = "closed"
@@ -54,8 +59,10 @@ fun HelpMenu(
             Column(
                 modifier = Modifier.padding(10.dp),
             ) {
+                // Creates a Row for each mapping defined above
                 mappings.forEach { (symbol, description) ->
                     Row(modifier = Modifier.fillMaxWidth()) {
+                        // Left aligns the symbol (command)
                         Text(
                             text = symbol,
                             textAlign = TextAlign.Left,
@@ -65,7 +72,7 @@ fun HelpMenu(
                             color = Color.Black,
                             fontWeight = FontWeight.Bold
                         )
-
+                        // Right aligns the description
                         Text(
                             text = description,
                             textAlign = TextAlign.Right,

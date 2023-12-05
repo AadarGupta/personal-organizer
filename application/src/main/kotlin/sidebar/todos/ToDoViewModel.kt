@@ -11,9 +11,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
+// Internal list management of to do data objects
 @Serializable
 data class ToDoList(val items: List<ToDoModel>)
 
+// To do viewmodel object
 class ToDoViewModel(currUser: MutableState<String>) {
     var currUser = currUser
     private var toDoList = mutableStateListOf<ToDoModel>()
@@ -32,14 +34,17 @@ class ToDoViewModel(currUser: MutableState<String>) {
         }
     }
 
+    // Returns all to do items in internal list.
     fun getToDoList() : List<ToDoModel> {
         return toDoList;
     }
 
+    // Returns whether internal to do list is empty or not.
     fun isToDoEmpty() : Boolean {
         return toDoList.isEmpty()
     }
 
+    // Creates and adds a to do item with name itemName.
     fun addToDo(itemName: String) : Int {
         val http = MyHttp()
         val body = JsonObject(
@@ -60,6 +65,7 @@ class ToDoViewModel(currUser: MutableState<String>) {
         return toDoList.size - 1
     }
 
+    // Edits the name of to do object targetItem to newName.
     fun changeToDoName(targetItem: ToDoModel, newName: String) {
         val idx = toDoList.indexOf(targetItem)
         toDoList[idx] =
@@ -84,6 +90,7 @@ class ToDoViewModel(currUser: MutableState<String>) {
         }
     }
 
+    // Edits the checked boolean of targetItem.
     fun changeToDoCheckStatus(targetItem: ToDoModel) {
         val idx = toDoList.indexOf(targetItem)
         toDoList[idx] = ToDoModel(toDoList[idx].id, toDoList[idx].owner, toDoList[idx].itemName, !toDoList[idx].isChecked)
@@ -102,6 +109,7 @@ class ToDoViewModel(currUser: MutableState<String>) {
         }
     }
 
+    // Removes to do item targetItem.
     fun removeToDoItem(targetItem: ToDoModel) {
         runBlocking {
             launch {
@@ -118,10 +126,12 @@ class ToDoViewModel(currUser: MutableState<String>) {
         }
     }
 
+    // Returns index of to do item toDoItem in internal list.
     fun getIdxById(toDoItem: ToDoModel): Int {
         return toDoList.indexOf(toDoItem)
     }
 
+    // Returns the to do item stored at idx of internal list.
     fun getItemByIdx(idx: Int): ToDoModel {
         return toDoList[idx]
     }

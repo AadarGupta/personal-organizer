@@ -8,7 +8,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontFamily
@@ -23,8 +22,11 @@ import java.net.URL
 import javax.imageio.ImageIO
 
 
+// Generates different styled simplified markdown
+
 @Composable
 fun H1(string: String) {
+    // Generates H1
     Text(
         text = string,
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 10.dp),
@@ -36,6 +38,7 @@ fun H1(string: String) {
 
 @Composable
 fun H2(string: String) {
+    // Generates H2
     Text(
         text = string,
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 7.dp),
@@ -47,6 +50,7 @@ fun H2(string: String) {
 
 @Composable
 fun H3(string: String) {
+    // Generates H3
     Text(
         text = string,
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 5.dp),
@@ -58,6 +62,7 @@ fun H3(string: String) {
 
 @Composable
 fun H4(string: String) {
+    // Generates H4
     Text(
         text = string,
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 4.dp),
@@ -69,6 +74,7 @@ fun H4(string: String) {
 
 @Composable
 fun H5(string: String) {
+    // Generates H5
     Text(
         text = string,
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 3.dp),
@@ -80,6 +86,7 @@ fun H5(string: String) {
 
 @Composable
 fun H6(string: String) {
+    // Generates H6
     Text(
         text = string,
         modifier = Modifier.padding(horizontal = 15.dp, vertical = 3.dp),
@@ -91,6 +98,7 @@ fun H6(string: String) {
 
 @Composable
 fun PointForm(string: String) {
+    // Generates point with a prevailing dot
     Text(
         text = "• $string",
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 2.dp),
@@ -101,6 +109,7 @@ fun PointForm(string: String) {
 
 @Composable
 fun CodeLine(string: String) {
+    // Generates and formats code lines
     Text(
         text = string,
         style = TextStyle(
@@ -118,34 +127,47 @@ fun CodeLine(string: String) {
 
 @Composable
 fun TextInline(string: String) {
+    // Inline text (handles any in text bolding and italics)
     Text(
+        // Builds an annotated string
         buildAnnotatedString {
+            // By default, no bold or italics
             var bold = false;
             var italics = false;
             var prev = "";
 
+            // Loop through each string
             for (i in string.indices) {
+                // Get the current character
                 var curr = string[i].toString()
 
+                // If the current character is *
                 if(curr == "*") {
+                    // If current and previous are * => reverse bold truth value
                     if(prev == "*") {
                         bold = !bold
-                    } else {
+                    } // If only current is * => reverse italics truth value
+                    else {
                         italics = !italics
                     }
                 }
+                // Update prev to the current value
                 prev = curr
 
+                // If the current value is not *
                 if(curr != "*") {
+                    // If need to bold, apply bold and append
                     if(bold) {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append(curr)
                         }
-                    } else if (italics) {
+                    } // If need to italics, apply italics and append
+                    else if (italics) {
                         withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
                             append(curr)
                         }
-                    } else {
+                    } // Append normal text with no bold or italics
+                    else {
                         append(curr)
                     }
                 }
@@ -158,24 +180,36 @@ fun TextInline(string: String) {
 
 @Composable
 fun ClickableURL(url: String) {
+    // Generates a clickable url
+
+    // Sets link to the url
     var link = url
+
+    // If there is no https:// in front of the link, add it
     if (url.substring(0, 5) != "https") {
         link = "https://${url}"
     }
+
+    // Builds an annotated string
     val annotatedText = buildAnnotatedString {
+        // Adds a string annotation of the URL
         pushStringAnnotation(tag = "URL", annotation = link)
+        // Styles the link as a link
         withStyle(style = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
             append(link)
         }
         pop()
     }
 
+    // Opens the link
     fun openLink(url: String) {
+        // If the link is clicked and on desktop, open in default browser
         if (Desktop.isDesktopSupported()) {
             Desktop.getDesktop().browse(URI(url))
         }
     }
 
+    // Generates a clickable text using the url
     ClickableText(
         text = annotatedText,
         onClick = { offset ->
@@ -190,6 +224,7 @@ fun ClickableURL(url: String) {
 
 @Composable
 fun ShowImage(url: String) {
+    // Generates an image using the url
     Image(
         bitmap = ImageIO.read(URL(url)).toComposeImageBitmap(),
         contentDescription = null,
